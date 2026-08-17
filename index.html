@@ -345,16 +345,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 </head>
 <body>
 
-<!-- ===== Access Gate (全站访问口令) ===== -->
+<!-- ===== 管理员登录弹窗 ===== -->
 <div class="login-page" id="gatePage" style="display:none;">
   <div class="login-card">
-    <div class="login-logo" id="gateLogo">女装选品小站</div>
-    <div class="login-subtitle" id="gateSubtitle">请输入访问口令进入</div>
+    <div class="login-logo" id="gateLogo">管理员登录</div>
+    <div class="login-subtitle" id="gateSubtitle">请输入管理员口令进入后台</div>
     <div class="login-form">
-      <label class="login-label">访问口令</label>
-      <input class="login-input" id="gateCode" type="password" placeholder="请输入访问口令" autocomplete="off">
-      <button class="login-btn" onclick="handleGate()">进 入</button>
-      <div class="login-error" id="gateError">访问口令错误，请重试</div>
+      <label class="login-label">管理员口令</label>
+      <input class="login-input" id="gateCode" type="password" placeholder="请输入管理员口令" autocomplete="off">
+      <button class="login-btn" onclick="handleGate()">登 录</button>
+      <button class="login-btn" style="margin-top:10px;background:transparent;color:var(--text-secondary);border:1px solid var(--border);" onclick="closeAdminLogin()">返回</button>
+      <div class="login-error" id="gateError">管理员口令错误，请重试</div>
     </div>
   </div>
 </div>
@@ -368,7 +369,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="nav-tab active" onclick="switchPage('products')">商品浏览</div>
         <div class="nav-tab" onclick="switchPage('cart')">购物车</div>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
-        <div class="nav-tab" id="adminTab" style="display:none" onclick="switchPage('admin')">货盘管理</div>
+        <div class="nav-tab" id="adminTab" style="display:none" onclick="switchPage('admin')">数据上传</div>
       </div>
     </div>
     <div class="nav-right">
@@ -377,7 +378,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         购物车
         <span class="cart-count" id="cartCount">0</span>
       </div>
-      <div class="nav-logout" onclick="handleLogout()">退出</div>
+      <div class="nav-logout" id="adminLoginEntry" onclick="openAdminLogin()">管理员登录</div>
+      <div class="nav-logout" id="adminLogoutEntry" style="display:none" onclick="handleLogout()">退出管理</div>
     </div>
   </nav>
 
@@ -565,9 +567,10 @@ let selectedPIDs = new Set();
 let filteredProducts = [];
 let currentUser = null;
 
-// ===== Access Gate =====
-// ===== 双口令：访问口令(所有人) + 管理员口令(仅本人更新货盘)，均私密不在页面明示 =====
-var GATE_KEY = 'gatePassed';
+// ===== 访问策略 =====
+// 普通用户：打开即进主页，无需口令。
+// 管理员：右上角「管理员登录」输入管理员口令进入后台（货盘管理/数据上传）。
+var GATE_KEY = 'gatePassed';   // 保留兼容旧逻辑，现已默认放行
 var ADMIN_KEY = 'isAdmin';
 function accessCodeHash() {
   return (SITE_CONFIG && SITE_CONFIG.accessCodeHash) ? SITE_CONFIG.accessCodeHash.toLowerCase() : '';
@@ -584,44 +587,33 @@ function sha256Hex(str) {
     return hex;
   });
 }
-function gatePassed() {
-  // 用 localStorage 持久化：通过一次后，本浏览器长期免再输
-  return localStorage.getItem(GATE_KEY) === '1';
-}
 function isAdmin() {
   return localStorage.getItem(ADMIN_KEY) === '1';
 }
-function showGate() {
+// 打开管理员登录弹窗
+function openAdminLogin() {
   document.getElementById('gatePage').style.display = 'flex';
-  document.getElementById('appWrap').style.display = 'none';
   document.getElementById('gateError').style.display = 'none';
-  var logo = document.getElementById('gateLogo');
-  var sub = document.getElementById('gateSubtitle');
-  if (logo) logo.textContent = SITE_CONFIG.loginTitle;
-  if (sub) sub.textContent = SITE_CONFIG.loginSubtitle;
   var el = document.getElementById('gateCode');
   if (el) { el.value = ''; setTimeout(function(){ el.focus(); }, 50); }
+}
+// 关闭管理员登录弹窗，回到主页
+function closeAdminLogin() {
+  document.getElementById('gatePage').style.display = 'none';
 }
 function handleGate() {
   var code = document.getElementById('gateCode').value.trim();
   if (!code) { document.getElementById('gateError').style.display = 'block'; return; }
-  // 对输入做 SHA-256 后与配置里的哈希比对，原文口令不落地
+  // 对输入做 SHA-256 后与配置里的管理员哈希比对，原文口令不落地
   sha256Hex(code).then(function(h) {
     h = h.toLowerCase();
     var adminH = adminCodeHash();
-    var visitH = accessCodeHash();
     if (adminH && h === adminH) {
-      // 管理员口令：同时具备访问权限 + 货盘管理权限
-      localStorage.setItem(GATE_KEY, '1');
       localStorage.setItem(ADMIN_KEY, '1');
       document.getElementById('gateError').style.display = 'none';
-      showApp();
-    } else if (visitH && h === visitH) {
-      // 访问口令：普通访客，无货盘管理权限
-      localStorage.setItem(GATE_KEY, '1');
-      localStorage.removeItem(ADMIN_KEY);
-      document.getElementById('gateError').style.display = 'none';
-      showApp();
+      document.getElementById('gatePage').style.display = 'none';
+      applyAdminUI();
+      switchPage('admin');   // 登录成功自动跳转到数据上传页
     } else {
       document.getElementById('gateError').style.display = 'block';
     }
@@ -630,9 +622,8 @@ function handleGate() {
   });
 }
 
-// ===== 入口检查 =====
+// ===== 入口检查：普通用户直接进主页 =====
 function checkSession() {
-  if (!gatePassed()) { showGate(); return; }
   showApp();
 }
 
@@ -641,24 +632,43 @@ function showApp() {
   document.getElementById('appWrap').style.display = 'block';
   applyAdminUI();
   loadProductData();
+  maybeShowSettingsTip();
 }
 
-// 根据管理员身份显示/隐藏「货盘管理」入口
+// 首次访问弹窗:提醒用户先完善个人/机构信息(仅普通访客、且未填过机构、每浏览器仅提醒一次)
+function maybeShowSettingsTip() {
+  try {
+    if (isAdmin()) return;
+    if (userSettings && userSettings.agencyName) return;
+    if (localStorage.getItem('settingsTipShown') === '1') return;
+    setTimeout(function() {
+      var go = confirm('欢迎来到女装选品小站！\n\n建议您先前往「机构设置」完善机构名称、收件人等个人信息，之后导出申样记录会更顺畅。\n\n点击「确定」现在去设置，点击「取消」稍后再说。');
+      localStorage.setItem('settingsTipShown', '1');
+      if (go) switchPage('settings');
+    }, 600);
+  } catch (e) {}
+}
+
+// 根据管理员身份显示/隐藏「货盘管理」入口与登录/退出按钮
 function applyAdminUI() {
+  var admin = isAdmin();
   var tab = document.getElementById('adminTab');
-  if (tab) tab.style.display = isAdmin() ? '' : 'none';
+  if (tab) tab.style.display = admin ? '' : 'none';
+  var loginEntry = document.getElementById('adminLoginEntry');
+  var logoutEntry = document.getElementById('adminLogoutEntry');
+  if (loginEntry) loginEntry.style.display = admin ? 'none' : '';
+  if (logoutEntry) logoutEntry.style.display = admin ? '' : 'none';
 }
 
 function handleLogout() {
-  // 退出即清除本浏览器的访问口令与管理员状态，回到口令页
-  localStorage.removeItem(GATE_KEY);
+  // 退出管理：清除管理员状态，回到普通用户主页
   localStorage.removeItem(ADMIN_KEY);
-  cart = [];
-  selectedPIDs.clear();
-  showGate();
+  applyAdminUI();
+  switchPage('products');
+  showToast('已退出管理员');
 }
 
-// Enter key on gate / filters
+// Enter key on admin-login popup / filters
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
     if (document.getElementById('gatePage').style.display !== 'none') {
@@ -812,6 +822,19 @@ function initApp() {
   loadSettings();
   updateCartCount();
   updateWelcome();
+  maybePromptProfile();
+}
+
+// 首次进入(未填写机构信息)时,弹窗提醒用户先完善个人信息设置
+function maybePromptProfile() {
+  if (isAdmin()) return;                       // 管理员进后台,不打扰
+  if (userSettings && userSettings.agencyName) return;  // 已填过机构,不再提醒
+  if (sessionStorage.getItem('profilePrompted') === '1') return; // 本次会话只提醒一次
+  sessionStorage.setItem('profilePrompted', '1');
+  setTimeout(function() {
+    var ok = window.confirm('欢迎来到女装选品小站！\n\n为方便后续一键导出申样记录，建议先完善「机构设置」中的个人信息（机构名称、达人、收件人等）。\n\n点击「确定」立即前往设置，点击「取消」先浏览商品。');
+    if (ok) switchPage('settings');
+  }, 600);
 }
 
 function buildSidebar() {
