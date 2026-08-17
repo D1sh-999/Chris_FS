@@ -116,16 +116,41 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .filter-stats { font-size: 11px; color: var(--text-tertiary); margin-top: 10px; }
 
 /* ===== Product Grid ===== */
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 18px; }
+.product-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+@media (max-width: 1400px) { .product-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (max-width: 1150px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px)  { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px)  { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ===== Frozen layout: header fixed, detail area scrolls ===== */
+.products-page { display: flex; flex-direction: column; height: calc(100vh - 48px); }
+.products-page .layout-wrap { display: flex; flex-direction: column; flex: 1; min-height: 0; max-width: 1360px; margin: 0 auto; padding: 16px 22px 0; gap: 0; width: 100%; }
+.products-page .main-content { display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; }
+.frozen-head { flex-shrink: 0; }
+.scroll-area { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 2px 12px; }
+.scroll-area::-webkit-scrollbar { width: 8px; }
+.scroll-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.16); border-radius: 8px; }
+
+/* ===== Pagination bar ===== */
+.pagination { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 8px 16px; border-top: 0.5px solid rgba(0,0,0,0.08); background: var(--bg); flex-wrap: wrap; }
+.pg-btn { min-width: 32px; height: 32px; padding: 0 10px; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+.pg-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.pg-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pg-ellipsis { color: var(--text-tertiary); padding: 0 2px; }
+.pg-jump { display: flex; align-items: center; gap: 5px; margin-left: 8px; font-size: 12px; color: var(--text-tertiary); }
+.pg-jump input { width: 48px; height: 32px; text-align: center; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 13px; }
+.pg-jump input:focus { outline: none; border-color: var(--accent); }
+.pg-total { font-size: 12px; color: var(--text-tertiary); margin-right: 6px; }
 .product-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition); cursor: pointer; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
 .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: rgba(0,113,227,0.15); }
 .product-img-wrap { position: relative; overflow: hidden; }
-.product-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--surface); transition: transform 0.4s ease; }
+.product-img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; background: #f5f5f7; transition: transform 0.4s ease; }
 .product-card:hover .product-img { transform: scale(1.04); }
 .product-img-btn { position: absolute; bottom: 6px; right: 6px; padding: 4px 8px; background: rgba(0,0,0,0.55); color: #fff; border-radius: 980px; font-size: 10px; cursor: pointer; opacity: 0; transition: var(--transition); backdrop-filter: blur(4px); border: none; font-weight: 500; }
 .product-card:hover .product-img-btn { opacity: 1; }
 .product-img-btn:hover { background: rgba(0,0,0,0.75); }
-.product-info { padding: 12px 14px 14px; }
+.product-info { padding: 9px 10px 10px; }
 .product-spu { font-size: 11px; color: var(--text-secondary); font-family: 'SF Mono', 'Menlo', monospace; letter-spacing: -0.01em; margin-bottom: 2px; }
 .product-pid-line { font-size: 12px; color: var(--text-primary); font-family: 'SF Mono', 'Menlo', monospace; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
 .product-buyer { font-size: 11px; color: var(--accent); font-weight: 500; margin-bottom: 6px; }
@@ -139,7 +164,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .product-label.trending { background: #f0faf0; color: #30d158; }
 .product-label.recommend { background: #fef8f0; color: #ff9500; }
 /* new-product tag on image */
-.product-img-tag { position: absolute; top: 6px; left: 6px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; color: #fff; z-index: 2; }
+.product-img-tag { position: absolute; top: 8px; left: 8px; padding: 4px 11px; border-radius: 7px; font-size: 13px; font-weight: 900; letter-spacing: 0.04em; color: #fff; z-index: 2; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 3px 9px rgba(0,0,0,0.28); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 .product-img-tag.t7 { background: #ff3b30; }
 .product-img-tag.t14 { background: #ff9500; }
 .product-img-tag.t45 { background: #af52de; }
@@ -169,6 +194,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .pc-rank { font-size: 13px; font-weight: 700; color: var(--text-primary); }
 .pc-gpm { font-size: 12px; font-weight: 700; color: #ff2d55; }
 .pc-aff { font-size: 11px; font-weight: 500; color: var(--text-secondary); background: var(--surface); padding: 2px 8px; border-radius: 5px; }
+.pc-season { font-size: 11px; font-weight: 600; color: #0071e3; background: rgba(0,113,227,0.10); padding: 2px 9px; border-radius: 980px; white-space: nowrap; }
+.product-img-jit { position: absolute; top: 8px; right: 8px; padding: 4px 11px; border-radius: 7px; font-size: 13px; font-weight: 900; letter-spacing: 0.06em; color: #fff; background: linear-gradient(135deg,#ff1744,#ff2d55); z-index: 3; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 3px 10px rgba(255,23,68,0.55), 0 0 0 2px rgba(255,23,68,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.25); animation: jitPulse 1.6s ease-in-out infinite; }
+@keyframes jitPulse { 0%,100% { transform: scale(1); box-shadow: 0 3px 10px rgba(255,23,68,0.55), 0 0 0 2px rgba(255,23,68,0.25); } 50% { transform: scale(1.08); box-shadow: 0 4px 14px rgba(255,23,68,0.7), 0 0 0 5px rgba(255,23,68,0.12); } }
+.product-img-country + .product-img-jit, .product-img-jit.has-country { top: 34px; }
 .pc-bottom { display: flex; align-items: center; justify-content: space-between; }
 .pc-date { font-size: 12px; color: var(--text-tertiary); }
 .quick-add-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; }
@@ -183,6 +212,32 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .float-cart:hover { background: var(--accent-hover); transform: scale(1.04); }
 .float-cart.show { display: flex; }
 .float-cart .fc-count { background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* ===== Side floating action buttons ===== */
+.side-fabs { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 96; display: flex; flex-direction: column; gap: 10px; }
+.side-fab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 60px; padding: 12px 6px; border: none; cursor: pointer; color: #fff; font-size: 11px; font-weight: 600; line-height: 1.25; border-radius: 14px 0 0 14px; box-shadow: -2px 3px 12px rgba(0,0,0,0.16); transition: var(--transition); text-align: center; }
+.side-fab:hover { transform: translateX(-3px); box-shadow: -4px 4px 16px rgba(0,0,0,0.22); }
+.side-fab .side-fab-ic { font-size: 18px; }
+.side-fab.fab-guide { background: linear-gradient(135deg,#5856d6,#7d5bed); }
+.side-fab.fab-sample { background: linear-gradient(135deg,#0071e3,#00a1ff); }
+
+/* ===== Tag guide modal ===== */
+.guide-modal { background: var(--card-bg); border-radius: var(--radius-lg); max-width: 520px; width: 92%; max-height: 82vh; overflow-y: auto; padding: 26px 28px 22px; box-shadow: var(--shadow-lg); }
+.guide-modal h2 { font-size: 19px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.02em; }
+.guide-modal .guide-sub { font-size: 12px; color: var(--text-tertiary); margin-bottom: 18px; }
+.guide-sec { margin-bottom: 16px; }
+.guide-sec-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.guide-chip { font-size: 11px; font-weight: 700; color: #fff; padding: 2px 10px; border-radius: 980px; }
+.guide-chip.t7 { background: #ff3b30; }
+.guide-chip.t14 { background: #ff9500; }
+.guide-chip.thot { background: linear-gradient(135deg,#ff2d55,#ff375f); }
+.guide-chip.tpot { background: #34c759; }
+.guide-chip.tnew { background: #af52de; }
+.guide-item { font-size: 13px; color: var(--text-secondary); line-height: 1.7; padding-left: 2px; }
+.guide-item b { color: var(--text-primary); font-weight: 600; }
+.guide-close { display: block; width: 100%; margin-top: 8px; padding: 11px; background: var(--surface); color: var(--text-primary); border: none; border-radius: 980px; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+.guide-close:hover { background: var(--border-light); }
+@media (max-width: 640px) { .side-fab { width: 50px; font-size: 10px; padding: 10px 4px; } }
 
 /* ===== SKU Modal ===== */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(6px); z-index: 200; align-items: center; justify-content: center; }
@@ -245,8 +300,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 /* ===== Cart Page ===== */
 .cart-page { display: none; }
 .cart-page.active { display: flex; }
-.products-page { display: block; }
-.products-page.hidden { display: none; }
+.products-page.hidden { display: none !important; }
 .settings-page { display: none; }
 .settings-page.active { display: flex; }
 .admin-page { display: none; }
@@ -367,7 +421,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
       <div class="nav-logo">女装选品小站</div>
       <div class="nav-tabs">
         <div class="nav-tab active" onclick="switchPage('products')">商品浏览</div>
-        <div class="nav-tab" onclick="switchPage('cart')">购物车</div>
+        <div class="nav-tab" onclick="switchPage('cart')">圈品池</div>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
         <div class="nav-tab" id="adminTab" style="display:none" onclick="switchPage('admin')">数据上传</div>
       </div>
@@ -375,7 +429,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
     <div class="nav-right">
       <div class="agency-badge" id="agencyBadge">未选择机构</div>
       <div class="cart-badge" onclick="switchPage('cart')">
-        购物车
+        圈品池
         <span class="cart-count" id="cartCount">0</span>
       </div>
       <div class="nav-logout" id="adminLoginEntry" onclick="openAdminLogin()">管理员登录</div>
@@ -394,9 +448,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <div class="products-page" id="productsPage">
     <div class="layout-wrap">
       <div class="main-content">
+        <div class="frozen-head">
         <div class="welcome-banner" id="welcomeBanner">
           <div class="welcome-text" id="welcomeText">Hi，欢迎来到女装选品小站</div>
-          <div class="welcome-sub">挑选心仪商品加入购物车，批量导出申样记录</div>
+          <div class="welcome-sub">挑选心仪商品加入圈品池，批量导出申样记录</div>
         </div>
         <div class="filter-bar">
           <div class="filter-basic">
@@ -413,6 +468,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
             <select class="filter-select" id="filterCat2"><option value="">二级类目</option></select>
             <select class="filter-select" id="filterTag"><option value="">商品标签</option></select>
             <select class="filter-select" id="filterGpm"><option value="">GPM分层</option></select>
+            <select class="filter-select" id="filterSeason"><option value="">季节</option></select>
+            <select class="filter-select" id="filterJit"><option value="">JIT</option><option value="yes">是 JIT</option><option value="no">非 JIT</option></select>
             <div class="filter-group">
               <span class="filter-label">营销价</span>
               <input class="filter-input narrow" id="filterPriceMin" type="number" placeholder="min">
@@ -437,7 +494,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
           </div>
           <div class="filter-stats" id="filterStats"></div>
         </div>
-        <div id="productGrid"></div>
+        </div><!-- /.frozen-head -->
+        <div class="scroll-area" id="scrollArea">
+          <div id="productGrid"></div>
+        </div>
+        <div class="pagination" id="pagination"></div>
       </div>
     </div>
   </div>
@@ -446,7 +507,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <div class="layout-wrap cart-page" id="cartPage">
     <div class="main-content" style="max-width:860px;margin:0 auto;">
       <div class="page-header">
-        <div class="page-title">购物车</div>
+        <div class="page-title">圈品池</div>
         <div class="page-subtitle" id="cartSubtitle">选择商品后导出申样记录</div>
       </div>
       <div id="cartContent"></div>
@@ -551,8 +612,41 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   </div>
 
   <!-- Floating buttons (browse page) -->
-  <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前购物车的PID</button>
-  <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 购物车 <span class="fc-count" id="floatCartCount">0</span></button>
+  <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前圈品池的PID</button>
+  <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
+
+  <!-- Side floating action buttons -->
+  <div class="side-fabs">
+    <button class="side-fab fab-guide" onclick="openGuide()"><span class="side-fab-ic">📖</span>标签<br>说明</button>
+    <a class="side-fab fab-sample" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044&from=from_parent_docs" target="_blank" rel="noopener"><span class="side-fab-ic">📝</span>立即<br>申样</a>
+  </div>
+
+  <!-- Tag Guide Modal -->
+  <div class="modal-overlay" id="guideModal">
+    <div class="guide-modal">
+      <h2>标签说明</h2>
+      <div class="guide-sub">围栏指标解释（针对标码女装 · A 列标签定义）</div>
+
+      <div class="guide-sec">
+        <div class="guide-sec-title"><span class="guide-chip thot">爆款</span></div>
+        <div class="guide-item">近 7 天 · 订单量 <b>&gt;100</b> · <b>US + UK</b></div>
+        <div class="guide-item">近 7 天 · 订单量 <b>&gt;50</b> · <b>MX + EU</b></div>
+      </div>
+
+      <div class="guide-sec">
+        <div class="guide-sec-title"><span class="guide-chip tpot">高潜</span></div>
+        <div class="guide-item">近 7 天 · 订单量 <b>&gt;20</b> · 环比增速 <b>&gt;50%</b> · <b>US + UK + MX + EU</b></div>
+      </div>
+
+      <div class="guide-sec">
+        <div class="guide-sec-title"><span class="guide-chip tnew">新品</span></div>
+        <div class="guide-item">上架 30 天内（近 7 天数据）· 单量 <b>&gt;10</b></div>
+        <div class="guide-item">上架 30 天内（近 7 天数据）· <b>10 &gt; 单量 &gt; 3</b></div>
+      </div>
+
+      <button class="guide-close" onclick="closeGuide()">我知道了</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -565,6 +659,8 @@ let selectedColor = null;
 let selectedSize = null;
 let selectedPIDs = new Set();
 let filteredProducts = [];
+let currentPage = 1;
+const PAGE_SIZE = 24; // 每页 4 行 × 6 列
 let currentUser = null;
 
 // ===== 访问策略 =====
@@ -700,7 +796,9 @@ const FIELD_ALIASES = {
   price:    ['营销价', 'price', 'promo_price', 'promoPrice'],
   gpm:      ['GPM分层', 'gpm', 'gpm_tier'],
   colors:   ['销售颜色英文名集合', '颜色', 'colors', 'color'],
-  sizes:    ['尺寸集合', '尺码', 'sizes', 'size']
+  sizes:    ['尺寸集合', '尺码', 'sizes', 'size'],
+  season:   ['季节', 'Season Tag', 'season tag', 'seasonTag', 'season_tag', 'season'],
+  jit:      ['JIT', 'jit', 'is_jit', 'isJit', 'JIT标签', 'jit_tag']
 };
 // 从一行数据中,按别名列表取第一个存在(且非空表头)的值
 function pickField(row, key) {
@@ -751,7 +849,9 @@ function mapRowsToProducts(rows) {
       promoPrice: priceRaw ? ('$' + priceRaw) : '', // Q 营销价
       gpm: g('gpm'),                   // GPM分层
       colorList: g('colors').split(',').map(s => s.trim()).filter(Boolean), // 颜色
-      sizeList: g('sizes').split(',').map(s => s.trim()).filter(Boolean)     // 尺码
+      sizeList: g('sizes').split(',').map(s => s.trim()).filter(Boolean),     // 尺码
+      season: (function(v){ return ['NULL','#N/A','N/A','NONE'].includes(String(v).trim().toUpperCase()) ? '' : v; })(g('season')),             // 季节 / Season Tag
+      isJit: (function(v){ const s = String(v).trim().toLowerCase(); return ['1','y','yes','true','是','jit'].includes(s); })(g('jit')) // JIT 标签
     };
   }).filter(p => p.pid);
   // 按 PID 去重:同一 PID 只保留 rank 最小(排名最靠前)的一条
@@ -867,12 +967,14 @@ function buildFilterOptions() {
   const cat3s = [...new Set(PRODUCTS.map(p => p.category3))].sort();
   const tags = [...new Set(PRODUCTS.map(p => p.tag).filter(Boolean))].sort();
   const gpms = [...new Set(PRODUCTS.map(p => p.gpm).filter(Boolean))].sort();
+  const seasons = [...new Set(PRODUCTS.map(p => p.season).filter(Boolean))].sort();
 
   fillSelect('filterCountry', countries, '国家');
   fillSelect('filterCat2', cat2s, '二级类目');
   fillSelect('filterCat3', cat3s, '三级类目');
   fillSelect('filterTag', tags, '商品标签');
   fillSelect('filterGpm', gpms, 'GPM分层');
+  fillSelect('filterSeason', seasons, '季节');
 }
 
 function fillSelect(id, opts, label) {
@@ -899,12 +1001,15 @@ function applyFilters() {
   const cat2 = document.getElementById('filterCat2').value;
   const tag = document.getElementById('filterTag').value;
   const gpm = document.getElementById('filterGpm').value;
+  const season = document.getElementById('filterSeason').value;
+  const jit = document.getElementById('filterJit').value;
   const priceMin = parseFloat(document.getElementById('filterPriceMin').value) || 0;
   const priceMax = parseFloat(document.getElementById('filterPriceMax').value) || Infinity;
   const stockMin = parseInt(document.getElementById('filterStockMin').value) || 0;
   const ratingMin = parseFloat(document.getElementById('filterRatingMin').value) || 0;
   const sort = document.getElementById('filterSort').value;
 
+  currentPage = 1;
   filteredProducts = PRODUCTS.filter(p => {
     if (q && !(p.pid.includes(q) || p.spuCode.toLowerCase().includes(q) || (p.store||'').toLowerCase().includes(q))) return false;
     if (country && p.country !== country) return false;
@@ -912,6 +1017,9 @@ function applyFilters() {
     if (cat2 && p.category2 !== cat2) return false;
     if (tag && p.tag !== tag) return false;
     if (gpm && p.gpm !== gpm) return false;
+    if (season && p.season !== season) return false;
+    if (jit === 'yes' && !p.isJit) return false;
+    if (jit === 'no' && p.isJit) return false;
     const price = parsePrice(p.promoPrice);
     if (price < priceMin || price > priceMax) return false;
     if (p.stock < stockMin) return false;
@@ -934,8 +1042,9 @@ function applyFilters() {
 }
 
 function resetFilters() {
-  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterGpm','filterPriceMin','filterPriceMax','filterStockMin','filterRatingMin'].forEach(id => { document.getElementById(id).value = ''; });
+  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterGpm','filterSeason','filterJit','filterPriceMin','filterPriceMax','filterStockMin','filterRatingMin'].forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('filterSort').value = 'rank';
+  currentPage = 1;
   filteredProducts = [...PRODUCTS];
   renderProducts();
   document.getElementById('filterStats').textContent = '';
@@ -1063,23 +1172,32 @@ function tagClass(tag) {
 function renderProducts() {
   const grid = document.getElementById('productGrid');
   if (filteredProducts.length === 0) {
+    grid.className = '';
     grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F50D;</div><div class="empty-state-text">暂无匹配商品</div></div>';
+    renderPagination();
     return;
   }
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = filteredProducts.slice(start, start + PAGE_SIZE);
   grid.className = 'product-grid';
-  grid.innerHTML = filteredProducts.map((p, idx) => {
+  grid.innerHTML = pageItems.map((p, idx) => {
     const tagCls = tagClass(p.tag);
     const rankTxt = (p.rank && p.rank < 99999) ? `<span class="pc-rank">#${p.rank}</span>` : '';
     const gpmTxt = p.gpm ? `<span class="pc-gpm">${p.gpm}</span>` : '';
     const affTxt = p.affiliate ? `<span class="pc-aff">${p.affiliate}</span>` : '';
     const csTxt = (p.colorList.length || p.sizeList.length)
-      ? `<div class="pc-colorsize">${p.colorList.length ? `<span class="pc-cs">${p.colorList.length}色</span>` : ''}${p.sizeList.length ? `<span class="pc-cs">${p.sizeList.length}码</span>` : ''}</div>`
-      : '';
+      ? `<div class="pc-colorsize">${p.colorList.length ? `<span class="pc-cs">${p.colorList.length}色</span>` : ''}${p.sizeList.length ? `<span class="pc-cs">${p.sizeList.length}码</span>` : ''}${p.season ? `<span class="pc-season">${p.season}</span>` : ''}</div>`
+      : (p.season ? `<div class="pc-colorsize"><span class="pc-season">${p.season}</span></div>` : '');
+    const jitTxt = p.isJit ? `<span class="product-img-jit">JIT</span>` : '';
     return `
     <div class="product-card">
       <div class="product-img-wrap" onclick="openSKU('${p.pid}')">
         <img class="product-img" src="${p.image}" onerror="this.style.background='linear-gradient(135deg,#f5f5f7,#e8e8ed)';this.src=''">
         ${p.tag ? `<span class="product-img-tag ${tagCls}">${p.tag}</span>` : ''}
+        ${jitTxt}
         <button class="product-img-btn" onclick="event.stopPropagation();openLightbox('${p.image}')">查看大图</button>
       </div>
       <div class="product-info" onclick="openSKU('${p.pid}')" style="cursor:pointer;">
@@ -1104,7 +1222,58 @@ function renderProducts() {
       </div>
     </div>`;
   }).join('');
+  const sa = document.getElementById('scrollArea');
+  if (sa) sa.scrollTop = 0;
+  renderPagination();
 }
+
+// ===== Pagination =====
+function renderPagination() {
+  const bar = document.getElementById('pagination');
+  if (!bar) return;
+  const total = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (total === 0) { bar.innerHTML = ''; return; }
+
+  // 计算要显示的页码（首页、末页、当前页 ±2，其余用省略号）
+  const pages = [];
+  const add = n => { if (!pages.includes(n) && n >= 1 && n <= totalPages) pages.push(n); };
+  add(1); add(totalPages);
+  for (let i = currentPage - 2; i <= currentPage + 2; i++) add(i);
+  pages.sort((a, b) => a - b);
+
+  let html = `<span class="pg-total">共 ${total} 件 / ${totalPages} 页</span>`;
+  html += `<button class="pg-btn" onclick="gotoPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>`;
+  let prev = 0;
+  for (const n of pages) {
+    if (prev && n - prev > 1) html += `<span class="pg-ellipsis">…</span>`;
+    html += `<button class="pg-btn ${n === currentPage ? 'active' : ''}" onclick="gotoPage(${n})">${n}</button>`;
+    prev = n;
+  }
+  html += `<button class="pg-btn" onclick="gotoPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>`;
+  html += `<span class="pg-jump">跳至 <input type="number" min="1" max="${totalPages}" id="pgJumpInput" onkeydown="if(event.key==='Enter')jumpPage()"> 页 <button class="pg-btn" onclick="jumpPage()">Go</button></span>`;
+  bar.innerHTML = html;
+}
+
+function gotoPage(n) {
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  n = Math.min(Math.max(1, n), totalPages);
+  if (n === currentPage) return;
+  currentPage = n;
+  renderProducts();
+}
+
+function jumpPage() {
+  const input = document.getElementById('pgJumpInput');
+  if (!input) return;
+  const n = parseInt(input.value);
+  if (!n || isNaN(n)) { showToast('请输入有效页码'); return; }
+  gotoPage(n);
+}
+
+// ===== Tag Guide =====
+function openGuide() { document.getElementById('guideModal').classList.add('active'); }
+function closeGuide() { document.getElementById('guideModal').classList.remove('active'); }
 
 // ===== Lightbox =====
 function openLightbox(src) {
@@ -1184,7 +1353,7 @@ function renderSKUModal() {
             </div>
           </div>
         </div>
-        <button class="add-cart-btn" onclick="addToCart()">加入购物车</button>
+        <button class="add-cart-btn" onclick="addToCart()">加入圈品池</button>
         <div id="skuFeedback"></div>
       </div>
     </div>
@@ -1254,7 +1423,7 @@ function renderCart() {
   const content = document.getElementById('cartContent');
   const bottomBar = document.getElementById('cartBottomBar');
   if (cart.length === 0) {
-    content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F6D2;</div><div class="empty-state-text">购物车为空，去商品浏览页逛逛吧</div></div>';
+    content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F6D2;</div><div class="empty-state-text">圈品池为空，去商品浏览页逛逛吧</div></div>';
     bottomBar.classList.remove('active');
     document.getElementById('cartSubtitle').textContent = '选择商品后导出申样记录';
     return;
@@ -1349,10 +1518,10 @@ function quickAdd(pid) {
   showToast(`已加入：热销色 / S M L混发 x6（PID …${pid.slice(-6)}）`);
 }
 
-// 复制购物车 PID（去重 → 系统剪贴板）
-// 购物车页：优先复制勾选的 PID，未勾选则复制全部；浮动按钮：复制全部
+// 复制圈品池 PID（去重 → 系统剪贴板）
+// 圈品池页：优先复制勾选的 PID，未勾选则复制全部；浮动按钮：复制全部
 function copyCartPIDs() {
-  if (cart.length === 0) { showToast('购物车为空'); return; }
+  if (cart.length === 0) { showToast('圈品池为空'); return; }
   let pids;
   if (selectedPIDs.size > 0) pids = [...selectedPIDs];
   else pids = [...new Set(cart.map(i => i.pid))];
