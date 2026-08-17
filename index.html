@@ -146,6 +146,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: rgba(0,113,227,0.15); }
 .product-img-wrap { position: relative; overflow: hidden; }
 .product-img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; background: #f5f5f7; transition: transform 0.4s ease; }
+.product-img.img-fallback { background: linear-gradient(135deg,#f5f5f7,#e8e8ed); }
+.img-fallback-tip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #b0b0b8; pointer-events: none; }
 .product-card:hover .product-img { transform: scale(1.04); }
 .product-img-btn { position: absolute; bottom: 6px; right: 6px; padding: 4px 8px; background: rgba(0,0,0,0.55); color: #fff; border-radius: 980px; font-size: 10px; cursor: pointer; opacity: 0; transition: var(--transition); backdrop-filter: blur(4px); border: none; font-weight: 500; }
 .product-card:hover .product-img-btn { opacity: 1; }
@@ -195,8 +197,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .pc-gpm { font-size: 12px; font-weight: 700; color: #ff2d55; }
 .pc-aff { font-size: 11px; font-weight: 500; color: var(--text-secondary); background: var(--surface); padding: 2px 8px; border-radius: 5px; }
 .pc-season { font-size: 11px; font-weight: 600; color: #0071e3; background: rgba(0,113,227,0.10); padding: 2px 9px; border-radius: 980px; white-space: nowrap; }
-.product-img-jit { position: absolute; top: 8px; right: 8px; padding: 4px 11px; border-radius: 7px; font-size: 13px; font-weight: 900; letter-spacing: 0.06em; color: #fff; background: linear-gradient(135deg,#ff1744,#ff2d55); z-index: 3; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 3px 10px rgba(255,23,68,0.55), 0 0 0 2px rgba(255,23,68,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.25); animation: jitPulse 1.6s ease-in-out infinite; }
-@keyframes jitPulse { 0%,100% { transform: scale(1); box-shadow: 0 3px 10px rgba(255,23,68,0.55), 0 0 0 2px rgba(255,23,68,0.25); } 50% { transform: scale(1.08); box-shadow: 0 4px 14px rgba(255,23,68,0.7), 0 0 0 5px rgba(255,23,68,0.12); } }
+.product-img-jit { position: absolute; top: 8px; right: 8px; padding: 4px 11px; border-radius: 7px; font-size: 13px; font-weight: 900; letter-spacing: 0.06em; color: #fff; background: linear-gradient(135deg,#ff1744,#ff2d55); z-index: 3; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 3px 10px rgba(255,23,68,0.55), 0 0 0 2px rgba(255,23,68,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
 .product-img-country + .product-img-jit, .product-img-jit.has-country { top: 34px; }
 .pc-bottom { display: flex; align-items: center; justify-content: space-between; }
 .pc-date { font-size: 12px; color: var(--text-tertiary); }
@@ -213,11 +214,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .float-cart.show { display: flex; }
 .float-cart .fc-count { background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
 
-/* ===== Side floating action buttons ===== */
-.side-fabs { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 96; display: flex; flex-direction: column; gap: 10px; }
-.side-fab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 60px; padding: 12px 6px; border: none; cursor: pointer; color: #fff; font-size: 11px; font-weight: 600; line-height: 1.25; border-radius: 14px 0 0 14px; box-shadow: -2px 3px 12px rgba(0,0,0,0.16); transition: var(--transition); text-align: center; }
+/* ===== Side floating action buttons (每个按钮独立可拖动) ===== */
+.side-fab { position: fixed; right: 0; z-index: 96; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 60px; padding: 12px 6px; border: none; cursor: grab; color: #fff; font-size: 11px; font-weight: 600; line-height: 1.25; border-radius: 14px 0 0 14px; box-shadow: -2px 3px 12px rgba(0,0,0,0.16); transition: box-shadow 0.2s ease, transform 0.2s ease; text-align: center; text-decoration: none; touch-action: none; user-select: none; -webkit-user-select: none; }
 .side-fab:hover { transform: translateX(-3px); box-shadow: -4px 4px 16px rgba(0,0,0,0.22); }
+.side-fab.dragging { transition: none; opacity: 0.92; cursor: grabbing; transform: none; }
+.side-fab.side-left { border-radius: 0 14px 14px 0; box-shadow: 2px 3px 12px rgba(0,0,0,0.16); }
+.side-fab.side-left:hover { transform: translateX(3px); box-shadow: 4px 4px 16px rgba(0,0,0,0.22); }
+.side-fab.side-left.dragging { transform: none; }
 .side-fab .side-fab-ic { font-size: 18px; }
+.side-fab-handle { position: absolute; top: 3px; left: 0; right: 0; height: 10px; display: flex; align-items: center; justify-content: center; font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.55); pointer-events: none; }
 .side-fab.fab-guide { background: linear-gradient(135deg,#5856d6,#7d5bed); }
 .side-fab.fab-sample { background: linear-gradient(135deg,#0071e3,#00a1ff); }
 
@@ -303,8 +308,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .products-page.hidden { display: none !important; }
 .settings-page { display: none; }
 .settings-page.active { display: flex; }
-.admin-page { display: none; }
-.admin-page.active { display: flex; }
 
 .page-header { margin-bottom: 24px; }
 .page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); }
@@ -399,21 +402,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 </head>
 <body>
 
-<!-- ===== 管理员登录弹窗 ===== -->
-<div class="login-page" id="gatePage" style="display:none;">
-  <div class="login-card">
-    <div class="login-logo" id="gateLogo">管理员登录</div>
-    <div class="login-subtitle" id="gateSubtitle">请输入管理员口令进入后台</div>
-    <div class="login-form">
-      <label class="login-label">管理员口令</label>
-      <input class="login-input" id="gateCode" type="password" placeholder="请输入管理员口令" autocomplete="off">
-      <button class="login-btn" onclick="handleGate()">登 录</button>
-      <button class="login-btn" style="margin-top:10px;background:transparent;color:var(--text-secondary);border:1px solid var(--border);" onclick="closeAdminLogin()">返回</button>
-      <div class="login-error" id="gateError">管理员口令错误，请重试</div>
-    </div>
-  </div>
-</div>
-
 <!-- ===== Main App ===== -->
 <div class="app-wrap" id="appWrap">
   <nav class="nav">
@@ -423,7 +411,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="nav-tab active" onclick="switchPage('products')">商品浏览</div>
         <div class="nav-tab" onclick="switchPage('cart')">圈品池</div>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
-        <div class="nav-tab" id="adminTab" style="display:none" onclick="switchPage('admin')">数据上传</div>
       </div>
     </div>
     <div class="nav-right">
@@ -432,8 +419,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         圈品池
         <span class="cart-count" id="cartCount">0</span>
       </div>
-      <div class="nav-logout" id="adminLoginEntry" onclick="openAdminLogin()">管理员登录</div>
-      <div class="nav-logout" id="adminLogoutEntry" style="display:none" onclick="handleLogout()">退出管理</div>
     </div>
   </nav>
 
@@ -441,7 +426,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 
   <!-- Lightbox -->
   <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
-    <img class="lightbox-img" id="lightboxImg" src="">
+    <img class="lightbox-img" id="lightboxImg" src="" referrerpolicy="no-referrer">
   </div>
 
   <!-- Products Page -->
@@ -579,33 +564,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
     </div>
   </div>
 
-  <!-- Admin Page (货盘管理，仅管理员可见) -->
-  <div class="layout-wrap admin-page" id="adminPage">
-    <div class="main-content" style="max-width:640px;margin:0 auto;">
-      <div class="page-header">
-        <div class="page-title">货盘管理</div>
-        <div class="page-subtitle">上传新货盘 CSV 将<strong>全量覆盖</strong>当前商品底池（仅保存在本浏览器）</div>
-      </div>
-      <div class="settings-section">
-        <div class="settings-title">当前货盘状态</div>
-        <div class="form-hint" id="adminPoolStatus" style="font-size:14px;line-height:1.8;">加载中…</div>
-      </div>
-      <div class="settings-section">
-        <div class="settings-title">上传新货盘</div>
-        <div class="form-group">
-          <label class="form-label">选择 CSV 文件</label>
-          <input class="form-input" type="file" id="adminCsvFile" accept=".csv,text/csv">
-          <div class="form-hint">CSV 表头兼容中英文（如「PID / 首图 url / 营销价 / 销量排名」等）；上传后按 PID 去重、只保留排名最靠前的一条。</div>
-        </div>
-        <div id="adminUploadMsg" class="form-hint" style="min-height:20px;"></div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
-          <button class="save-btn" style="flex:1;min-width:180px;" onclick="handleAdminUpload()">上传并覆盖货盘</button>
-          <button class="save-btn" style="flex:1;min-width:180px;background:#e8e8ed;color:#1d1d1f;" onclick="handleAdminReset()">恢复默认货盘</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- SKU Modal -->
   <div class="modal-overlay" id="skuModal">
     <div class="sku-modal" id="skuModalContent"></div>
@@ -615,11 +573,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前圈品池的PID</button>
   <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
 
-  <!-- Side floating action buttons -->
-  <div class="side-fabs">
-    <button class="side-fab fab-guide" onclick="openGuide()"><span class="side-fab-ic">📖</span>标签<br>说明</button>
-    <a class="side-fab fab-sample" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044&from=from_parent_docs" target="_blank" rel="noopener"><span class="side-fab-ic">📝</span>立即<br>申样</a>
-  </div>
+  <!-- Side floating action buttons (每个按钮独立可拖动，位置各自记忆) -->
+  <button class="side-fab fab-guide" id="fabGuide" onclick="onFabClick(event, openGuide)"><span class="side-fab-handle">⠿</span><span class="side-fab-ic">📖</span>标签<br>说明</button>
+  <a class="side-fab fab-sample" id="fabSample" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044&from=from_parent_docs" target="_blank" rel="noopener" onclick="return onFabAnchorClick(event)"><span class="side-fab-handle">⠿</span><span class="side-fab-ic">📝</span>立即<br>申样</a>
 
   <!-- Tag Guide Modal -->
   <div class="modal-overlay" id="guideModal">
@@ -665,76 +621,138 @@ let currentUser = null;
 
 // ===== 访问策略 =====
 // 普通用户：打开即进主页，无需口令。
-// 管理员：右上角「管理员登录」输入管理员口令进入后台（货盘管理/数据上传）。
-var GATE_KEY = 'gatePassed';   // 保留兼容旧逻辑，现已默认放行
-var ADMIN_KEY = 'isAdmin';
-function accessCodeHash() {
-  return (SITE_CONFIG && SITE_CONFIG.accessCodeHash) ? SITE_CONFIG.accessCodeHash.toLowerCase() : '';
-}
-function adminCodeHash() {
-  return (SITE_CONFIG && SITE_CONFIG.adminCodeHash) ? SITE_CONFIG.adminCodeHash.toLowerCase() : '';
-}
-// 计算输入口令的 SHA-256(十六进制小写)；优先用浏览器原生 SubtleCrypto
-function sha256Hex(str) {
-  var enc = new TextEncoder().encode(str);
-  return crypto.subtle.digest('SHA-256', enc).then(function(buf) {
-    var bytes = new Uint8Array(buf), hex = '';
-    for (var i = 0; i < bytes.length; i++) { hex += bytes[i].toString(16).padStart(2, '0'); }
-    return hex;
-  });
-}
-function isAdmin() {
-  return localStorage.getItem(ADMIN_KEY) === '1';
-}
-// 打开管理员登录弹窗
-function openAdminLogin() {
-  document.getElementById('gatePage').style.display = 'flex';
-  document.getElementById('gateError').style.display = 'none';
-  var el = document.getElementById('gateCode');
-  if (el) { el.value = ''; setTimeout(function(){ el.focus(); }, 50); }
-}
-// 关闭管理员登录弹窗，回到主页
-function closeAdminLogin() {
-  document.getElementById('gatePage').style.display = 'none';
-}
-function handleGate() {
-  var code = document.getElementById('gateCode').value.trim();
-  if (!code) { document.getElementById('gateError').style.display = 'block'; return; }
-  // 对输入做 SHA-256 后与配置里的管理员哈希比对，原文口令不落地
-  sha256Hex(code).then(function(h) {
-    h = h.toLowerCase();
-    var adminH = adminCodeHash();
-    if (adminH && h === adminH) {
-      localStorage.setItem(ADMIN_KEY, '1');
-      document.getElementById('gateError').style.display = 'none';
-      document.getElementById('gatePage').style.display = 'none';
-      applyAdminUI();
-      switchPage('admin');   // 登录成功自动跳转到数据上传页
-    } else {
-      document.getElementById('gateError').style.display = 'block';
-    }
-  }).catch(function() {
-    document.getElementById('gateError').style.display = 'block';
-  });
-}
-
-// ===== 入口检查：普通用户直接进主页 =====
+// ===== 入口检查：所有用户直接进主页 =====
 function checkSession() {
   showApp();
 }
 
 function showApp() {
-  document.getElementById('gatePage').style.display = 'none';
   document.getElementById('appWrap').style.display = 'block';
-  applyAdminUI();
   loadProductData();
   maybeShowSettingsTip();
+  initFabDrag();
 }
 
-// 首次访问弹窗:提醒用户先完善个人/机构信息(仅普通访客、且未填过机构、每浏览器仅提醒一次)
+// ===== 侧边浮动按钮:每个按钮独立可拖动(左右侧栏 + 上下任意位置),各自记忆位置 =====
+let _fabDidDrag = false;
+// 每个按钮独立配置:元素 id + 独立存储键 + 默认竖直比例(避免默认重叠)
+const FAB_DEFS = [
+  { id: 'fabGuide',  key: 'fabPos_guide_v2',  defRatio: 0.40 },
+  { id: 'fabSample', key: 'fabPos_sample_v2', defRatio: 0.56 }
+];
+
+function initFabDrag() {
+  FAB_DEFS.forEach(def => bindOneFab(def));
+  window.addEventListener('resize', () => {
+    FAB_DEFS.forEach(def => {
+      const el = document.getElementById(def.id);
+      if (el) applyFabPos(el, loadFabPos(def.key, def.defRatio));
+    });
+  });
+}
+
+function bindOneFab(def) {
+  const el = document.getElementById(def.id);
+  if (!el || el.dataset.dragBound === '1') return;
+  el.dataset.dragBound = '1';
+
+  // 恢复该按钮已保存的位置
+  applyFabPos(el, loadFabPos(def.key, def.defRatio));
+
+  let startX = 0, startY = 0, originLeft = 0, originTop = 0, dragging = false, moved = false;
+
+  function onDown(e) {
+    const pt = e.touches ? e.touches[0] : e;
+    const rect = el.getBoundingClientRect();
+    // 切换到 left/top 绝对定位,便于自由拖动
+    el.style.right = 'auto';
+    el.style.left = rect.left + 'px';
+    el.style.top = rect.top + 'px';
+    originLeft = rect.left; originTop = rect.top;
+    startX = pt.clientX; startY = pt.clientY;
+    dragging = true; moved = false;
+    el.classList.add('dragging');
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    const pt = e.touches ? e.touches[0] : e;
+    const dx = pt.clientX - startX, dy = pt.clientY - startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+    if (e.cancelable) e.preventDefault();
+    let nl = originLeft + dx, nt = originTop + dy;
+    const w = el.offsetWidth, h = el.offsetHeight;
+    nl = Math.max(0, Math.min(nl, window.innerWidth - w));
+    nt = Math.max(0, Math.min(nt, window.innerHeight - h));
+    el.style.left = nl + 'px';
+    el.style.top = nt + 'px';
+  }
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+    _fabDidDrag = moved;
+    if (moved) snapFab(el, def.key);  // 松手后吸附到最近的左/右边
+    setTimeout(() => { _fabDidDrag = false; }, 60);
+  }
+  el.addEventListener('mousedown', onDown);
+  el.addEventListener('touchstart', onDown, { passive: true });
+}
+
+// 松手吸附:按当前中心 x 决定贴左还是贴右,记录 side + 竖直比例(每按钮独立)
+function snapFab(el, key) {
+  const rect = el.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const side = centerX < window.innerWidth / 2 ? 'left' : 'right';
+  const ratio = Math.max(0, Math.min(1, rect.top / Math.max(1, window.innerHeight - rect.height)));
+  const pos = { side, ratio };
+  saveFabPos(key, pos);
+  applyFabPos(el, pos);
+}
+function applyFabPos(el, pos) {
+  if (!el) return;
+  const h = el.offsetHeight;
+  const ratio = pos && typeof pos.ratio === 'number' ? pos.ratio : 0.45;
+  const top = Math.round((window.innerHeight - h) * ratio);
+  el.style.top = Math.max(0, Math.min(top, window.innerHeight - h)) + 'px';
+  if (pos && pos.side === 'left') {
+    el.classList.add('side-left');
+    el.style.left = '0'; el.style.right = 'auto';
+  } else {
+    el.classList.remove('side-left');
+    el.style.right = '0'; el.style.left = 'auto';
+  }
+}
+function loadFabPos(key, defRatio) {
+  try {
+    const v = JSON.parse(localStorage.getItem(key) || 'null');
+    if (v && typeof v.ratio === 'number') return v;
+  } catch (e) {}
+  return { side: 'right', ratio: (typeof defRatio === 'number' ? defRatio : 0.45) };
+}
+function saveFabPos(key, pos) {
+  try { localStorage.setItem(key, JSON.stringify(pos)); } catch (e) {}
+}
+// 拖动结束的那一下点击不触发按钮动作
+function onFabClick(e, fn) {
+  if (_fabDidDrag) { e.preventDefault(); return; }
+  fn();
+}
+function onFabAnchorClick(e) {
+  if (_fabDidDrag) { e.preventDefault(); return false; }
+  return true;
+}
+
+// 首次访问弹窗:提醒用户先完善个人/机构信息(未填过机构、每浏览器仅提醒一次)
 function maybeShowSettingsTip() {
   try {
-    if (isAdmin()) return;
     if (userSettings && userSettings.agencyName) return;
     if (localStorage.getItem('settingsTipShown') === '1') return;
     setTimeout(function() {
@@ -745,31 +763,10 @@ function maybeShowSettingsTip() {
   } catch (e) {}
 }
 
-// 根据管理员身份显示/隐藏「货盘管理」入口与登录/退出按钮
-function applyAdminUI() {
-  var admin = isAdmin();
-  var tab = document.getElementById('adminTab');
-  if (tab) tab.style.display = admin ? '' : 'none';
-  var loginEntry = document.getElementById('adminLoginEntry');
-  var logoutEntry = document.getElementById('adminLogoutEntry');
-  if (loginEntry) loginEntry.style.display = admin ? 'none' : '';
-  if (logoutEntry) logoutEntry.style.display = admin ? '' : 'none';
-}
-
-function handleLogout() {
-  // 退出管理：清除管理员状态，回到普通用户主页
-  localStorage.removeItem(ADMIN_KEY);
-  applyAdminUI();
-  switchPage('products');
-  showToast('已退出管理员');
-}
-
-// Enter key on admin-login popup / filters
+// Enter key on filters
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
-    if (document.getElementById('gatePage').style.display !== 'none') {
-      handleGate();
-    } else if (document.activeElement && document.activeElement.closest('.filter-bar')) {
+    if (document.activeElement && document.activeElement.closest('.filter-bar')) {
       applyFilters();
     }
   }
@@ -860,28 +857,10 @@ function mapRowsToProducts(rows) {
   return list;
 }
 
-// 管理员上传的货盘会覆盖存到本地浏览器(全量覆盖),加载时优先读取
-var LOCAL_PALLET_KEY = 'localPallet_v1';
-var LOCAL_PALLET_META_KEY = 'localPalletMeta_v1';
-
+// 方案A:全站唯一数据源就是仓库里的 data/products.csv,所有设备加载同一份。
 function loadProductData() {
   const grid = document.getElementById('productGrid');
   grid.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">加载商品数据...</div></div>';
-
-  // 若本地存在管理员上传的货盘,优先使用(全量覆盖 data/products.csv)
-  try {
-    const local = localStorage.getItem(LOCAL_PALLET_KEY);
-    if (local) {
-      const arr = JSON.parse(local);
-      if (Array.isArray(arr) && arr.length) {
-        PRODUCTS = arr;
-        PRODUCTS.sort((a, b) => a.rank - b.rank);
-        filteredProducts = [...PRODUCTS];
-        initApp();
-        return;
-      }
-    }
-  } catch (e) { console.warn('本地货盘读取失败,回退到 CSV', e); }
 
   // 依次尝试多个候选路径，兼容 CSV 被放到根目录(未放进 data/)的情况
   var candidates = [];
@@ -927,7 +906,6 @@ function initApp() {
 
 // 首次进入(未填写机构信息)时,弹窗提醒用户先完善个人信息设置
 function maybePromptProfile() {
-  if (isAdmin()) return;                       // 管理员进后台,不打扰
   if (userSettings && userSettings.agencyName) return;  // 已填过机构,不再提醒
   if (sessionStorage.getItem('profilePrompted') === '1') return; // 本次会话只提醒一次
   sessionStorage.setItem('profilePrompted', '1');
@@ -1052,104 +1030,20 @@ function resetFilters() {
 
 // ===== Pages =====
 function switchPage(page) {
-  if (page === 'admin' && !isAdmin()) { showToast('无权限'); return; }
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('productsPage').classList.toggle('hidden', page !== 'products');
   document.getElementById('cartPage').classList.toggle('active', page === 'cart');
   document.getElementById('settingsPage').classList.toggle('active', page === 'settings');
-  document.getElementById('adminPage').classList.toggle('active', page === 'admin');
   document.getElementById('cartBottomBar').classList.toggle('active', page === 'cart' && cart.length > 0);
   const tabs = document.querySelectorAll('.nav-tab');
   if (page === 'products') tabs[0].classList.add('active');
   if (page === 'cart') { tabs[1].classList.add('active'); renderCart(); }
   if (page === 'settings') tabs[2].classList.add('active');
-  if (page === 'admin') { document.getElementById('adminTab').classList.add('active'); renderAdminStatus(); }
   updateFloatButtons();
 }
 
 function switchPallet(type) {
   if (type !== 'all') { showToast('该货盘即将上线，敬请期待'); return; }
-}
-
-// ===== 货盘管理（管理员）=====
-// 展示当前货盘来源 / 数量 / 更新时间
-function renderAdminStatus() {
-  const el = document.getElementById('adminPoolStatus');
-  if (!el) return;
-  let metaTxt = '';
-  try {
-    const meta = JSON.parse(localStorage.getItem(LOCAL_PALLET_META_KEY) || 'null');
-    if (meta && localStorage.getItem(LOCAL_PALLET_KEY)) {
-      metaTxt = `<b>当前使用：</b>本地上传货盘<br>`
-        + `<b>商品数量：</b>${meta.count} 个（已去重）<br>`
-        + `<b>更新时间：</b>${meta.time}<br>`
-        + (meta.fileName ? `<b>来源文件：</b>${meta.fileName}` : '');
-    }
-  } catch (e) {}
-  if (!metaTxt) {
-    metaTxt = `<b>当前使用：</b>默认货盘（随站点发布的 data/products.csv）<br>`
-      + `<b>商品数量：</b>${PRODUCTS.length} 个（已去重）`;
-  }
-  el.innerHTML = metaTxt;
-}
-
-// 上传 CSV → 解析 → 全量覆盖本地货盘
-function handleAdminUpload() {
-  const input = document.getElementById('adminCsvFile');
-  const msg = document.getElementById('adminUploadMsg');
-  const file = input && input.files && input.files[0];
-  if (!file) { msg.style.color = '#d70015'; msg.textContent = '请先选择一个 CSV 文件'; return; }
-  msg.style.color = '#1d1d1f';
-  msg.textContent = '正在解析…';
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-      try {
-        const list = mapRowsToProducts(results.data || []);
-        if (!list.length) {
-          msg.style.color = '#d70015';
-          msg.textContent = '解析结果为空：请检查 CSV 是否包含 PID 等必要列';
-          return;
-        }
-        localStorage.setItem(LOCAL_PALLET_KEY, JSON.stringify(list));
-        localStorage.setItem(LOCAL_PALLET_META_KEY, JSON.stringify({
-          count: list.length,
-          time: new Date().toLocaleString('zh-CN'),
-          fileName: file.name
-        }));
-        // 立即生效到当前会话
-        PRODUCTS = list;
-        PRODUCTS.sort((a, b) => a.rank - b.rank);
-        filteredProducts = [...PRODUCTS];
-        buildFilterOptions();
-        renderProducts();
-        updateWelcome();
-        msg.style.color = '#1d8f3a';
-        msg.textContent = `上传成功：已覆盖为 ${list.length} 个商品（去重后）`;
-        renderAdminStatus();
-        input.value = '';
-      } catch (e) {
-        msg.style.color = '#d70015';
-        msg.textContent = '处理失败：' + (e && e.message ? e.message : e);
-      }
-    },
-    error: function(err) {
-      msg.style.color = '#d70015';
-      msg.textContent = 'CSV 解析失败：' + (err && err.message ? err.message : err);
-    }
-  });
-}
-
-// 恢复默认货盘：清除本地上传，回退到随站点发布的 CSV
-function handleAdminReset() {
-  if (!confirm('确定恢复为默认货盘？本地上传的货盘将被清除。')) return;
-  localStorage.removeItem(LOCAL_PALLET_KEY);
-  localStorage.removeItem(LOCAL_PALLET_META_KEY);
-  const msg = document.getElementById('adminUploadMsg');
-  if (msg) { msg.style.color = '#1d8f3a'; msg.textContent = '已恢复默认货盘，正在重新加载…'; }
-  loadProductData();
-  renderAdminStatus();
 }
 
 // ===== Products =====
@@ -1168,6 +1062,75 @@ function tagClass(tag) {
   let h = 0;
   for (let i = 0; i < t.length; i++) { h = (h * 31 + t.charCodeAt(i)) >>> 0; }
   return 'tp' + (h % 8);
+}
+
+// ===== 商品图片:兼容 + 稳定加载 =====
+// 字节/TikTok 图床(ibyteimg / tiktokcdn)的链接常见两类问题:
+//  1) 防盗链:带 Referer 会被 CDN 判 403 → 用 referrerpolicy="no-referrer" 规避;
+//  2) ~tplv 模板变体偶发不存在/超时 → onerror 逐级回退到其它模板尺寸,最后回退去掉模板取原图。
+// 生成一组候选 URL(从原始链接派生),按顺序尝试。
+function imageCandidates(raw) {
+  const url = (raw || '').trim();
+  if (!url) return [];
+  const cands = [url];
+  const tplvIdx = url.indexOf('~tplv');
+  if (tplvIdx > -1) {
+    const base = url.slice(0, tplvIdx);              // 到 ~tplv 之前
+    const afterQ = url.indexOf('?', tplvIdx);
+    const query = afterQ > -1 ? url.slice(afterQ) : '';
+    const token = base.replace(/\/$/, '');           // 资源 token 前缀
+    // 尝试从模板里取出 tplv 前缀名(如 tplv-o3syd03w52),拼常见 resize 尺寸
+    const m = url.slice(tplvIdx).match(/~tplv-([a-z0-9]+)-/i);
+    const pfx = m ? m[1] : '';
+    if (pfx) {
+      cands.push(`${token}~tplv-${pfx}-resize-jpeg:800:800.image${query}`);
+      cands.push(`${token}~tplv-${pfx}-resize-jpeg:600:600.image${query}`);
+      cands.push(`${token}~tplv-${pfx}-resize:800:800.image${query}`);
+      cands.push(`${token}~tplv-${pfx}.image${query}`);
+    }
+    // 最后回退:去掉模板与 query,取资源原图
+    cands.push(`${token}.image`);
+    cands.push(token);
+  }
+  // 去重、保序
+  return cands.filter((v, i) => v && cands.indexOf(v) === i);
+}
+
+// onerror 处理:沿候选链尝试下一个;全部失败则显示占位。
+// 用 data-cands(JSON) + data-ci(当前索引)记录状态。
+function onImgError(img) {
+  try {
+    let cands = [];
+    try { cands = JSON.parse(img.getAttribute('data-cands') || '[]'); } catch (e) {}
+    let ci = parseInt(img.getAttribute('data-ci') || '0', 10);
+    ci += 1;
+    if (cands && ci < cands.length) {
+      img.setAttribute('data-ci', String(ci));
+      img.src = cands[ci];
+      return;
+    }
+  } catch (e) {}
+  // 彻底失败:占位(不再触发 onerror)
+  img.onerror = null;
+  img.removeAttribute('src');
+  img.classList.add('img-fallback');
+  const wrap = img.parentNode;
+  if (wrap && !wrap.querySelector('.img-fallback-tip')) {
+    const tip = document.createElement('div');
+    tip.className = 'img-fallback-tip';
+    tip.textContent = '图片暂不可用';
+    wrap.appendChild(tip);
+  }
+}
+
+// 生成 <img> 标签(带候选链、no-referrer、懒加载)
+function productImgTag(cls, raw) {
+  const cands = imageCandidates(raw);
+  const first = cands[0] || '';
+  const cJson = JSON.stringify(cands).replace(/"/g, '&quot;');
+  return `<img class="${cls}" src="${first}" data-cands="${cJson}" data-ci="0" `
+       + `referrerpolicy="no-referrer" loading="lazy" decoding="async" `
+       + `onerror="onImgError(this)">`;
 }
 function renderProducts() {
   const grid = document.getElementById('productGrid');
@@ -1195,7 +1158,7 @@ function renderProducts() {
     return `
     <div class="product-card">
       <div class="product-img-wrap" onclick="openSKU('${p.pid}')">
-        <img class="product-img" src="${p.image}" onerror="this.style.background='linear-gradient(135deg,#f5f5f7,#e8e8ed)';this.src=''">
+        ${productImgTag('product-img', p.image)}
         ${p.tag ? `<span class="product-img-tag ${tagCls}">${p.tag}</span>` : ''}
         ${jitTxt}
         <button class="product-img-btn" onclick="event.stopPropagation();openLightbox('${p.image}')">查看大图</button>
@@ -1303,7 +1266,7 @@ function renderSKUModal() {
     <button class="modal-close-btn" onclick="closeModal()" title="关闭">&times;</button>
     <div class="sku-layout">
       <div class="sku-left">
-        <img class="sku-big-img" src="${p.image}" onclick="openLightbox('${p.image}')" title="点击查看大图" onerror="this.style.background='var(--surface)'">
+        ${productImgTag('sku-big-img', p.image).replace('<img ', `<img onclick="openLightbox('${p.image}')" title="点击查看大图" `)}
         ${p.tag ? `<span class="sku-img-tag">${p.tag}</span>` : ''}
       </div>
       <div class="sku-right">
@@ -1441,7 +1404,7 @@ function renderCart() {
       <div class="cart-item">
         <div class="cart-item-header">
           <input type="checkbox" class="cart-item-checkbox" ${checked} onchange="togglePIDSelect('${pid}', this.checked)">
-          <img class="cart-item-img" src="${group.product.image}" onerror="this.style.background='var(--surface)'">
+          ${productImgTag('cart-item-img', group.product.image)}
           <div class="cart-item-detail">
             <div class="cart-item-title">${group.product.store || group.product.spuCode} · ${group.product.category3 || ''}</div>
             <div class="cart-item-pid">PID: ${pid} &middot; ${totalQty} 件</div>
