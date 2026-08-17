@@ -689,8 +689,8 @@ const FIELD_ALIASES = {
   url:      ['商品详情页URL', '商品详情页url', '商品详情页', 'url', 'detail_url'],
   price:    ['营销价', 'price', 'promo_price', 'promoPrice'],
   gpm:      ['GPM分层', 'gpm', 'gpm_tier'],
-  colors:   ['颜色', 'colors', 'color'],
-  sizes:    ['尺码', 'sizes', 'size']
+  colors:   ['销售颜色英文名集合', '颜色', 'colors', 'color'],
+  sizes:    ['尺寸集合', '尺码', 'sizes', 'size']
 };
 // 从一行数据中,按别名列表取第一个存在(且非空表头)的值
 function pickField(row, key) {
@@ -732,7 +732,7 @@ function mapRowsToProducts(rows) {
       category2: g('cat2'),            // F 二级类目 (仅弹窗)
       category3: g('cat3'),            // G 三级类目 (仅弹窗)
       rating: g('rating'),             // H 店铺评分
-      image: g('image').replace(/~tplv-[^.]+\.[^~]*$/, '~tplv-g9dfdl17fc-origin-image.image'), // I 高清主图
+      image: g('image'), // I 首图,直接使用数据源原始链接(不改写图床模板,避免部分图片失效)
       uploadDate: g('listDate'),       // J 上架时间
       stock: parseInt(g('stock')) || 0, // M 可用库存 (仅弹窗)
       rank: parseInt(g('rank')) || 99999, // N 销量排名
