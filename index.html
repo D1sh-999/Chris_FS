@@ -323,8 +323,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .pc-sale-wow { background: rgba(255,45,85,0.10); border-color: rgba(255,45,85,0.26); color: #c31d3f; font-weight: 800; }
 .pc-sale-wow i { color: #c31d3f; }
 .pc-wow-label { font-size: 10px; font-weight: 700; opacity: 0.85; }
-.pc-channel { display: flex; align-items: stretch; width: 100%; height: 6px; min-height: 6px; flex-shrink: 0; border-radius: 980px; overflow: hidden; margin-bottom: 12px; background: rgba(0,0,0,0.05); gap: 1.5px; }
-.pc-ch-seg { align-self: stretch; min-height: 6px; display: block; cursor: help; border-radius: 980px; transition: filter 0.15s, transform 0.15s; }
+.pc-channel { display: flex; flex-wrap: nowrap; align-items: stretch; width: 100%; height: 7px; min-height: 7px; flex-shrink: 0; border-radius: 980px; overflow: hidden; margin: 2px 0 12px; background: rgba(0,0,0,0.06); }
+.pc-ch-seg { align-self: stretch; height: 7px; min-height: 7px; display: block; cursor: help; transition: filter 0.15s, transform 0.15s; }
 .pc-ch-seg:hover { filter: brightness(1.08); transform: scaleY(1.5); }
 .pc-ch-seg.ch-video { background: #ff6b60; }
 .pc-ch-seg.ch-live { background: #34c759; }
@@ -1752,7 +1752,7 @@ function channelBar(p) {
   const denom = (p.sales7 && p.sales7 > 0) ? p.sales7 : (v + l + s);
   if (!denom || (v + l + s) === 0) return '';
   const pv = v / denom * 100, pl = l / denom * 100, ps = s / denom * 100;
-  const seg = (w, cls, label) => { if (w <= 0) return ''; const tip = label + ' ' + (Math.round(w*10)/10) + '%'; return `<span class="pc-ch-seg ${cls}" style="width:${w}%" data-tip="${tip}" title="${tip}"></span>`; };
+  const seg = (w, cls, label) => { if (w <= 0) return ''; const tip = label + ' ' + (Math.round(w*10)/10) + '%'; return `<span class="pc-ch-seg ${cls}" style="flex:0 0 ${w}%;width:${w}%;max-width:${w}%" data-tip="${tip}" title="${tip}"></span>`; };
   return `<div class="pc-channel">`
     + seg(pv, 'ch-video', '短视频') + seg(pl, 'ch-live', '直播') + seg(ps, 'ch-shelf', '货架')
     + `</div>`;
