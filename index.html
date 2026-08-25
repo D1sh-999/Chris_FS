@@ -146,10 +146,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .filter-show-btn:hover { background: var(--surface); }
 .filter-show-btn .fbt-arrow { font-size: 10px; }
 .filter-show-row .channel-legend { margin-left: 0; padding-left: 0; }
-/* 搜索栏折叠:用 grid-rows 0fr→1fr + 透明度做平滑过渡,替代生硬的 display:none */
-#filterBar { display: grid; grid-template-rows: 1fr; opacity: 1; transform: translateY(0); transition: grid-template-rows 0.4s cubic-bezier(0.22,0.61,0.36,1), opacity 0.32s ease, transform 0.4s cubic-bezier(0.22,0.61,0.36,1), margin-bottom 0.4s cubic-bezier(0.22,0.61,0.36,1), padding 0.4s cubic-bezier(0.22,0.61,0.36,1); }
-#filterBar > * { min-height: 0; }
-.frozen-head.filterbar-hidden #filterBar { grid-template-rows: 0fr; opacity: 0; transform: translateY(-8px); margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-width: 0; overflow: hidden; pointer-events: none; }
+/* 搜索栏折叠:用 max-height→0 + 透明度做平滑过渡,彻底移除占位高度(grid 0fr 在部分浏览器会残留空白) */
+#filterBar { max-height: 1200px; opacity: 1; overflow: hidden; transform: translateY(0); transition: max-height 0.4s cubic-bezier(0.22,0.61,0.36,1), opacity 0.32s ease, transform 0.4s cubic-bezier(0.22,0.61,0.36,1), margin-bottom 0.4s cubic-bezier(0.22,0.61,0.36,1), padding 0.4s cubic-bezier(0.22,0.61,0.36,1), border-width 0.4s ease; }
+.frozen-head.filterbar-hidden #filterBar { max-height: 0; height: 0; opacity: 0; transform: translateY(-8px); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-width: 0; pointer-events: none; visibility: hidden; }
 .frozen-head.filterbar-hidden .filterbar-toggle { display: none; }
 .filter-show-row { transition: opacity 0.3s ease; }
 .frozen-head.filterbar-hidden + .filter-show-row { display: inline-flex; }
