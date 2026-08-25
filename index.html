@@ -1121,7 +1121,7 @@ function fmtWow(raw) {
 function mapRowsToProducts(rows) {
   let list = rows.map(row => {
     const g = k => pickField(row, k);
-    const gi = k => parseInt(g(k)) || 0;
+    const gi = k => { const n = parseInt(String(g(k)).replace(/,/g, '').trim(), 10); return isNaN(n) ? 0 : n; };
     const priceRaw = g('price');
     const wowRaw = g('wow');
     return {
@@ -1203,7 +1203,7 @@ function tryLoadCsv(candidates, idx, grid) {
     grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">数据加载失败，请刷新页面重试</div></div>';
     return;
   }
-  Papa.parse(candidates[idx], {
+  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || Date.now()), {
     download: true,
     header: true,
     skipEmptyLines: true,
@@ -1935,7 +1935,7 @@ function tryLoadPidMap(candidates, idx, cb) {
     if (cb) cb(new Error('pid_map load failed'));
     return;
   }
-  Papa.parse(candidates[idx], {
+  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || Date.now()), {
     download: true, header: true, skipEmptyLines: true,
     complete: function(results) {
       var rows = results.data || [];
