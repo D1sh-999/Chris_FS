@@ -66,6 +66,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .nav-tab { padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--text-secondary); transition: var(--transition); font-weight: 500; }
 .nav-tab.active { background: var(--card-bg); color: var(--text-primary); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .nav-tab:hover:not(.active) { color: var(--text-primary); }
+.nav-tab-link { text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.nav-tab-link::after { content: '↗'; font-size: 11px; opacity: 0.6; }
 .nav-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .agency-badge { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
 .nav-logout { font-size: 11px; color: var(--text-tertiary); cursor: pointer; padding: 4px 10px; border-radius: 980px; border: 1px solid var(--border-light); transition: var(--transition); }
@@ -102,11 +104,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .filter-input.search-main { width: 200px; }
 .filter-select { padding: 7px 10px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 13px; background: var(--bg); color: var(--text-primary); cursor: pointer; -webkit-appearance: none; appearance: none; padding-right: 26px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2386868b'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
 .filter-select:focus { outline: none; border-color: var(--accent); }
+.filter-range { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); background: var(--bg); }
+.filter-range .fr-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+.filter-range .fr-sep { font-size: 12px; color: var(--text-tertiary); }
+.filter-range .filter-input { border: none; padding: 3px 4px; background: transparent; font-size: 12px; }
+.filter-range .filter-input:focus { box-shadow: none; background: transparent; }
+.filter-range .fr-num { width: 54px; }
+.filter-range .fr-date { width: 130px; }
 .filter-btn { padding: 7px 16px; border-radius: 980px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); }
 .filter-btn.primary { background: var(--accent); color: #fff; }
 .filter-btn.primary:hover { background: var(--accent-hover); }
 .filter-btn.ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-light); }
 .filter-btn.ghost:hover { background: var(--surface); color: var(--text-primary); }
+.filter-guide-btn { padding: 7px 14px; border-radius: 980px; font-size: 13px; font-weight: 500; cursor: pointer; background: transparent; color: var(--text-secondary); border: 1px solid var(--border-light); transition: var(--transition); white-space: nowrap; }
+.filter-guide-btn:hover { background: var(--surface); color: var(--text-primary); border-color: var(--accent); }
 .filter-expand-btn { background: none; border: none; font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 500; padding: 6px 0; display: flex; align-items: center; gap: 4px; transition: var(--transition); }
 .filter-expand-btn:hover { opacity: 0.75; }
 .filter-expand-btn .arrow { display: inline-block; transition: transform 0.2s; font-size: 10px; }
@@ -118,9 +129,33 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .filter-input.narrow { width: 70px; }
 .filter-sep { color: var(--text-tertiary); font-size: 11px; }
 .filter-stats { font-size: 11px; color: var(--text-tertiary); margin-top: 10px; }
+/* 渠道占比图例(搜索栏旁) */
+.channel-legend { display: flex; align-items: center; gap: 12px; margin-left: auto; padding-left: 8px; }
+.cl-item { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+.cl-swatch { width: 14px; height: 8px; border-radius: 3px; display: inline-block; }
+.cl-swatch.cl-video { background: #ff3b30; }
+.cl-swatch.cl-live { background: #34c759; }
+.cl-swatch.cl-shelf { background: #007aff; }
+/* 隐藏/显示搜索筛选栏 */
+.filterbar-toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text-secondary); background: var(--card-bg); border: 0.5px solid rgba(0,0,0,0.08); border-radius: 980px; box-shadow: var(--shadow-sm); cursor: pointer; transition: var(--transition); }
+.filterbar-toggle:hover { color: var(--text-primary); background: var(--surface); }
+.filterbar-toggle .fbt-arrow { font-size: 10px; transition: transform 0.35s cubic-bezier(0.22,0.61,0.36,1); }
+.frozen-head.filterbar-hidden .filterbar-toggle .fbt-arrow { transform: rotate(180deg); }
+.filter-show-row { display: none; align-items: center; gap: 16px; margin: 0 0 12px; }
+.filter-show-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--card-bg); border: 0.5px solid rgba(0,0,0,0.08); border-radius: 980px; box-shadow: var(--shadow-sm); cursor: pointer; transition: var(--transition); }
+.filter-show-btn:hover { background: var(--surface); }
+.filter-show-btn .fbt-arrow { font-size: 10px; }
+.filter-show-row .channel-legend { margin-left: 0; padding-left: 0; }
+/* 搜索栏折叠:用 grid-rows 0fr→1fr + 透明度做平滑过渡,替代生硬的 display:none */
+#filterBar { display: grid; grid-template-rows: 1fr; opacity: 1; transform: translateY(0); transition: grid-template-rows 0.4s cubic-bezier(0.22,0.61,0.36,1), opacity 0.32s ease, transform 0.4s cubic-bezier(0.22,0.61,0.36,1), margin-bottom 0.4s cubic-bezier(0.22,0.61,0.36,1), padding 0.4s cubic-bezier(0.22,0.61,0.36,1); }
+#filterBar > * { min-height: 0; }
+.frozen-head.filterbar-hidden #filterBar { grid-template-rows: 0fr; opacity: 0; transform: translateY(-8px); margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-width: 0; overflow: hidden; pointer-events: none; }
+.frozen-head.filterbar-hidden .filterbar-toggle { display: none; }
+.filter-show-row { transition: opacity 0.3s ease; }
+.frozen-head.filterbar-hidden + .filter-show-row { display: inline-flex; }
 
 /* ===== Product Grid ===== */
-.product-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+.product-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; align-items: stretch; grid-auto-rows: 1fr; }
 @media (max-width: 1700px) { .product-grid { grid-template-columns: repeat(7, 1fr); } }
 @media (max-width: 1500px) { .product-grid { grid-template-columns: repeat(6, 1fr); } }
 @media (max-width: 1280px) { .product-grid { grid-template-columns: repeat(5, 1fr); } }
@@ -148,7 +183,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .pg-jump input { width: 48px; height: 32px; text-align: center; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 13px; }
 .pg-jump input:focus { outline: none; border-color: var(--accent); }
 .pg-total { font-size: 12px; color: var(--text-tertiary); margin-right: 6px; }
-.product-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition); cursor: pointer; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
+.product-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition); cursor: pointer; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; height: 100%; }
 .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: rgba(0,113,227,0.15); }
 .product-img-wrap { position: relative; overflow: hidden; }
 .product-img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; background: #f5f5f7; transition: transform 0.4s ease; }
@@ -158,7 +193,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .product-img-btn { position: absolute; bottom: 6px; right: 6px; padding: 4px 8px; background: rgba(0,0,0,0.55); color: #fff; border-radius: 980px; font-size: 10px; cursor: pointer; opacity: 0; transition: var(--transition); backdrop-filter: blur(4px); border: none; font-weight: 500; }
 .product-card:hover .product-img-btn { opacity: 1; }
 .product-img-btn:hover { background: rgba(0,0,0,0.75); }
-.product-info { padding: 9px 10px 10px; }
+.product-info { padding: 11px 13px 12px; display: flex; flex-direction: column; flex: 1 1 auto; }
 .product-spu { font-size: 11px; color: var(--text-secondary); font-family: 'SF Mono', 'Menlo', monospace; letter-spacing: -0.01em; margin-bottom: 2px; }
 .product-pid-line { font-size: 12px; color: var(--text-primary); font-family: 'SF Mono', 'Menlo', monospace; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
 .product-buyer { font-size: 11px; color: var(--accent); font-weight: 500; margin-bottom: 6px; }
@@ -171,41 +206,136 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .product-label.new { background: #f0f8ff; color: #007aff; }
 .product-label.trending { background: #f0faf0; color: #30d158; }
 .product-label.recommend { background: #fef8f0; color: #ff9500; }
-/* new-product tag on image */
-.product-img-tag { position: absolute; top: 8px; left: 8px; padding: 4px 11px; border-radius: 7px; font-size: 13px; font-weight: 900; letter-spacing: 0.04em; color: #fff; z-index: 2; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 3px 9px rgba(0,0,0,0.28); text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-.product-img-tag.t7 { background: #ff3b30; }
-.product-img-tag.t14 { background: #ff9500; }
-.product-img-tag.t45 { background: #af52de; }
-.product-img-tag.told { background: rgba(0,0,0,0.55); }
-/* A列(新老品标签)通用调色板:任意文本都能映射到一个稳定颜色 */
-.product-img-tag.tp0 { background: #ff3b30; }
-.product-img-tag.tp1 { background: #ff9500; }
-.product-img-tag.tp2 { background: #34c759; }
-.product-img-tag.tp3 { background: #007aff; }
-.product-img-tag.tp4 { background: #af52de; }
-.product-img-tag.tp5 { background: #ff2d55; }
-.product-img-tag.tp6 { background: #5856d6; }
-.product-img-tag.tp7 { background: #00c7be; }
+/* new-product tag on image — premium glass/gradient */
+.product-img-tag { position: absolute; top: 9px; left: 9px; padding: 4px 12px; border-radius: 9px; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; color: #fff; z-index: 2; border: 1px solid rgba(255,255,255,0.55); box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.35); text-shadow: 0 1px 2px rgba(0,0,0,0.28); backdrop-filter: blur(2px); }
+.product-img-tag.t7 { background: linear-gradient(135deg,#0a84ff,#0060df); }
+.product-img-tag.t14 { background: linear-gradient(135deg,#409cff,#0a7bff); }
+.product-img-tag.t45 { background: linear-gradient(135deg,#5eb0f5,#3b93e8); }
+.product-img-tag.told { background: linear-gradient(135deg,rgba(60,60,67,0.72),rgba(28,28,30,0.62)); }
+/* A列(新老品标签)通用调色板:统一蓝色系,不同深浅稳定区分 */
+.product-img-tag.tp0 { background: linear-gradient(135deg,#0a84ff,#0060df); }
+.product-img-tag.tp1 { background: linear-gradient(135deg,#409cff,#0a7bff); }
+.product-img-tag.tp2 { background: linear-gradient(135deg,#5eb0f5,#3b93e8); }
+.product-img-tag.tp3 { background: linear-gradient(135deg,#4a9bff,#0071e3); }
+.product-img-tag.tp4 { background: linear-gradient(135deg,#2f7fd6,#1466b8); }
+.product-img-tag.tp5 { background: linear-gradient(135deg,#6cb2f0,#3f92e0); }
+.product-img-tag.tp6 { background: linear-gradient(135deg,#0a6bd6,#004fa8); }
+.product-img-tag.tp7 { background: linear-gradient(135deg,#7ec2f5,#4a9bd8); }
 .product-img-country { position: absolute; top: 6px; right: 6px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; background: rgba(0,0,0,0.55); color: #fff; z-index: 2; backdrop-filter: blur(4px); }
 /* Card fields — matches screenshot layout */
-.pc-pid { font-size: 15px; font-weight: 700; color: var(--text-primary); font-family: 'SF Mono','Menlo',monospace; letter-spacing: -0.02em; margin-bottom: 6px; word-break: break-all; }
+.pc-pid { font-size: 13px; font-weight: 700; color: var(--text-primary); font-family: 'SF Pro Rounded','Varela Round','Quicksand',ui-rounded,-apple-system,'PingFang SC',sans-serif; letter-spacing: 0.01em; margin-bottom: 6px; word-break: break-all; line-height: 1.2; }
 .pc-shop-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
 .pc-shop { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pc-rating { font-size: 12px; font-weight: 600; color: #ff9500; white-space: nowrap; flex-shrink: 0; }
-.pc-cat { font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pc-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.pc-market { font-size: 11px; font-weight: 700; color: #0071e3; background: rgba(0,113,227,0.10); padding: 2px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0; }
+.pc-cat { font-size: 12px; color: var(--text-tertiary); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 属性标签流:国家/重点商家/季节/类目 合并到同一可换行区域,尽量填满、减少空白 */
+.pc-attrrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; min-height: 0; }
+.pc-attrrow:empty { display: none; }
+.pc-chip { display: inline-flex; align-items: center; max-width: 100%; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; overflow: hidden; }
+.pc-chip .pc-chip-txt { overflow: hidden; text-overflow: ellipsis; }
+.pc-cattag { flex: 1 1 auto; min-width: 0; justify-content: flex-start; color: #2b6a94; background: rgba(90,163,208,0.10); border: 1px solid rgba(90,163,208,0.22); }
+/* 店铺标签:位于价格行、右对齐、无前缀、过长截断 */
+.pc-shopchip { flex: 1 1 auto; min-width: 0; display: inline-flex; justify-content: flex-end; overflow: hidden; }
+.pc-shopchip span { max-width: 100%; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; color: #0a4d8c; background: rgba(0,113,227,0.06); border: 1px solid rgba(0,113,227,0.16); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-metrics { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.pc-hist { font-size: 11px; font-weight: 500; color: var(--text-secondary); background: var(--surface); padding: 2px 9px; border-radius: 980px; white-space: nowrap; }
+.pc-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px; }
+.pc-price-row .pc-shopchip { align-self: center; }
 .product-price { font-size: 17px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; }
 .pc-stock { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
-.pc-colorsize { display: flex; gap: 6px; margin-bottom: 8px; }
+.pc-colorsize { display: flex; gap: 6px; margin-bottom: 11px; }
 .pc-cs { font-size: 11px; font-weight: 500; color: var(--text-secondary); background: var(--surface); padding: 2px 9px; border-radius: 980px; }
 .pc-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; min-height: 20px; }
 .pc-rank { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.pc-wow { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 5px; white-space: nowrap; }
+.pc-wow.up { color: #0a7c2f; background: rgba(10,124,47,0.10); }
+.pc-wow.down { color: #d0021b; background: rgba(208,2,27,0.10); }
+.pc-wow.flat { color: var(--text-secondary); background: var(--surface); }
 .pc-gpm { font-size: 12px; font-weight: 700; color: #ff2d55; }
 .pc-aff { font-size: 11px; font-weight: 500; color: var(--text-secondary); background: var(--surface); padding: 2px 8px; border-radius: 5px; }
 .pc-season { font-size: 11px; font-weight: 600; color: #0071e3; background: rgba(0,113,227,0.10); padding: 2px 9px; border-radius: 980px; white-space: nowrap; }
-.product-img-jit { position: absolute; top: 8px; right: 8px; padding: 4px 11px; border-radius: 7px; font-size: 13px; font-weight: 900; letter-spacing: 0.06em; color: #fff; background: linear-gradient(135deg,#ff1744,#ff2d55); z-index: 3; border: 1.5px solid rgba(255,255,255,0.9); box-shadow: 0 3px 10px rgba(255,23,68,0.55), 0 0 0 2px rgba(255,23,68,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.25); }
-.product-img-country + .product-img-jit, .product-img-jit.has-country { top: 34px; }
-.pc-bottom { display: flex; align-items: center; justify-content: space-between; }
+/* Final card face (v7) */
+.pc-topline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 7px; min-height: 20px; }
+.pc-country { font-size: 11px; font-weight: 700; color: #4a6478; background: rgba(60,90,120,0.07); border: 1px solid rgba(60,90,120,0.14); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.pc-keymerchant { font-size: 11px; font-weight: 700; color: #0a4d8c; background: rgba(0,113,227,0.10); border: 1px solid rgba(0,113,227,0.24); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.pc-wow-up { font-size: 11px; font-weight: 800; color: #005bbf; background: rgba(0,113,227,0.10); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.pc-spu { font-size: 13px; font-weight: 700; color: var(--text-primary); font-family: 'SF Pro Rounded','Varela Round','Quicksand',ui-rounded,-apple-system,'PingFang SC',sans-serif; letter-spacing: 0.01em; margin-bottom: 5px; word-break: break-all; }
+/* SHEIN 式聚合信息块:SPU行/PID大标题/店铺行/子信息行/价格行,底部对齐 */
+.pc-infoblock { padding-bottom: 10px; border-bottom: 1px solid var(--border-light); margin-bottom: 10px; }
+.pc-spu-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+.pc-spu-row .pc-spu { margin-bottom: 0; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; word-break: normal; }
+.pc-spu-tag { flex-shrink: 0; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; color: #fff; padding: 3px 10px; border-radius: 8px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+.pc-spu-tag.t7 { background: linear-gradient(135deg,#0a84ff,#0060df); }
+.pc-spu-tag.t14 { background: linear-gradient(135deg,#409cff,#0a7bff); }
+.pc-spu-tag.t45 { background: linear-gradient(135deg,#5eb0f5,#3b93e8); }
+.pc-spu-tag.told { background: linear-gradient(135deg,rgba(60,60,67,0.72),rgba(28,28,30,0.62)); }
+.pc-spu-tag.tp0 { background: linear-gradient(135deg,#0a84ff,#0060df); }
+.pc-spu-tag.tp1 { background: linear-gradient(135deg,#409cff,#0a7bff); }
+.pc-spu-tag.tp2 { background: linear-gradient(135deg,#5eb0f5,#3b93e8); }
+.pc-spu-tag.tp3 { background: linear-gradient(135deg,#4a9bff,#0071e3); }
+.pc-spu-tag.tp4 { background: linear-gradient(135deg,#2f7fd6,#1466b8); }
+.pc-spu-tag.tp5 { background: linear-gradient(135deg,#6cb2f0,#3f92e0); }
+.pc-spu-tag.tp6 { background: linear-gradient(135deg,#0a6bd6,#004fa8); }
+.pc-spu-tag.tp7 { background: linear-gradient(135deg,#7ec2f5,#4a9bd8); }
+.pc-store-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.pc-store-name { flex: 1 1 auto; min-width: 0; font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-store-score { flex-shrink: 0; font-size: 11px; font-weight: 700; color: #ff9500; background: rgba(255,149,0,0.10); border: 1px solid rgba(255,149,0,0.24); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.pc-store-score b { font-weight: 800; }
+.pc-subinfo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; min-height: 16px; }
+.pc-subinfo { flex: 1 1 auto; min-width: 0; font-size: 12px; color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-subinfo-row .pc-keymerchant { margin-left: auto; flex-shrink: 0; }
+.pc-priceline { display: flex; align-items: baseline; gap: 10px; }
+.pc-priceline .product-price { font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 0; }
+.pc-priceline .pc-stock { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+.pc-priceline .pc-price-season { margin-left: auto; flex-shrink: 0; font-size: 11px; font-weight: 600; color: #0071e3; background: rgba(0,113,227,0.09); border: 1px solid rgba(0,113,227,0.20); padding: 2px 9px; border-radius: 980px; white-space: nowrap; align-self: center; }
+.pc-dots-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; min-height: 15px; }
+.pc-dots-row:empty { display: none; }
+.pc-upload-inline { flex-shrink: 0; }
+.pc-dots { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; min-height: 14px; flex: 1 1 auto; }
+.pc-dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+.pc-dot-more { font-size: 10px; font-weight: 700; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-light); border-radius: 980px; padding: 0 6px; height: 15px; line-height: 15px; display: inline-flex; align-items: center; }
+/* 顶部胶囊标签(季节/上架日期) */
+.pc-capsules { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 7px; min-height: 0; }
+.pc-capsules:empty { display: none; }
+.pc-cap { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 980px; white-space: nowrap; }
+.pc-cap-season { color: #0071e3; background: rgba(0,113,227,0.09); }
+.pc-chip.pc-cap-season { border: 1px solid rgba(0,113,227,0.20); }
+.pc-cap-list { color: #4a6478; background: rgba(60,90,120,0.08); }
+/* 销量/库存/SPS 脱敏标签行 */
+.pc-sales { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
+.pc-sales:empty { display: none; }
+/* 2×2 网格:历史/近7日/昨日销量 + 近3日增速,四格四色、互不重叠 */
+.pc-sales-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
+.pc-sale-cell { display: flex; min-width: 0; }
+.pc-sale-cell > .pc-sale { flex: 1 1 auto; min-width: 0; box-sizing: border-box; justify-content: center; overflow: hidden; }
+.pc-sale { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 8px; white-space: nowrap; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-light); overflow: hidden; text-overflow: ellipsis; }
+.pc-sale i { font-style: normal; font-weight: 600; font-size: 10px; opacity: 0.85; flex-shrink: 0; }
+/* 四色区分:历史=蓝 / 近7日=绿 / 昨日=橙 / 增速=紫红 */
+.pc-sale-hist { background: rgba(0,113,227,0.10); border-color: rgba(0,113,227,0.24); color: #0060df; }
+.pc-sale-hist i { color: #0060df; }
+.pc-sale-7 { background: rgba(10,124,47,0.10); border-color: rgba(10,124,47,0.24); color: #0a7c2f; }
+.pc-sale-7 i { color: #0a7c2f; }
+.pc-sale-t1 { background: rgba(255,149,0,0.12); border-color: rgba(255,149,0,0.28); color: #b56a00; }
+.pc-sale-t1 i { color: #b56a00; }
+.pc-sale-stock { background: rgba(90,163,208,0.10); border-color: rgba(90,163,208,0.24); color: #2b6a94; }
+.pc-sale-stock i { color: #4a90c2; }
+.pc-sale-sps { background: rgba(0,113,227,0.12); border-color: rgba(0,113,227,0.28); color: #004a99; }
+.pc-sale-sps i { color: #0060cc; }
+.pc-sale-wow { background: rgba(255,45,85,0.10); border-color: rgba(255,45,85,0.26); color: #c31d3f; font-weight: 800; }
+.pc-sale-wow i { color: #c31d3f; }
+.pc-wow-label { font-size: 10px; font-weight: 700; opacity: 0.85; }
+.pc-channel { display: flex; width: 100%; height: 5px; border-radius: 980px; overflow: hidden; margin-bottom: 12px; background: rgba(0,0,0,0.05); gap: 1.5px; }
+.pc-ch-seg { height: 100%; display: inline-block; cursor: help; border-radius: 980px; transition: filter 0.15s, transform 0.15s; }
+.pc-ch-seg:hover { filter: brightness(1.08); transform: scaleY(1.5); }
+.pc-ch-seg.ch-video { background: #ff6b60; }
+.pc-ch-seg.ch-live { background: #34c759; }
+.pc-ch-seg.ch-shelf { background: #0a84ff; }
+/* 渠道条自定义浮标 */
+#chTip { position: fixed; z-index: 9999; pointer-events: none; background: rgba(28,28,30,0.94); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 8px; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,0.28); opacity: 0; transform: translate(-50%, -100%) translateY(4px); transition: opacity 0.12s; }
+#chTip.show { opacity: 1; }
+#chTip::after { content: ''; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(28,28,30,0.94); border-bottom: 0; }
+.pc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 8px; min-height: 28px; border-top: 1px solid var(--border-light); }
 .pc-date { font-size: 12px; color: var(--text-tertiary); }
 .quick-add-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0; }
 .quick-add-btn:hover { background: var(--accent-hover); transform: scale(1.12); }
@@ -239,11 +369,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .guide-sec { margin-bottom: 16px; }
 .guide-sec-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
 .guide-chip { font-size: 11px; font-weight: 700; color: #fff; padding: 2px 10px; border-radius: 980px; }
-.guide-chip.t7 { background: #ff3b30; }
-.guide-chip.t14 { background: #ff9500; }
-.guide-chip.thot { background: linear-gradient(135deg,#ff2d55,#ff375f); }
-.guide-chip.tpot { background: #34c759; }
-.guide-chip.tnew { background: #af52de; }
+.guide-chip.t7 { background: #0060df; }
+.guide-chip.t14 { background: #0a7bff; }
+.guide-chip.thot { background: linear-gradient(135deg,#0a84ff,#0060df); }
+.guide-chip.tpot { background: #3b93e8; }
+.guide-chip.tnew { background: #5eb0f5; }
 .guide-item { font-size: 13px; color: var(--text-secondary); line-height: 1.7; padding-left: 2px; }
 .guide-item b { color: var(--text-primary); font-weight: 600; }
 .guide-close { display: block; width: 100%; margin-top: 8px; padding: 11px; background: var(--surface); color: var(--text-primary); border: none; border-radius: 980px; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); }
@@ -274,8 +404,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .sku-info-cell { display: flex; flex-direction: column; }
 .sku-info-label { color: var(--text-tertiary); }
 .sku-info-val { color: var(--text-primary); margin-top: 1px; }
-.sku-url-row { margin-top: 10px; font-size: 12px; }
+.sku-url-row { margin-top: 10px; font-size: 12px; display: flex; gap: 16px; flex-wrap: wrap; }
 .sku-url-row a { color: var(--accent); word-break: break-all; text-decoration: none; }
+.sku-url-link { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: var(--accent); background: rgba(0,113,227,0.08); padding: 4px 12px; border-radius: 980px; text-decoration: none; transition: var(--transition); }
+.sku-url-link:hover { background: rgba(0,113,227,0.16); }
+.sku-url-link::after { content: '↗'; font-size: 11px; opacity: 0.7; }
+.sku-url-row-inline { display: flex; gap: 12px; }
+.sku-url-row-inline .sku-url-link { flex: 1 1 0; justify-content: center; }
 .sku-count { color: var(--text-tertiary); font-weight: 400; font-size: 10px; text-transform: none; letter-spacing: 0; margin-left: 4px; }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .modal-close-btn { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border-radius: 50%; background: var(--surface); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-secondary); transition: var(--transition); z-index: 10; }
@@ -314,6 +449,42 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .products-page.hidden { display: none !important; }
 .settings-page { display: none; }
 .settings-page.active { display: flex; }
+
+/* ===== SPU-PID Lookup Page ===== */
+.lookup-page { display: none; }
+.lookup-page.active { display: flex; }
+.lookup-box { background: var(--card-bg); border-radius: var(--radius-lg); padding: 18px 20px; border: 0.5px solid rgba(0,0,0,0.06); box-shadow: var(--shadow-sm); margin-bottom: 18px; }
+.lookup-tips { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-tertiary); margin-bottom: 10px; gap: 12px; flex-wrap: wrap; }
+.lookup-tips b { color: var(--text-secondary); }
+.lookup-count { color: var(--accent); font-weight: 500; white-space: nowrap; }
+.lookup-input { width: 100%; min-height: 110px; max-height: 260px; resize: vertical; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 13px; font-family: 'SF Mono','Menlo',monospace; line-height: 1.6; background: var(--bg); color: var(--text-primary); box-sizing: border-box; }
+.lookup-input:focus { outline: none; border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(0,113,227,0.08); }
+.lookup-actions { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.lookup-cols { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; padding: 10px 12px; background: var(--surface); border-radius: var(--radius-sm); }
+.lookup-cols-label { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+.lookup-cols-items { display: flex; gap: 6px; flex-wrap: wrap; }
+.lk-col-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 10px; border-radius: 980px; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-secondary); cursor: pointer; user-select: none; transition: var(--transition); }
+.lk-col-chip input { margin: 0; cursor: pointer; }
+.lk-col-chip.on { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.lookup-cols-op { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 500; }
+.lookup-cols-op:hover { text-decoration: underline; }
+.lookup-actions-right { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.lookup-stats { font-size: 12px; color: var(--text-tertiary); margin-top: 10px; }
+.lookup-stats .ok { color: var(--success); }
+.lookup-stats .miss { color: var(--danger); }
+.lookup-result-wrap { overflow-x: auto; }
+.lookup-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.lookup-table th, .lookup-table td { padding: 9px 12px; text-align: left; border-bottom: 0.5px solid rgba(0,0,0,0.07); white-space: nowrap; }
+.lookup-table th { background: var(--surface); font-weight: 600; color: var(--text-secondary); font-size: 12px; position: sticky; top: 0; }
+.lookup-table td { font-family: 'SF Mono','Menlo',monospace; color: var(--text-primary); }
+.lookup-table tr:hover td { background: var(--surface); }
+.lookup-table .lk-key { font-weight: 600; }
+.lookup-table .lk-buyer { font-family: -apple-system, 'PingFang SC', sans-serif; color: var(--text-secondary); }
+.lookup-table .lk-miss { color: var(--text-tertiary); }
+.lookup-table .lk-notfound td { color: var(--danger); font-family: inherit; }
+.lk-input-type { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-family: inherit; font-weight: 600; }
+.lk-input-type.spu { background: var(--accent-light); color: var(--accent); }
+.lk-input-type.pid { background: #fff0f0; color: #ff3b30; }
 
 .page-header { margin-bottom: 24px; }
 .page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); }
@@ -417,6 +588,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
       <div class="nav-tabs">
         <div class="nav-tab active" onclick="switchPage('products')">商品浏览</div>
         <div class="nav-tab" onclick="switchPage('cart')">圈品池</div>
+        <div class="nav-tab" onclick="switchPage('lookup')">SPU-PID互查</div>
+        <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044" target="_blank" rel="noopener">立即申样</a>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
       </div>
       <div class="nav-welcome" id="navWelcome">
@@ -445,53 +618,108 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
     <div class="layout-wrap">
       <div class="main-content">
         <div class="frozen-head">
-        <div class="filter-bar">
+        <div class="filter-bar" id="filterBar">
           <div class="filter-basic">
-            <input class="filter-input search-main" id="filterSearch" placeholder="搜索 PID / SPU / 店铺名...">
+            <input class="filter-input search-main" id="filterSearch" placeholder="搜索 PID / SPU / 店铺 / 供应商 / 买手...">
             <select class="filter-select" id="filterCountry"><option value="">国家</option></select>
+            <select class="filter-select" id="filterCat2"><option value="">二级类目</option></select>
             <select class="filter-select" id="filterCat3"><option value="">三级类目</option></select>
+            <select class="filter-select" id="filterTag"><option value="">商品标签</option></select>
+            <div class="filter-range" title="上架日期区间">
+              <span class="fr-label">上架</span>
+              <input class="filter-input fr-date" type="date" id="filterUploadFrom" title="上架起始日期">
+              <span class="fr-sep">~</span>
+              <input class="filter-input fr-date" type="date" id="filterUploadTo" title="上架截止日期">
+            </div>
+            <div class="filter-range" title="店铺分数(SPS)区间">
+              <span class="fr-label">SPS</span>
+              <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMin" placeholder="最低">
+              <span class="fr-sep">~</span>
+              <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMax" placeholder="最高">
+            </div>
             <button class="filter-btn primary" onclick="applyFilters()">搜索</button>
             <button class="filter-btn ghost" onclick="resetFilters()">重置</button>
             <button class="filter-expand-btn" id="filterExpandBtn" onclick="toggleAdvancedFilter()">
               更多筛选 <span class="arrow">&#x25BC;</span>
             </button>
+            <div class="channel-legend" title="商品卡下方渠道占比条的颜色含义">
+              <span class="cl-item"><span class="cl-swatch cl-video"></span>短视频</span>
+              <span class="cl-item"><span class="cl-swatch cl-live"></span>直播</span>
+              <span class="cl-item"><span class="cl-swatch cl-shelf"></span>货架</span>
+            </div>
+            <button class="filter-guide-btn" onclick="openGuide()" title="查看爆款/高潜/新品标签定义">&#x1F4D6; 标签说明</button>
           </div>
           <div class="filter-advanced" id="filterAdvanced">
-            <select class="filter-select" id="filterCat2"><option value="">二级类目</option></select>
-            <select class="filter-select" id="filterTag"><option value="">商品标签</option></select>
-            <select class="filter-select" id="filterGpm"><option value="">GPM分层</option></select>
-            <select class="filter-select" id="filterSeason"><option value="">季节</option></select>
-            <select class="filter-select" id="filterJit"><option value="">JIT</option><option value="yes">是 JIT</option><option value="no">非 JIT</option></select>
-            <div class="filter-group">
-              <span class="filter-label">营销价</span>
-              <input class="filter-input narrow" id="filterPriceMin" type="number" placeholder="min">
-              <span class="filter-sep">~</span>
-              <input class="filter-input narrow" id="filterPriceMax" type="number" placeholder="max">
-            </div>
-            <div class="filter-group">
-              <span class="filter-label">库存≥</span>
-              <input class="filter-input narrow" id="filterStockMin" type="number" placeholder="">
-            </div>
-            <div class="filter-group">
-              <span class="filter-label">店铺评分≥</span>
-              <input class="filter-input narrow" id="filterRatingMin" type="number" step="0.1" placeholder="">
-            </div>
+            <select class="filter-select" id="filterHistRange"><option value="">历史累计销量</option></select>
+            <select class="filter-select" id="filterRange7"><option value="">近7天销量</option></select>
+            <select class="filter-select" id="filterRangeT1"><option value="">昨日销量</option></select>
+            <select class="filter-select" id="filterDataDate"><option value="">数据更新日期</option></select>
+            <select class="filter-select" id="filterDeveloper"><option value="">买手</option></select>
             <select class="filter-select" id="filterSort">
-              <option value="rank">按销量排名</option>
+              <option value="histDesc" selected>历史累计销量最高</option>
+              <option value="sales7">近7日单量最高</option>
+              <option value="wowDesc">近3天环比最高</option>
               <option value="priceAsc">价格从低到高</option>
               <option value="priceDesc">价格从高到低</option>
               <option value="dateDesc">上架时间最新</option>
-              <option value="ratingDesc">店铺评分最高</option>
             </select>
           </div>
           <div class="filter-stats" id="filterStats"></div>
         </div>
+        <button class="filterbar-toggle" id="filterBarToggle" onclick="toggleFilterBar()" title="隐藏/显示搜索筛选栏">
+          <span class="fbt-label">隐藏搜索栏</span> <span class="fbt-arrow">&#x25B2;</span>
+        </button>
         </div><!-- /.frozen-head -->
+        <div class="filter-show-row" id="filterShowRow">
+          <button class="filter-show-btn" id="filterShowBtn" onclick="toggleFilterBar()" title="展开搜索与筛选栏">&#x1F50D; 显示搜索栏 <span class="fbt-arrow">&#x25BC;</span></button>
+          <div class="channel-legend" title="商品卡下方渠道占比条的颜色含义">
+            <span class="cl-item"><span class="cl-swatch cl-video"></span>短视频</span>
+            <span class="cl-item"><span class="cl-swatch cl-live"></span>直播</span>
+            <span class="cl-item"><span class="cl-swatch cl-shelf"></span>货架</span>
+          </div>
+          <button class="filter-guide-btn" onclick="openGuide()" title="查看爆款/高潜/新品标签定义">&#x1F4D6; 标签说明</button>
+        </div>
         <div class="scroll-area" id="scrollArea">
           <div id="productGrid"></div>
         </div>
         <div class="pagination" id="pagination"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- SPU-PID Lookup Page -->
+  <div class="layout-wrap lookup-page" id="lookupPage">
+    <div class="main-content" style="max-width:1080px;margin:0 auto;">
+      <div class="page-header">
+        <div class="page-title">SPU-PID 互查</div>
+        <div class="page-subtitle">输入 SPU 查各国 PID，或输入 PID 反查 SPU / 国家；支持批量查询、复制、导出、下载</div>
+      </div>
+
+      <div class="lookup-box">
+        <div class="lookup-tips">
+          <span>支持一次粘贴多个,用<b>换行 / 逗号 / 空格</b>分隔;系统自动识别 SPU 与 PID</span>
+          <span class="lookup-count" id="lookupDbCount"></span>
+        </div>
+        <textarea class="lookup-input" id="lookupInput" placeholder="示例:&#10;S1234567890&#10;728901234567890123&#10;也可用逗号/空格分隔:S1000, S1001 728901234567890"></textarea>
+        <div class="lookup-cols" id="lookupCols">
+          <span class="lookup-cols-label">显示国家列:</span>
+          <span class="lookup-cols-items" id="lookupColsItems"></span>
+          <a class="lookup-cols-op" onclick="setLookupCols(true)">全选</a>
+          <a class="lookup-cols-op" onclick="setLookupCols(false)">全不选</a>
+        </div>
+        <div class="lookup-actions">
+          <button class="filter-btn primary" onclick="runLookup()">查询</button>
+          <button class="filter-btn ghost" onclick="clearLookup()">清空</button>
+          <div class="lookup-actions-right" id="lookupResultActions" style="display:none;">
+            <button class="filter-btn ghost" onclick="copyLookupResult()">复制结果</button>
+            <button class="filter-btn ghost" onclick="exportLookupResult('csv')">导出 CSV</button>
+            <button class="filter-btn ghost" onclick="exportLookupResult('xlsx')">导出 Excel</button>
+          </div>
+        </div>
+        <div class="lookup-stats" id="lookupStats"></div>
+      </div>
+
+      <div class="lookup-result-wrap" id="lookupResultWrap"></div>
     </div>
   </div>
 
@@ -580,10 +808,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前圈品池的PID</button>
   <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
 
-  <!-- Side floating action buttons (每个按钮独立可拖动，位置各自记忆) -->
-  <button class="side-fab fab-guide" id="fabGuide" onclick="onFabClick(event, openGuide)"><span class="side-fab-handle">⠿</span><span class="side-fab-ic">📖</span>标签<br>说明</button>
-  <a class="side-fab fab-sample" id="fabSample" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044&from=from_parent_docs" target="_blank" rel="noopener" onclick="return onFabAnchorClick(event)"><span class="side-fab-handle">⠿</span><span class="side-fab-ic">📝</span>立即<br>申样</a>
-
   <!-- Tag Guide Modal -->
   <div class="modal-overlay" id="guideModal">
     <div class="guide-modal">
@@ -604,7 +828,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
       <div class="guide-sec">
         <div class="guide-sec-title"><span class="guide-chip tnew">新品</span></div>
         <div class="guide-item">上架 30 天内（近 7 天数据）· 单量 <b>&gt;10</b></div>
-        <div class="guide-item">上架 30 天内（近 7 天数据）· <b>10 &gt; 单量 &gt; 3</b></div>
       </div>
 
       <button class="guide-close" onclick="closeGuide()">我知道了</button>
@@ -623,8 +846,17 @@ let selectedSize = null;
 let selectedPIDs = new Set();
 let filteredProducts = [];
 let currentPage = 1;
-const PAGE_SIZE = 24; // 每页 4 行 × 6 列
+const PAGE_SIZE = 28; // 每页 4 行 × 7 列
 let currentUser = null;
+
+// ===== SPU-PID 互查 数据 =====
+const LOOKUP_COUNTRIES = ['DE','ES','FR','IT','GB','US','MX'];
+let PID_MAP = {};        // spu -> { DE, ES, FR, IT, GB, US, MX }
+let PID_INDEX = {};      // pid -> { spu, country }
+let PID_MAP_LOADED = false;
+let PID_MAP_LOADING = false;
+let lastLookupRows = []; // 最近一次查询结果(用于复制/导出)
+let lookupSelectedCols = ['DE','ES','FR','IT','GB','US','MX']; // 导出/显示时勾选的国家列
 
 // ===== 访问策略 =====
 // 普通用户：打开即进主页，无需口令。
@@ -783,26 +1015,48 @@ document.addEventListener('keydown', function(e) {
 // 字段兼容层:同一逻辑字段支持「中文表头」或「英文键」,任取其一命中即可。
 // 以后直接把原始中文表头 CSV 覆盖 data/products.csv 即可,无需转换。
 const FIELD_ALIASES = {
-  tag:      ['新老品标签', 'tag'],
-  country:  ['国家', 'country'],
-  pid:      ['PID', 'pid', 'product_id', 'ProductId'],
-  spu:      ['SPU', 'spu', 'spu_code'],
-  shop:     ['shop_name', '店铺名', '店铺', 'shop', 'store'],
-  cat2:     ['二级类目', 'cat2', 'category2'],
-  cat3:     ['三级类目', 'cat3', 'category3'],
-  rating:   ['店铺评分', 'rating', 'shop_rating'],
-  image:    ['首图 url', '首图url', '首图', '主图', 'image', 'img', 'image_url'],
-  listDate: ['上架时间', 'listDate', 'list_date', 'launch_date'],
-  stock:    ['可用库存', 'stock', 'available_stock'],
-  rank:     ['销量排名', 'rank', 'sales_rank'],
-  affiliate:['是否在联盟', 'affiliate', 'in_affiliate'],
-  url:      ['商品详情页URL', '商品详情页url', '商品详情页', 'url', 'detail_url'],
-  price:    ['营销价', 'price', 'promo_price', 'promoPrice'],
-  gpm:      ['GPM分层', 'gpm', 'gpm_tier'],
-  colors:   ['销售颜色英文名集合', '颜色', 'colors', 'color'],
-  sizes:    ['尺寸集合', '尺码', 'sizes', 'size'],
-  season:   ['季节', 'Season Tag', 'season tag', 'seasonTag', 'season_tag', 'season'],
-  jit:      ['JIT', 'jit', 'is_jit', 'isJit', 'JIT标签', 'jit_tag']
+  dataDate:   ['数据日期', 'data_date'],
+  country:    ['原始国家', '国家', 'country'],
+  marketGroup:['市场组', 'market_group', 'marketGroup'],
+  tag:        ['商品标签', '新老品标签', 'tag'],
+  pid:        ['product_id', 'PID', 'pid', 'ProductId'],
+  spu:        ['spu_code', 'SPU', 'spu'],
+  shopId:     ['shop_id', 'shopId'],
+  shopCode:   ['shop_code', 'shopCode'],
+  shop:       ['店铺名称', 'shop_name', '店铺名', '店铺', 'shop', 'store'],
+  skm:        ['SKM标签', 'skm', 'skm_tag'],
+  cat2:       ['二级类目', 'cat2', 'category2'],
+  cat3:       ['三级类目', 'cat3', 'category3'],
+  leafCat:    ['叶子类目', 'leaf_category', 'leafCat'],
+  catCombo:   ['类目组合', 'cat_combo', 'catCombo'],
+  histSales:  ['历史累计支付子单量', 'hist_sales'],
+  histRange:  ['历史累计销量区间', 'hist_range'],
+  sales7:     ['近7日支付子单量', '近7天支付子单量', 'sales_7d'],
+  sales7Video:['近7天短视频支付子单量', 'sales_7d_video'],
+  sales7Live: ['近7天直播支付子单量', 'sales_7d_live'],
+  sales7Shelf:['近7天货架支付子单量', 'sales_7d_shelf'],
+  price:      ['大盘营销价-美金', '营销价', 'price', 'promo_price', 'promoPrice'],
+  range7:     ['近7天出单区间', 'range_7d'],
+  cur3:       ['近3天本期支付子单量', 'cur_3d'],
+  prev3:      ['近3天上期支付子单量', 'prev_3d'],
+  wow:        ['近3天环比增速', 'wow', 'wow_rate'],
+  wowTag:     ['近3天环比标签', 'wow_tag'],
+  salesT1:    ['T-1支付子单量', 'sales_t1'],
+  rangeT1:    ['T-1出单区间', 'range_t1'],
+  listDate:   ['全球首次上架日期', '上架时间', 'listDate', 'list_date', 'launch_date'],
+  onlineDays: ['上架天数', 'online_days'],
+  jit:        ['JIT标签', 'JIT', 'jit', 'is_jit', 'isJit', 'jit_tag'],
+  stock:      ['实际可售库存', '可用库存', 'stock', 'available_stock'],
+  jitStock:   ['JIT虚拟库存', 'jit_stock'],
+  colors:     ['颜色', '销售颜色英文名集合', 'colors', 'color'],
+  colorNum:   ['颜色数', 'color_num'],
+  sizes:      ['尺码', '尺寸集合', 'sizes', 'size'],
+  sizeNum:    ['尺码数', 'size_num'],
+  season:     ['季节标签', '季节', 'Season Tag', 'season tag', 'seasonTag', 'season_tag', 'season'],
+  image:      ['首图链接', '首图 url', '首图url', '首图', '主图', 'image', 'img', 'image_url'],
+  url:        ['商品详情页URL', '商品详情页url', '商品详情页', 'url', 'detail_url'],
+  supplier:   ['供应商名称', 'supplier'],
+  developer:  ['开发员名称', 'developer', '开发员']
 };
 // 从一行数据中,按别名列表取第一个存在(且非空表头)的值
 function pickField(row, key) {
@@ -819,48 +1073,114 @@ function pickField(row, key) {
   return '';
 }
 
-// 按 PID 去重:同一 PID 可能因不同榜单(近7天/近14天…)出现多行,只保留 rank 最小的一条
+// SPS 分:位置和名称都可能变,只保证表头里含 "sps"(不区分大小写)
+function pickSps(row) {
+  for (const k of Object.keys(row)) {
+    if (k && String(k).toLowerCase().includes('sps') && String(row[k]).trim() !== '') return String(row[k]).trim();
+  }
+  return '';
+}
+// 按 PID 去重:同一 PID 可能因多行出现,只保留近7日单量最高(排名最靠前)的一条
+// 兜底:脱敏版删除了单量字段(全为0)时,用「近7天出单区间」的下界做排序权重,保证排名仍有意义
+function rangeWeight(raw) {
+  if (!raw) return 0;
+  const m = String(raw).match(/-?\d+(\.\d+)?/g);
+  if (!m || !m.length) return 0;
+  // 取区间下界(第一个数值)作为权重;"10000+" 形式取到 10000
+  return parseFloat(m[0]) || 0;
+}
 function dedupeByPid(list) {
   const map = new Map();
+  const score = p => (p.sales7 > 0 ? p.sales7 : rangeWeight(p.range7));
   for (const p of list) {
     const cur = map.get(p.pid);
-    if (!cur || p.rank < cur.rank) map.set(p.pid, p);
+    if (!cur || score(p) > score(cur)) map.set(p.pid, p);
   }
   return Array.from(map.values());
 }
 
-// 把一批原始 CSV 行(对象数组)映射为标准商品对象,并做 PID 去重 + 排序。
+// 环比增速原始值:兼容 小数(1.4) 或 百分比串("140.00%"),统一转为小数;空/非法返回 null
+function wowDecimal(raw) {
+  if (raw === '' || raw === null || raw === undefined) return null;
+  const s = String(raw).trim();
+  if (s === '') return null;
+  const isPct = s.endsWith('%');
+  const n = parseFloat(s.replace(/%\s*$/, ''));
+  if (isNaN(n)) return null;
+  return isPct ? n / 100 : n;
+}
+// 环比增速小数 → 百分比字符串,空值返回 ''
+function fmtWow(raw) {
+  const n = wowDecimal(raw);
+  if (n === null) return '';
+  const pct = Math.round(n * 1000) / 10; // 保留一位小数
+  return (pct > 0 ? '+' : '') + pct + '%';
+}
+
+// 把一批原始 CSV 行(对象数组)映射为标准商品对象,并做 PID 去重 + 按近7日单量排序。
 // 网站加载(下载 CSV)与管理员上传(解析上传的 CSV)共用同一套逻辑,保证一致。
 function mapRowsToProducts(rows) {
   let list = rows.map(row => {
     const g = k => pickField(row, k);
+    const gi = k => parseInt(g(k)) || 0;
     const priceRaw = g('price');
+    const wowRaw = g('wow');
     return {
-      tag: g('tag'),                   // A 新老品标签
-      country: g('country'),           // B 国家
-      pid: g('pid'),                   // C PID
-      spuCode: g('spu'),               // D SPU
-      store: g('shop'),                // E shop_name (仅弹窗)
-      category2: g('cat2'),            // F 二级类目 (仅弹窗)
-      category3: g('cat3'),            // G 三级类目 (仅弹窗)
-      rating: g('rating'),             // H 店铺评分
-      image: g('image'), // I 首图,直接使用数据源原始链接(不改写图床模板,避免部分图片失效)
-      uploadDate: g('listDate'),       // J 上架时间
-      stock: parseInt(g('stock')) || 0, // M 可用库存 (仅弹窗)
-      rank: parseInt(g('rank')) || 99999, // N 销量排名
-      affiliate: g('affiliate'),       // O 是否在联盟
-      url: g('url'),                   // P 商品详情页URL (仅弹窗)
-      promoPrice: priceRaw ? ('$' + priceRaw) : '', // Q 营销价
-      gpm: g('gpm'),                   // GPM分层
-      colorList: g('colors').split(',').map(s => s.trim()).filter(Boolean), // 颜色
-      sizeList: g('sizes').split(',').map(s => s.trim()).filter(Boolean),     // 尺码
-      season: (function(v){ return ['NULL','#N/A','N/A','NONE'].includes(String(v).trim().toUpperCase()) ? '' : v; })(g('season')),             // 季节 / Season Tag
-      isJit: (function(v){ const s = String(v).trim().toLowerCase(); return ['1','y','yes','true','是','jit'].includes(s); })(g('jit')) // JIT 标签
+      dataDate: g('dataDate'),
+      tag: g('tag'),                     // 商品标签:爆款/高潜/新品
+      country: g('country'),             // 原始国家
+      marketGroup: g('marketGroup'),     // 市场组
+      pid: g('pid'),                     // product_id
+      spuCode: g('spu'),                 // spu_code
+      shopId: g('shopId'),
+      shopCode: g('shopCode'),
+      store: g('shop'),                  // 店铺名称
+      skm: g('skm'),                     // SKM标签
+      category2: g('cat2'),
+      category3: g('cat3'),
+      leafCat: g('leafCat'),             // 叶子类目
+      catCombo: g('catCombo'),           // 类目组合
+      histSales: gi('histSales'),        // 历史累计支付子单量
+      histRange: g('histRange'),         // 历史累计销量区间
+      sales7: gi('sales7'),              // 近7日支付子单量(核心排序指标)
+      sales7Video: gi('sales7Video'),    // 近7天短视频
+      sales7Live: gi('sales7Live'),      // 近7天直播
+      sales7Shelf: gi('sales7Shelf'),    // 近7天货架
+      range7: g('range7'),               // 近7天出单区间
+      cur3: gi('cur3'),                  // 近3天本期
+      prev3: gi('prev3'),                // 近3天上期
+      wowRaw: wowDecimal(wowRaw),        // 环比增速(小数)
+      wow: fmtWow(wowRaw),               // 环比增速(百分比串)
+      wowTag: g('wowTag'),               // 近3天环比标签
+      salesT1: gi('salesT1'),            // T-1支付子单量
+      rangeT1: g('rangeT1'),             // T-1出单区间
+      image: g('image'),                 // 首图,直接使用数据源原始链接
+      url: g('url'),                     // 商品详情页URL
+      uploadDate: g('listDate'),         // 全球首次上架日期
+      onlineDays: gi('onlineDays'),      // 上架天数
+      stock: gi('stock'),                // 实际可售库存
+      jitStock: gi('jitStock'),          // JIT虚拟库存
+      promoPrice: priceRaw ? ('$' + priceRaw) : '',   // 大盘营销价-美金
+      colorList: g('colors').split(',').map(s => s.trim()).filter(Boolean),
+      sizeList: g('sizes').split(',').map(s => s.trim()).filter(Boolean),
+      colorNum: gi('colorNum'),
+      sizeNum: gi('sizeNum'),
+      season: (function(v){ return ['NULL','#N/A','N/A','NONE','未知/未配置'].includes(String(v).trim().toUpperCase()) || String(v).trim()==='未知/未配置' ? '' : v; })(g('season')),
+      supplier: g('supplier'),           // 供应商名称
+      developer: g('developer'),         // 开发员名称
+      sps: pickSps(row),                 // SPS分(表头含 sps 即匹配,空则不展示)
+      isJit: (function(v){ const s = String(v).trim().toLowerCase(); return s.includes('jit') && !s.includes('非'); })(g('jit'))
     };
   }).filter(p => p.pid);
-  // 按 PID 去重:同一 PID 只保留 rank 最小(排名最靠前)的一条
+  // 按 PID 去重:同一 PID 只保留近7日单量最高的一条
   list = dedupeByPid(list);
-  list.sort((a, b) => a.rank - b.rank);
+  // 默认按历史累计支付子单量降序;脱敏版无单量时,退化用「历史累计销量区间」下界排序,并赋予展示用排名
+  list.sort((a, b) => {
+    const av = a.histSales > 0 ? a.histSales : rangeWeight(a.histRange);
+    const bv = b.histSales > 0 ? b.histSales : rangeWeight(b.histRange);
+    return bv - av;
+  });
+  list.forEach((p, i) => { p.rank = i + 1; });
   return list;
 }
 
@@ -947,19 +1267,52 @@ function updateWelcome() {
 
 // ===== Filters =====
 function buildFilterOptions() {
-  const countries = [...new Set(PRODUCTS.map(p => p.country))].sort();
-  const cat2s = [...new Set(PRODUCTS.map(p => p.category2))].sort();
-  const cat3s = [...new Set(PRODUCTS.map(p => p.category3))].sort();
-  const tags = [...new Set(PRODUCTS.map(p => p.tag).filter(Boolean))].sort();
-  const gpms = [...new Set(PRODUCTS.map(p => p.gpm).filter(Boolean))].sort();
-  const seasons = [...new Set(PRODUCTS.map(p => p.season).filter(Boolean))].sort();
+  const countries = [...new Set(PRODUCTS.map(p => p.country))].filter(Boolean).sort();
+  const cat2s = [...new Set(PRODUCTS.map(p => p.category2))].filter(Boolean).sort();
+  const cat3s = [...new Set(PRODUCTS.map(p => p.category3))].filter(Boolean).sort();
+  const TAG_ORDER = ['爆款', '高潜', '新品'];
+  const tags = [...new Set(PRODUCTS.map(p => p.tag).filter(Boolean))].sort((a,b) => {
+    const ia = TAG_ORDER.indexOf(a), ib = TAG_ORDER.indexOf(b);
+    return (ia<0?99:ia) - (ib<0?99:ib) || a.localeCompare(b);
+  });
+  // 区间字段:按区间下界数值升序排序(如 (100,500] / (10000,+∞))
+  const rangeLower = s => { const m = String(s).match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : Infinity; };
+  const rangeSort = arr => arr.sort((a,b) => rangeLower(a) - rangeLower(b) || String(a).localeCompare(String(b)));
+  const histRanges = rangeSort([...new Set(PRODUCTS.map(p => p.histRange).filter(Boolean))]);
+  const range7s = rangeSort([...new Set(PRODUCTS.map(p => p.range7).filter(Boolean))]);
+  const rangeT1s = rangeSort([...new Set(PRODUCTS.map(p => p.rangeT1).filter(Boolean))]);
+  // 买手 = 开发员名称
+  const developers = [...new Set(PRODUCTS.map(p => p.developer).filter(Boolean))].sort();
+  // 数据更新日期(取数日期),最新在前
+  const dataDates = [...new Set(PRODUCTS.map(p => p.dataDate).filter(Boolean))].sort((a,b) => String(b).localeCompare(String(a)));
 
   fillSelect('filterCountry', countries, '国家');
   fillSelect('filterCat2', cat2s, '二级类目');
   fillSelect('filterCat3', cat3s, '三级类目');
   fillSelect('filterTag', tags, '商品标签');
-  fillSelect('filterGpm', gpms, 'GPM分层');
-  fillSelect('filterSeason', seasons, '季节');
+  fillSelect('filterDataDate', dataDates, '数据更新日期');
+  fillRangeSelect('filterHistRange', histRanges, '历史累计销量');
+  fillRangeSelect('filterRange7', range7s, '近7天销量');
+  fillRangeSelect('filterRangeT1', rangeT1s, '昨日销量');
+  fillSelect('filterDeveloper', developers, '买手');
+  // 上架日期区间输入框:填充可选日期边界(min/max)
+  const uploadDates = PRODUCTS.map(p => p.uploadDate).filter(Boolean).map(normDate).filter(Boolean).sort();
+  if (uploadDates.length) {
+    const fFrom = document.getElementById('filterUploadFrom');
+    const fTo = document.getElementById('filterUploadTo');
+    if (fFrom) { fFrom.min = uploadDates[0]; fFrom.max = uploadDates[uploadDates.length-1]; }
+    if (fTo) { fTo.min = uploadDates[0]; fTo.max = uploadDates[uploadDates.length-1]; }
+  }
+}
+
+// 把各种日期串标准化成 YYYY-MM-DD(用于区间比较)
+function normDate(v) {
+  if (v == null) return '';
+  const s = String(v).trim();
+  if (!s) return '';
+  const m = s.match(/(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+  if (m) return m[1] + '-' + String(m[2]).padStart(2,'0') + '-' + String(m[3]).padStart(2,'0');
+  return '';
 }
 
 function fillSelect(id, opts, label) {
@@ -967,11 +1320,27 @@ function fillSelect(id, opts, label) {
   el.innerHTML = `<option value="">${label}</option>` + opts.map(o => `<option value="${o}">${o}</option>`).join('');
 }
 
+// 区间字段专用:option 的 value 仍是原始区间串(用于筛选比对),显示文本走 rangeLabel 转成「XX-XX」
+function fillRangeSelect(id, opts, label) {
+  const el = document.getElementById(id);
+  el.innerHTML = `<option value="">${label}</option>` + opts.map(o => {
+    const disp = rangeLabel(o).replace(/[「」]/g, '') || o;
+    return `<option value="${o}">${disp}</option>`;
+  }).join('');
+}
+
 function toggleAdvancedFilter() {
   const adv = document.getElementById('filterAdvanced');
   const btn = document.getElementById('filterExpandBtn');
   adv.classList.toggle('show');
   btn.classList.toggle('expanded');
+}
+
+function toggleFilterBar() {
+  const head = document.querySelector('.frozen-head');
+  const hidden = head.classList.toggle('filterbar-hidden');
+  const label = document.querySelector('#filterBarToggle .fbt-label');
+  if (label) label.textContent = hidden ? '显示搜索栏' : '隐藏搜索栏';
 }
 
 function parsePrice(str) {
@@ -985,30 +1354,42 @@ function applyFilters() {
   const cat3 = document.getElementById('filterCat3').value;
   const cat2 = document.getElementById('filterCat2').value;
   const tag = document.getElementById('filterTag').value;
-  const gpm = document.getElementById('filterGpm').value;
-  const season = document.getElementById('filterSeason').value;
-  const jit = document.getElementById('filterJit').value;
-  const priceMin = parseFloat(document.getElementById('filterPriceMin').value) || 0;
-  const priceMax = parseFloat(document.getElementById('filterPriceMax').value) || Infinity;
-  const stockMin = parseInt(document.getElementById('filterStockMin').value) || 0;
-  const ratingMin = parseFloat(document.getElementById('filterRatingMin').value) || 0;
+  const uploadFrom = normDate(document.getElementById('filterUploadFrom').value);
+  const uploadTo = normDate(document.getElementById('filterUploadTo').value);
+  const spsMinRaw = document.getElementById('filterSpsMin').value;
+  const spsMaxRaw = document.getElementById('filterSpsMax').value;
+  const spsMin = spsMinRaw.trim() === '' ? -Infinity : parseFloat(spsMinRaw);
+  const spsMax = spsMaxRaw.trim() === '' ? Infinity : parseFloat(spsMaxRaw);
+  const histRange = document.getElementById('filterHistRange').value;
+  const range7 = document.getElementById('filterRange7').value;
+  const rangeT1 = document.getElementById('filterRangeT1').value;
+  const developer = document.getElementById('filterDeveloper').value;
+  const dataDate = document.getElementById('filterDataDate').value;
   const sort = document.getElementById('filterSort').value;
 
   currentPage = 1;
   filteredProducts = PRODUCTS.filter(p => {
-    if (q && !(p.pid.includes(q) || p.spuCode.toLowerCase().includes(q) || (p.store||'').toLowerCase().includes(q))) return false;
+    if (q && !(p.pid.includes(q) || p.spuCode.toLowerCase().includes(q) || (p.store||'').toLowerCase().includes(q) || (p.supplier||'').toLowerCase().includes(q) || (p.developer||'').toLowerCase().includes(q))) return false;
     if (country && p.country !== country) return false;
     if (cat3 && p.category3 !== cat3) return false;
     if (cat2 && p.category2 !== cat2) return false;
     if (tag && p.tag !== tag) return false;
-    if (gpm && p.gpm !== gpm) return false;
-    if (season && p.season !== season) return false;
-    if (jit === 'yes' && !p.isJit) return false;
-    if (jit === 'no' && p.isJit) return false;
-    const price = parsePrice(p.promoPrice);
-    if (price < priceMin || price > priceMax) return false;
-    if (p.stock < stockMin) return false;
-    if ((parseFloat(p.rating)||0) < ratingMin) return false;
+    if (uploadFrom || uploadTo) {
+      const d = normDate(p.uploadDate);
+      if (!d) return false;
+      if (uploadFrom && d < uploadFrom) return false;
+      if (uploadTo && d > uploadTo) return false;
+    }
+    if (spsMin !== -Infinity || spsMax !== Infinity) {
+      const sv = parseFloat(p.sps);
+      if (isNaN(sv)) return false;
+      if (sv < spsMin || sv > spsMax) return false;
+    }
+    if (histRange && p.histRange !== histRange) return false;
+    if (range7 && p.range7 !== range7) return false;
+    if (rangeT1 && p.rangeT1 !== rangeT1) return false;
+    if (developer && p.developer !== developer) return false;
+    if (dataDate && p.dataDate !== dataDate) return false;
     return true;
   });
 
@@ -1017,8 +1398,10 @@ function applyFilters() {
       case 'priceAsc': return parsePrice(a.promoPrice) - parsePrice(b.promoPrice);
       case 'priceDesc': return parsePrice(b.promoPrice) - parsePrice(a.promoPrice);
       case 'dateDesc': return (b.uploadDate||'').localeCompare(a.uploadDate||'');
-      case 'ratingDesc': return (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0);
-      default: return a.rank - b.rank;
+      case 'sales7': return b.sales7 - a.sales7;
+      case 'wowDesc': return (b.wowRaw==null?-Infinity:b.wowRaw) - (a.wowRaw==null?-Infinity:a.wowRaw);
+      case 'histDesc':
+      default: return b.histSales - a.histSales;
     }
   });
 
@@ -1027,8 +1410,8 @@ function applyFilters() {
 }
 
 function resetFilters() {
-  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterGpm','filterSeason','filterJit','filterPriceMin','filterPriceMax','filterStockMin','filterRatingMin'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('filterSort').value = 'rank';
+  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1','filterDeveloper'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('filterSort').value = 'histDesc';
   currentPage = 1;
   filteredProducts = [...PRODUCTS];
   renderProducts();
@@ -1039,13 +1422,15 @@ function resetFilters() {
 function switchPage(page) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('productsPage').classList.toggle('hidden', page !== 'products');
+  document.getElementById('lookupPage').classList.toggle('active', page === 'lookup');
   document.getElementById('cartPage').classList.toggle('active', page === 'cart');
   document.getElementById('settingsPage').classList.toggle('active', page === 'settings');
   document.getElementById('cartBottomBar').classList.toggle('active', page === 'cart' && cart.length > 0);
   const tabs = document.querySelectorAll('.nav-tab');
   if (page === 'products') tabs[0].classList.add('active');
   if (page === 'cart') { tabs[1].classList.add('active'); renderCart(); }
-  if (page === 'settings') tabs[2].classList.add('active');
+  if (page === 'lookup') { tabs[2].classList.add('active'); initLookup(); }
+  if (page === 'settings') tabs[3].classList.add('active');
   updateFloatButtons();
 }
 
@@ -1063,7 +1448,9 @@ function tagClass(tag) {
   if (/7\s*天|7\s*day|7d\b/i.test(t)) return 't7';
   if (/14\s*天|14\s*day|14d\b/i.test(t)) return 't14';
   if (/45\s*天|45\s*day|45d\b/i.test(t)) return 't45';
-  if (/新品|new/i.test(t)) return 't7';
+  if (/爆款|hot|best\s*sell/i.test(t)) return 't7';
+  if (/高潜|potential|rising/i.test(t)) return 't14';
+  if (/新品|new/i.test(t)) return 't45';
   if (/老品|old|经典|常青|clearance/i.test(t)) return 'told';
   // 未知文本:哈希到 8 色通用调色板(同一文本永远同色)
   let h = 0;
@@ -1139,106 +1526,664 @@ function productImgTag(cls, raw) {
        + `referrerpolicy="no-referrer" loading="lazy" decoding="async" `
        + `onerror="onImgError(this)">`;
 }
-function renderProducts() {
-  const grid = document.getElementById('productGrid');
-  if (filteredProducts.length === 0) {
-    grid.className = '';
-    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F50D;</div><div class="empty-state-text">暂无匹配商品</div></div>';
-    renderPagination();
-    return;
+// ===== 商品渲染:一页到底 + 滚动到底自动加载更多(无分页) =====
+let renderedCount = 0;               // 当前已渲染数量
+const RENDER_CHUNK = 60;             // 每次追加的数量
+let _scrollBound = false;            // 滚动监听是否已绑定
+
+// 英文色名 → 色值映射(用于卡面颜色小圆点)。键统一小写。
+const COLOR_NAME_MAP = {
+  'black':'#111111','white':'#ffffff','red':'#e0201b','green':'#2e8b30','blue':'#2f6fe0',
+  'yellow':'#f4c518','orange':'#f57c1f','purple':'#8e44ad','pink':'#ff7eb3','gray':'#9aa0a6',
+  'grey':'#9aa0a6','brown':'#8b5a2b','beige':'#e6d3a3','navy':'#1f2a56','khaki':'#c3b091',
+  'gold':'#d4af37','silver':'#c0c0c0','ivory':'#fffff0','cream':'#f5efdc','apricot':'#f4b57e',
+  'burgundy':'#800020','wine':'#722f37','maroon':'#800000','coffee':'#6f4e37','camel':'#c19a6b',
+  'olive':'#808000','army green':'#4b5320','armygreen':'#4b5320','light blue':'#add8e6',
+  'lightblue':'#add8e6','sky blue':'#87ceeb','dark blue':'#00008b','light green':'#90ee90',
+  'dark green':'#006400','light gray':'#d3d3d3','dark gray':'#555555','rose':'#ff66a1',
+  'coral':'#ff7f50','peach':'#ffcba4','mint':'#98ff98','teal':'#008080','turquoise':'#40e0d0',
+  'lavender':'#b57edc','violet':'#7f00ff','magenta':'#ff00ff','cyan':'#00bcd4','tan':'#d2b48c',
+  'nude':'#e3bc9a','champagne':'#f7e7ce','mustard':'#e1ad01','lime':'#bfff00','indigo':'#4b0082',
+  'chocolate':'#7b3f00','sand':'#e0cda9','stone':'#a8a196','charcoal':'#36454f','dark red':'#8b0000',
+  'light pink':'#ffd1dc','hot pink':'#ff69b4','fuchsia':'#ff2d95','emerald':'#50c878',
+  'jade':'#00a86b','denim':'#3b5b92','multicolor':'linear-gradient(90deg,#e0201b,#f4c518,#2f6fe0)',
+  'multi':'linear-gradient(90deg,#e0201b,#f4c518,#2f6fe0)'
+};
+// 英文色名 → 中文(用于弹窗可点击颜色的展示)。映射不到则保留英文原文。键统一小写。
+const COLOR_CN_MAP = {
+  'black':'黑色','white':'白色','red':'红色','green':'绿色','blue':'蓝色','yellow':'黄色',
+  'orange':'橙色','purple':'紫色','pink':'粉色','gray':'灰色','grey':'灰色','brown':'棕色',
+  'beige':'米色','navy':'藏青','khaki':'卡其','gold':'金色','silver':'银色','ivory':'象牙白',
+  'cream':'奶油色','apricot':'杏色','burgundy':'酒红','wine':'酒红','maroon':'栗色',
+  'coffee':'咖啡色','camel':'驼色','olive':'橄榄绿','army green':'军绿','armygreen':'军绿',
+  'light blue':'浅蓝','lightblue':'浅蓝','sky blue':'天蓝','skyblue':'天蓝','dark blue':'深蓝',
+  'darkblue':'深蓝','light green':'浅绿','lightgreen':'浅绿','dark green':'深绿','darkgreen':'深绿',
+  'light gray':'浅灰','lightgray':'浅灰','light grey':'浅灰','dark gray':'深灰','darkgray':'深灰',
+  'dark grey':'深灰','rose':'玫瑰色','coral':'珊瑚色','peach':'蜜桃色','mint':'薄荷绿',
+  'teal':'蓝绿色','turquoise':'松石绿','lavender':'薰衣草紫','violet':'紫罗兰','magenta':'品红',
+  'cyan':'青色','tan':'棕褐色','nude':'裸色','champagne':'香槟色','mustard':'芥末黄','lime':'青柠色',
+  'indigo':'靛蓝','chocolate':'巧克力色','sand':'沙色','stone':'石灰色','charcoal':'炭灰色',
+  'dark red':'深红','darkred':'深红','light pink':'浅粉','lightpink':'浅粉','hot pink':'亮粉',
+  'hotpink':'亮粉','fuchsia':'紫红','emerald':'祖母绿','jade':'翡翠绿','denim':'牛仔蓝',
+  'multicolor':'多色','multi':'多色','caramel':'焦糖色','mocha':'摩卡色','taupe':'灰褐色',
+  'lilac':'丁香紫','plum':'李子色','salmon':'鲑鱼色','aqua':'水蓝色','azure':'蔚蓝色',
+  'ochre':'赭石色','terracotta':'陶土色','rust':'铁锈色','copper':'铜色','bronze':'古铜色',
+  'sage':'鼠尾草绿','forest green':'森林绿','forestgreen':'森林绿','pastel':'柔和色','ecru':'本白色',
+  'golden':'金色','chartreuse':'黄绿色','mulberry':'桑葚色','curry':'咖喱色','fawn':'鹿棕色',
+  'multi-color':'多色','multi color':'多色','black and white':'黑白色','jet black':'纯黑色',
+  'off white':'米白色','offwhite':'米白色','royal blue':'宝蓝色','navy blue':'藏青色',
+  'light wash':'浅水洗','dark wash':'深水洗','medium wash':'中水洗','wash':'水洗色',
+  'mauve':'木槿紫','pebble':'卵石色','flame red':'火焰红','lemon yellow':'柠檬黄',
+  'denim blue':'牛仔蓝','charcoal gray':'炭灰色','charcoal grey':'炭灰色','emerald green':'祖母绿',
+  'mint green':'薄荷绿','rust red':'铁锈红','wine red':'酒红色','army green':'军绿色','avocado green':'牛油果绿',
+  'olive green':'橄榄绿','forest green':'森林绿','sage green':'鼠尾草绿','moss green':'苔藓绿',
+  'coffee brown':'咖啡棕','apricot brown':'杏棕色','rose red':'玫红色','rose pink':'玫粉色',
+  'baby pink':'浅粉色','baby blue':'浅蓝色','jade green':'翡翠绿','coral red':'珊瑚红'
+};
+// 常见英文色名词根 → 中文,用于兜底逐词拼「中文+色」
+const COLOR_ROOT_MAP = {
+  'caramel':'焦糖','mocha':'摩卡','taupe':'灰褐','lilac':'丁香','plum':'李子','salmon':'鲑鱼',
+  'aqua':'水蓝','azure':'蔚蓝','ochre':'赭石','terracotta':'陶土','rust':'铁锈','copper':'铜',
+  'bronze':'古铜','sage':'鼠尾草','ecru':'本白','mauve':'木槿紫','cerulean':'蔚蓝','amber':'琥珀',
+  'ruby':'宝石红','sapphire':'宝蓝','pearl':'珍珠','smoke':'烟','ash':'烟灰','slate':'石板',
+  'lemon':'柠檬','cherry':'樱桃','grape':'葡萄','berry':'莓','honey':'蜂蜜','latte':'拿铁',
+  'dusty':'灰调','off':'柔','deep':'深','light':'浅','dark':'深','bright':'亮','pale':'淡',
+  'baby':'浅','hot':'亮','neon':'荧光','pastel':'柔','vintage':'复古','soft':'柔','warm':'暖',
+  'cool':'冷','nude':'裸','sand':'沙','stone':'石','cloud':'云','fog':'雾','sky':'天','sea':'海',
+  'ocean':'海','forest':'森林','army':'军','olive':'橄榄','moss':'苔','mint':'薄荷','emerald':'祖母绿',
+  'jade':'翡翠','navy':'藏青','denim':'牛仔','teal':'蓝绿','turquoise':'松石','indigo':'靛','violet':'紫罗兰',
+  'lavender':'薰衣草','magenta':'品红','fuchsia':'紫红','rose':'玫瑰','coral':'珊瑚','peach':'蜜桃',
+  'apricot':'杏','champagne':'香槟','mustard':'芥末','khaki':'卡其','beige':'米','cream':'奶油',
+  'ivory':'象牙','coffee':'咖啡','chocolate':'巧克力','wine':'酒红','burgundy':'酒红','maroon':'栗',
+  'charcoal':'炭','silver':'银','gold':'金','tan':'棕褐','camel':'驼',
+  // 基础色词(作为词组末词兜底)
+  'black':'黑','white':'白','red':'红','green':'绿','blue':'蓝','yellow':'黄','orange':'橙',
+  'purple':'紫','pink':'粉','gray':'灰','grey':'灰','brown':'棕'
+};
+// 把英文色名翻成中文;精确映射优先,其次逐词翻译拼「中文+色」,确保永远输出中文
+function colorToCn(name) {
+  const raw = String(name || '').trim();
+  if (!raw) return name;
+  const key = raw.toLowerCase();
+  if (COLOR_CN_MAP[key]) return COLOR_CN_MAP[key];
+  if (!/[a-z]/i.test(raw)) return raw; // 已是纯中文/纯符号
+
+  // 修饰词(深浅冷暖等)→ 中文前缀,不带"色"
+  const MOD = { 'deep':'深','dark':'深','light':'浅','pale':'淡','bright':'亮','baby':'浅','hot':'亮','soft':'柔','warm':'暖','cool':'冷','neon':'荧光','pastel':'柔','vintage':'复古','dusty':'灰调','off':'柔' };
+  // 单位/连接词(组合款可读)
+  const UNIT = { 'pieces':'件','piece':'件','pcs':'件','pc':'件','set':'套','sets':'套','and':'和','with':'配','pieces）':'件' };
+  // 基础/复合颜色词典(去掉尾"色",拼装时按需补)
+  const baseCn = w => {
+    const lw = w.toLowerCase();
+    if (COLOR_CN_MAP[lw]) return COLOR_CN_MAP[lw];
+    if (COLOR_ROOT_MAP[lw]) { const r = COLOR_ROOT_MAP[lw]; return /[色绿红蓝紫黄白黑灰棕粉青]$/.test(r) ? r : r + '色'; }
+    return null;
+  };
+
+  // 清洗:去掉款号/编号噪声
+  let cleaned = raw
+    .replace(/\b[0-9]+\s*#\s*[0-9]*/g, ' ')
+    .replace(/#\s*[0-9]+/g, ' ')
+    .replace(/\bRS?\s*[0-9]{2,}\b/gi, ' ')
+    .replace(/\b[0-9]{3,}\b/g, ' ');
+
+  // 分词(保留 + / * , & 作为组合分隔)
+  const rawTokens = cleaned.split(/([+*,&]|\bplus\b)/i);
+  const groups = rawTokens.filter(t => t !== undefined);
+  let out = [];
+  let anyColor = false;
+
+  const translateChunk = (chunk) => {
+    const words = chunk.split(/[\s\-_/()（）·]+/).filter(Boolean);
+    let segStr = '';
+    let pendingMod = '';
+    let localHit = false;
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i];
+      const lw = w.toLowerCase();
+      // 双词颜色(dark blue / army green / navy blue …)
+      if (i + 1 < words.length) {
+        const pairKey = (lw + ' ' + words[i+1].toLowerCase());
+        if (COLOR_CN_MAP[pairKey]) { segStr += (pendingMod) + COLOR_CN_MAP[pairKey]; pendingMod=''; localHit = true; anyColor = true; i++; continue; }
+      }
+      if (MOD[lw]) { pendingMod += MOD[lw]; continue; }
+      if (UNIT[lw]) { if (segStr) segStr += UNIT[lw]; continue; }
+      const c = baseCn(w);
+      if (c) {
+        // 修饰前缀 + 颜色:去掉颜色里可能重复的"色",拼成"深驼色"
+        let cc = c;
+        if (pendingMod) { cc = pendingMod + c.replace(/色$/, '') + (/[色绿红蓝紫黄白黑灰棕粉青]$/.test(c.replace(/色$/, '')) ? '' : '色'); pendingMod=''; }
+        segStr += cc; localHit = true; anyColor = true; continue;
+      }
+      // 非颜色描述词(Flowers/pattern/base/Small 等):直接丢弃,不污染
+      pendingMod = '';
+    }
+    if (pendingMod && !segStr) segStr = pendingMod + '色';
+    return { str: segStr, hit: localHit };
+  };
+
+  for (const g of groups) {
+    if (/^[+*]$/.test(g) || /^\bplus\b$/i.test(g)) { if (out.length && out[out.length-1] !== ' + ') out.push(' + '); continue; }
+    if (/^[,&]$/.test(g)) { if (out.length) out.push('、'); continue; }
+    const r = translateChunk(g);
+    if (r.str) out.push(r.str);
   }
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = filteredProducts.slice(start, start + PAGE_SIZE);
-  grid.className = 'product-grid';
-  grid.innerHTML = pageItems.map((p, idx) => {
-    const tagCls = tagClass(p.tag);
-    const rankTxt = (p.rank && p.rank < 99999) ? `<span class="pc-rank">#${p.rank}</span>` : '';
-    const gpmTxt = p.gpm ? `<span class="pc-gpm">${p.gpm}</span>` : '';
-    const affTxt = p.affiliate ? `<span class="pc-aff">${p.affiliate}</span>` : '';
-    const csTxt = (p.colorList.length || p.sizeList.length)
-      ? `<div class="pc-colorsize">${p.colorList.length ? `<span class="pc-cs">${p.colorList.length}色</span>` : ''}${p.sizeList.length ? `<span class="pc-cs">${p.sizeList.length}码</span>` : ''}${p.season ? `<span class="pc-season">${p.season}</span>` : ''}</div>`
-      : (p.season ? `<div class="pc-colorsize"><span class="pc-season">${p.season}</span></div>` : '');
-    const jitTxt = p.isJit ? `<span class="product-img-jit">JIT</span>` : '';
-    return `
+
+  let joined = out.join('').replace(/^[\s+、]+|[\s+、]+$/g,'').replace(/(\s*\+\s*)+$/,'').replace(/^(\s*\+\s*)+/,'').trim();
+  joined = joined.replace(/、{2,}/g,'、').replace(/(\s*\+\s*){2,}/g,' + ');
+  if (anyColor && joined) return joined;
+  // 完全无法解析 → 保底原文+色
+  return raw + '色';
+}
+// 近似色兜底:按关键字粗匹配(实在无法精确映射时启用)
+function approxColor(name) {
+  const n = String(name).toLowerCase();
+  const pairs = [['green','#2e8b30'],['blue','#2f6fe0'],['red','#e0201b'],['pink','#ff7eb3'],
+    ['purple','#8e44ad'],['yellow','#f4c518'],['orange','#f57c1f'],['brown','#8b5a2b'],
+    ['gray','#9aa0a6'],['grey','#9aa0a6'],['black','#111111'],['white','#ffffff'],
+    ['beige','#e6d3a3'],['gold','#d4af37'],['silver','#c0c0c0']];
+  for (const [k,v] of pairs) { if (n.includes(k)) return v; }
+  return null;
+}
+// 销量脱敏:保留约两位有效数字,向下取整,返回「lower-upper」;0/空返回 ''
+// 个位→「0-10」;两/三位 step=10;四位 step=100;… 即 step=10^max(1,位数-2)
+// 例:67→「60-70」139→「130-140」1234→「1200-1300」16345→「16000-17000」176543→「170000-180000」
+function desensitize(value) {
+  const n = parseInt(value);
+  if (!n || isNaN(n) || n <= 0) return '';
+  const digits = String(n).length;
+  if (digits <= 1) return '「0-10」';
+  const step = Math.pow(10, Math.max(1, digits - 2));
+  const lower = Math.floor(n / step) * step;
+  const upper = lower + step;
+  return '「' + lower + '-' + upper + '」';
+}
+// 把数据源里的销量区间串转成展示用「XX-XX」;上界为 +∞ 时展示「下界+」
+// 例:(0,100]→「0-100」(10,30]→「10-30」(10000,+∞)→「10000+」(100,+∞)→「100+」
+function rangeLabel(raw) {
+  if (raw == null) return '';
+  const s = String(raw).trim();
+  if (s === '' || /^(null|#n\/a|n\/a|none)$/i.test(s)) return '';
+  const m = s.match(/[\(\[]\s*([^,]+?)\s*,\s*([^\]\)]+?)\s*[\]\)]/);
+  if (!m) return '';                          // 非区间格式,不展示
+  const lo = m[1].trim();
+  let hi = m[2].trim();
+  const loNum = parseFloat(lo.replace(/[^\d.\-]/g, ''));
+  const loShow = isNaN(loNum) ? lo : String(Math.round(loNum));
+  if (/[+∞]|inf/i.test(hi)) return '「' + loShow + '+」';   // 上界无穷 → 「下界+」
+  const hiNum = parseFloat(hi.replace(/[^\d.\-]/g, ''));
+  const hiShow = isNaN(hiNum) ? hi : String(Math.round(hiNum));
+  return '「' + loShow + '-' + hiShow + '」';
+}
+// 生成卡面颜色圆点:优先精确映射,最多 5 个;不确定的先跳过,凑不满时再用近似色补
+// 若实际颜色数超过 5,末尾追加 "+N" 溢出提示
+function colorDots(colorList) {
+  if (!colorList || !colorList.length) return '';
+  const total = colorList.length;
+  const exact = [], approx = [];
+  for (const raw of colorList) {
+    const key = String(raw).trim().toLowerCase();
+    if (COLOR_NAME_MAP[key]) exact.push({ name: raw, val: COLOR_NAME_MAP[key] });
+    else { const a = approxColor(raw); if (a) approx.push({ name: raw, val: a }); }
+  }
+  let picked = exact.slice(0, 5);
+  if (picked.length < 5) picked = picked.concat(approx.slice(0, 5 - picked.length));
+  if (!picked.length) return '';
+  const dots = picked.map(c => {
+    const bg = c.val;
+    const border = (c.val.toLowerCase() === '#ffffff' || c.val.toLowerCase() === '#fffff0') ? 'border:1px solid #ccc;' : '';
+    return `<span class="pc-dot" style="background:${bg};${border}" title="${String(c.name).replace(/"/g,'')}"></span>`;
+  }).join('');
+  const overflow = total > 5 ? `<span class="pc-dot-more" title="还有 ${total - 5} 种颜色未展示">+${total - 5}</span>` : '';
+  return `<div class="pc-dots">${dots}${overflow}</div>`;
+}
+// 近3天环比增速:向下取整到 10% 档,只在为正时返回展示串(如 近3日增速 ↑10%);否则返回 ''
+function wowUpBadge(wowRaw) {
+  if (wowRaw == null || isNaN(wowRaw)) return '';
+  const pct = wowRaw * 100;
+  if (pct <= 0) return '';
+  const floored = Math.floor(pct / 10) * 10;
+  if (floored < 10) return '';   // 不足 10% 档不展示
+  return `<span class="pc-sale pc-sale-wow" title="近3日环比增速"><i>近3日增速</i>&#9650;${floored}%</span>`;
+}
+// 分渠道出单占比条(分母=近7日总量 Q;短视频红/直播绿/货架蓝);三者全 0 则不显示
+function channelBar(p) {
+  const v = Math.max(0, p.sales7Video || 0);
+  const l = Math.max(0, p.sales7Live || 0);
+  const s = Math.max(0, p.sales7Shelf || 0);
+  const denom = (p.sales7 && p.sales7 > 0) ? p.sales7 : (v + l + s);
+  if (!denom || (v + l + s) === 0) return '';
+  const pv = v / denom * 100, pl = l / denom * 100, ps = s / denom * 100;
+  const seg = (w, cls, label) => { if (w <= 0) return ''; const tip = label + ' ' + (Math.round(w*10)/10) + '%'; return `<span class="pc-ch-seg ${cls}" style="width:${w}%" data-tip="${tip}" title="${tip}"></span>`; };
+  return `<div class="pc-channel">`
+    + seg(pv, 'ch-video', '短视频') + seg(pl, 'ch-live', '直播') + seg(ps, 'ch-shelf', '货架')
+    + `</div>`;
+}
+
+function buildCardHtml(p) {
+  const tagCls = tagClass(p.tag);
+  const keyMerchant = /SKM商家/.test(p.skm || '') && !/非SKM/.test(p.skm || '') ? `<span class="pc-keymerchant">重点商家</span>` : '';
+  const wowTxt = wowUpBadge(p.wowRaw);
+  const dots = colorDots(p.colorList);
+  const chBar = channelBar(p);
+  // 店铺名称(截断)
+  const storeName = (p.store && String(p.store).trim() !== '') ? String(p.store) : '';
+  // 店铺评分(原"店铺SPS分" → 改名"店铺评分")
+  const spsScore = (p.sps && String(p.sps).trim() !== '') ? String(p.sps).trim() : '';
+  // 类目组合:数据源里的 "+" 展示为 "/"
+  const catCombo = (p.catCombo || '').replace(/\+/g, '/');
+  // 类目 | 国家 副信息行(参考图:标码女装 / 女士下装 | GB)
+  const subInfoParts = [];
+  if (catCombo) subInfoParts.push(catCombo);
+  if (p.country) subInfoParts.push(p.country);
+  const subInfo = subInfoParts.length ? subInfoParts.join(' | ') : '';
+  // 库存(真实相加,不脱敏)
+  const stockVal = (p.stock || 0) + (p.jitStock || 0);
+  // 商品 tag(新老品/爆款…):放到 SPU 同一行、右对齐
+  const spuTagInline = p.tag ? `<span class="pc-spu-tag ${tagCls}">${p.tag}</span>` : '';
+  // 顶部属性标签流:已清空(重点商家移至 类目|国家 行右对齐,季节移至价格行)
+  const attrRow = '';
+  // 季节标签:放到价格行,位于库存右侧
+  const seasonInline = p.season ? `<span class="pc-price-season">${p.season}</span>` : '';
+  // 上架日期:胶囊标签,放在颜色圆块行左侧(位于数据更新日期上方)
+  const uploadInline = p.uploadDate ? `<span class="pc-cap pc-cap-list pc-upload-inline" title="全球首次上架日期">上架 ${p.uploadDate}</span>` : '';
+  // 销量标签:直接取数据源区间字段,转成「XX-XX」(历史累计销量区间/近7天出单区间/T-1出单区间)
+  const histLabel = rangeLabel(p.histRange);
+  const s7Label = rangeLabel(p.range7);
+  const t1Label = rangeLabel(p.rangeT1);
+  const histTag = histLabel ? `<span class="pc-sale pc-sale-hist" title="历史累计销量"><i>历史</i>${histLabel}</span>` : '';
+  const s7Tag = s7Label ? `<span class="pc-sale pc-sale-7" title="近7日销量"><i>近7日</i>${s7Label}</span>` : '';
+  const t1Tag = t1Label ? `<span class="pc-sale pc-sale-t1" title="昨日销量"><i>昨日</i>${t1Label}</span>` : '';
+  // 历史/近7日/昨日销量 + 近3日增速 → 2×2 网格
+  const wowCell = wowTxt ? `<div class="pc-sale-cell">${wowTxt}</div>` : '';
+  const salesCells = ''
+    + (histTag ? `<div class="pc-sale-cell">${histTag}</div>` : '')
+    + (s7Tag ? `<div class="pc-sale-cell">${s7Tag}</div>` : '')
+    + (t1Tag ? `<div class="pc-sale-cell">${t1Tag}</div>` : '')
+    + wowCell;
+  const salesRow = salesCells ? `<div class="pc-sales pc-sales-grid">${salesCells}</div>` : '';
+  return `
     <div class="product-card">
       <div class="product-img-wrap" onclick="openSKU('${p.pid}')">
         ${productImgTag('product-img', p.image)}
-        ${p.tag ? `<span class="product-img-tag ${tagCls}">${p.tag}</span>` : ''}
-        ${jitTxt}
         <button class="product-img-btn" onclick="event.stopPropagation();openLightbox('${p.image}')">查看大图</button>
       </div>
       <div class="product-info" onclick="openSKU('${p.pid}')" style="cursor:pointer;">
-        <div class="pc-pid">${p.pid}</div>
-        <div class="pc-shop-row">
-          <span class="pc-shop" title="${p.store}">${p.store || '-'}</span>
-          ${p.rating ? `<span class="pc-rating">店铺评分 ${p.rating}</span>` : ''}
+        <div class="pc-infoblock">
+          <div class="pc-spu-row">
+            <span class="pc-spu">SPU ${p.spuCode || '-'}</span>
+            ${spuTagInline}
+          </div>
+          <div class="pc-pid">${p.pid}</div>
+          <div class="pc-store-row">
+            <span class="pc-store-name" title="${storeName.replace(/"/g,'')}">${storeName || '-'}</span>
+            ${spsScore ? `<span class="pc-store-score" title="店铺评分">店铺评分 <b>${spsScore}</b></span>` : ''}
+          </div>
+          ${(subInfo || keyMerchant) ? `<div class="pc-subinfo-row"><span class="pc-subinfo" title="${subInfo.replace(/"/g,'')}">${subInfo}</span>${keyMerchant}</div>` : ''}
+          <div class="pc-priceline">
+            <span class="product-price">${p.promoPrice || '-'}</span>
+            ${stockVal > 0 ? `<span class="pc-stock">库存 ${stockVal}</span>` : ''}
+            ${seasonInline}
+          </div>
         </div>
-        <div class="pc-cat">${p.category2 || ''} / ${p.category3 || ''} | ${p.country}</div>
-        <div class="pc-price-row">
-          <span class="product-price">${p.promoPrice}</span>
-          ${p.stock ? `<span class="pc-stock">库存 ${p.stock}</span>` : ''}
-        </div>
-        ${csTxt}
-        <div class="pc-badges">
-          ${rankTxt}${gpmTxt}${affTxt}
+        ${attrRow}
+        ${salesRow}
+        ${chBar}
+        <div class="pc-dots-row">
+          ${uploadInline}
+          ${dots}
         </div>
         <div class="pc-bottom">
-          <span class="pc-date">${p.uploadDate || ''}</span>
+          <span class="pc-date" title="数据更新日期(取数日期)">${p.dataDate ? '数据更新 ' + p.dataDate : ''}</span>
           <button class="quick-add-btn" title="快速加入（热销色 / S M L混发 / 6件）" onclick="event.stopPropagation();quickAdd('${p.pid}')">+</button>
         </div>
       </div>
     </div>`;
-  }).join('');
-  const sa = document.getElementById('scrollArea');
-  if (sa) sa.scrollTop = 0;
-  renderPagination();
 }
 
-// ===== Pagination =====
-function renderPagination() {
+// 从头渲染(筛选/排序/重置后调用):清空网格并渲染首屏,滚回顶部
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  bindScrollLoader();
+  if (filteredProducts.length === 0) {
+    grid.className = '';
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F50D;</div><div class="empty-state-text">暂无匹配商品</div></div>';
+    renderedCount = 0;
+    updateProductCount();
+    return;
+  }
+  grid.className = 'product-grid';
+  grid.innerHTML = '';
+  renderedCount = 0;
+  const sa = document.getElementById('scrollArea');
+  if (sa) sa.scrollTop = 0;
+  appendMoreProducts();
+  // 若首屏未撑满容器,继续补齐直到出现滚动条或全部加载完
+  fillUntilScrollable();
+}
+
+// 追加下一批商品
+function appendMoreProducts() {
+  const grid = document.getElementById('productGrid');
+  if (!grid || renderedCount >= filteredProducts.length) return;
+  const next = filteredProducts.slice(renderedCount, renderedCount + RENDER_CHUNK);
+  const frag = document.createElement('div');
+  frag.innerHTML = next.map(buildCardHtml).join('');
+  while (frag.firstChild) grid.appendChild(frag.firstChild);
+  renderedCount += next.length;
+  updateProductCount();
+}
+
+// 若内容不足以产生滚动条,持续补齐(避免无法触发滚动加载)
+function fillUntilScrollable() {
+  const sa = document.getElementById('scrollArea');
+  if (!sa) return;
+  let guard = 0;
+  while (renderedCount < filteredProducts.length && sa.scrollHeight <= sa.clientHeight + 40 && guard < 200) {
+    appendMoreProducts();
+    guard++;
+  }
+}
+
+function updateProductCount() {
+  const el = document.getElementById('filterStats');
+  // filterStats 由 applyFilters 设置匹配数,这里补充"已加载 x/总数"提示到分页占位区
   const bar = document.getElementById('pagination');
   if (!bar) return;
   const total = filteredProducts.length;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   if (total === 0) { bar.innerHTML = ''; return; }
-
-  // 计算要显示的页码（首页、末页、当前页 ±2，其余用省略号）
-  const pages = [];
-  const add = n => { if (!pages.includes(n) && n >= 1 && n <= totalPages) pages.push(n); };
-  add(1); add(totalPages);
-  for (let i = currentPage - 2; i <= currentPage + 2; i++) add(i);
-  pages.sort((a, b) => a - b);
-
-  let html = `<span class="pg-total">共 ${total} 件 / ${totalPages} 页</span>`;
-  html += `<button class="pg-btn" onclick="gotoPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>`;
-  let prev = 0;
-  for (const n of pages) {
-    if (prev && n - prev > 1) html += `<span class="pg-ellipsis">…</span>`;
-    html += `<button class="pg-btn ${n === currentPage ? 'active' : ''}" onclick="gotoPage(${n})">${n}</button>`;
-    prev = n;
+  if (renderedCount >= total) {
+    bar.innerHTML = `<span class="pg-total">已展示全部 ${total} 件</span>`;
+  } else {
+    bar.innerHTML = `<span class="pg-total">已加载 ${renderedCount} / ${total} 件 · 向下滚动加载更多</span>`;
   }
-  html += `<button class="pg-btn" onclick="gotoPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>`;
-  html += `<span class="pg-jump">跳至 <input type="number" min="1" max="${totalPages}" id="pgJumpInput" onkeydown="if(event.key==='Enter')jumpPage()"> 页 <button class="pg-btn" onclick="jumpPage()">Go</button></span>`;
-  bar.innerHTML = html;
 }
 
-function gotoPage(n) {
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
-  n = Math.min(Math.max(1, n), totalPages);
-  if (n === currentPage) return;
-  currentPage = n;
-  renderProducts();
+// 绑定滚动监听:接近底部时自动追加
+function bindScrollLoader() {
+  if (_scrollBound) return;
+  const sa = document.getElementById('scrollArea');
+  if (!sa) return;
+  sa.addEventListener('scroll', function() {
+    if (renderedCount >= filteredProducts.length) return;
+    if (sa.scrollTop + sa.clientHeight >= sa.scrollHeight - 600) {
+      appendMoreProducts();
+    }
+  });
+  _scrollBound = true;
 }
 
-function jumpPage() {
-  const input = document.getElementById('pgJumpInput');
-  if (!input) return;
-  const n = parseInt(input.value);
-  if (!n || isNaN(n)) { showToast('请输入有效页码'); return; }
-  gotoPage(n);
+// ===== SPU-PID 互查 =====
+// 加载 pid_map.csv,构建双向索引。预览环境直接用注入的 window.PREVIEW_PID_MAP。
+function loadPidMap(cb) {
+  if (PID_MAP_LOADED) { if (cb) cb(); return; }
+  if (PID_MAP_LOADING) { return; }
+  PID_MAP_LOADING = true;
+
+  if (window.PREVIEW_PID_MAP) {
+    buildPidIndex(window.PREVIEW_PID_MAP);
+    PID_MAP_LOADED = true; PID_MAP_LOADING = false;
+    if (cb) cb();
+    return;
+  }
+
+  var candidates = ['data/pid_map.csv', 'pid_map.csv'];
+  tryLoadPidMap(candidates, 0, cb);
+}
+
+function tryLoadPidMap(candidates, idx, cb) {
+  if (idx >= candidates.length) {
+    PID_MAP_LOADING = false;
+    if (cb) cb(new Error('pid_map load failed'));
+    return;
+  }
+  Papa.parse(candidates[idx], {
+    download: true, header: true, skipEmptyLines: true,
+    complete: function(results) {
+      var rows = results.data || [];
+      if (!rows.length) { tryLoadPidMap(candidates, idx + 1, cb); return; }
+      buildPidIndex(rows);
+      PID_MAP_LOADED = true; PID_MAP_LOADING = false;
+      if (cb) cb();
+    },
+    error: function() { tryLoadPidMap(candidates, idx + 1, cb); }
+  });
+}
+
+// rows: [{spu_code|spu, buyer|买手, DE, ES, FR, IT, GB, US, MX}, ...]
+function buildPidIndex(rows) {
+  PID_MAP = {}; PID_INDEX = {};
+  rows.forEach(function(r) {
+    var spu = String(r.spu_code || r.spu || r.SPU || '').trim();
+    if (!spu) return;
+    var entry = { buyer: String(r.buyer || r['买手'] || '').trim() };
+    LOOKUP_COUNTRIES.forEach(function(c) {
+      var v = String(r[c] || '').trim();
+      entry[c] = v;
+      if (v && !PID_INDEX[v]) PID_INDEX[v] = { spu: spu, country: c };
+    });
+    PID_MAP[spu] = entry;
+  });
+}
+
+function initLookup() {
+  renderLookupColChips();
+  var elCount = document.getElementById('lookupDbCount');
+  if (PID_MAP_LOADED) {
+    if (elCount) elCount.textContent = '已加载 ' + Object.keys(PID_MAP).length + ' 个 SPU / ' + Object.keys(PID_INDEX).length + ' 个 PID';
+    return;
+  }
+  if (elCount) elCount.textContent = '正在加载对照表...';
+  loadPidMap(function(err) {
+    if (err) { if (elCount) elCount.textContent = '对照表加载失败,请刷新重试'; return; }
+    if (elCount) elCount.textContent = '已加载 ' + Object.keys(PID_MAP).length + ' 个 SPU / ' + Object.keys(PID_INDEX).length + ' 个 PID';
+  });
+}
+
+// 渲染国家列勾选 chip(可只选 1~3 个国家)
+function renderLookupColChips() {
+  var box = document.getElementById('lookupColsItems');
+  if (!box) return;
+  box.innerHTML = LOOKUP_COUNTRIES.map(function(c){
+    var on = lookupSelectedCols.indexOf(c) !== -1;
+    return '<label class="lk-col-chip' + (on ? ' on' : '') + '" data-c="' + c + '">'
+      + '<input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="toggleLookupCol(\'' + c + '\', this.checked)">'
+      + c + '</label>';
+  }).join('');
+}
+
+function toggleLookupCol(c, checked) {
+  var i = lookupSelectedCols.indexOf(c);
+  if (checked && i === -1) lookupSelectedCols.push(c);
+  if (!checked && i !== -1) lookupSelectedCols.splice(i, 1);
+  // 按固定国家顺序排序,保证列序稳定
+  lookupSelectedCols.sort(function(a, b){ return LOOKUP_COUNTRIES.indexOf(a) - LOOKUP_COUNTRIES.indexOf(b); });
+  renderLookupColChips();
+  // 已有结果时,实时刷新表格列
+  if (lastLookupRows.length) reRenderLookupResult();
+}
+
+function setLookupCols(all) {
+  lookupSelectedCols = all ? LOOKUP_COUNTRIES.slice() : [];
+  renderLookupColChips();
+  if (lastLookupRows.length) reRenderLookupResult();
+}
+
+// 识别输入类型:先精确命中表;未命中则按形态猜测(S 开头=SPU,长数字=PID),便于给出"未找到"
+function classifyToken(tok) {
+  var t = tok.trim();
+  if (!t) return null;
+  if (PID_MAP[t]) return { type: 'spu', value: t };
+  if (PID_INDEX[t]) return { type: 'pid', value: t };
+  if (/^s/i.test(t)) return { type: 'spu', value: t };
+  if (/^\d{6,}$/.test(t)) return { type: 'pid', value: t };
+  return { type: 'spu', value: t };
+}
+
+function parseLookupTokens(text) {
+  var raw = (text || '').split(/[\s,;，、\n\r\t]+/);
+  var seen = {}, out = [];
+  raw.forEach(function(x) {
+    var t = x.trim();
+    if (!t || seen[t]) return;
+    seen[t] = 1; out.push(t);
+  });
+  return out;
+}
+
+function runLookup() {
+  var input = document.getElementById('lookupInput');
+  var tokens = parseLookupTokens(input ? input.value : '');
+  if (!tokens.length) { showToast('请先输入 SPU 或 PID'); return; }
+  if (!PID_MAP_LOADED) { initLookup(); showToast('对照表加载中,请稍候再查'); return; }
+  if (tokens.length > 5000) { showToast('单次最多查询 5000 条,已截断'); tokens = tokens.slice(0, 5000); }
+
+  var rows = [], okCount = 0, missCount = 0;
+  tokens.forEach(function(tok) {
+    var cls = classifyToken(tok);
+    if (cls.type === 'spu') {
+      var entry = PID_MAP[cls.value];
+      if (entry) {
+        okCount++;
+        var row = { input: cls.value, type: 'SPU', spu: cls.value, buyer: entry.buyer || '', found: true };
+        LOOKUP_COUNTRIES.forEach(function(c){ row[c] = entry[c] || ''; });
+        rows.push(row);
+      } else { missCount++; rows.push({ input: cls.value, type: 'SPU', spu: cls.value, found: false }); }
+    } else {
+      var hit = PID_INDEX[cls.value];
+      if (hit) {
+        okCount++;
+        var entry2 = PID_MAP[hit.spu] || {};
+        var row2 = { input: cls.value, type: 'PID', spu: hit.spu, buyer: entry2.buyer || '', hitCountry: hit.country, found: true };
+        LOOKUP_COUNTRIES.forEach(function(c){ row2[c] = entry2[c] || ''; });
+        rows.push(row2);
+      } else { missCount++; rows.push({ input: cls.value, type: 'PID', spu: '', found: false }); }
+    }
+  });
+
+  lastLookupRows = rows;
+  reRenderLookupResult();
+}
+
+// 用当前勾选列重新渲染统计条与结果表(rows 内始终保存全部国家数据)
+function reRenderLookupResult() {
+  var rows = lastLookupRows;
+  var okCount = rows.filter(function(r){ return r.found; }).length;
+  var missCount = rows.length - okCount;
+  renderLookupResult(rows, okCount, missCount);
+}
+
+function renderLookupResult(rows, okCount, missCount) {
+  var cols = lookupSelectedCols.length ? lookupSelectedCols : [];
+  var stats = document.getElementById('lookupStats');
+  var wrap = document.getElementById('lookupResultWrap');
+  var actions = document.getElementById('lookupResultActions');
+  if (stats) {
+    stats.innerHTML = '共 ' + rows.length + ' 条输入,'
+      + '<span class="ok">命中 ' + okCount + '</span>,'
+      + '<span class="miss">未找到 ' + missCount + '</span>'
+      + (cols.length ? '(显示 ' + cols.length + ' 国:' + cols.join('/') + ')' : '(未选择国家列)');
+  }
+  if (actions) actions.style.display = rows.length ? 'flex' : 'none';
+  if (!rows.length) { if (wrap) wrap.innerHTML = ''; return; }
+
+  var esc = function(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var cell = function(v, hit){
+    if (!v) return '<td class="lk-miss">—</td>';
+    return '<td' + (hit ? ' style="color:var(--accent);font-weight:600;"' : '') + '>' + esc(v) + '</td>';
+  };
+  var html = '<table class="lookup-table"><thead><tr><th>输入</th><th>SPU</th><th>买手</th>'
+    + cols.map(function(c){ return '<th>' + c + '</th>'; }).join('')
+    + '</tr></thead><tbody>';
+  rows.forEach(function(r){
+    if (!r.found) {
+      html += '<tr class="lk-notfound"><td class="lk-key">' + esc(r.input)
+        + '<span class="lk-input-type ' + (r.type === 'PID' ? 'pid' : 'spu') + '">' + r.type + '</span></td>'
+        + '<td colspan="' + (cols.length + 2) + '">未找到</td></tr>';
+      return;
+    }
+    html += '<tr><td class="lk-key">' + esc(r.input)
+      + '<span class="lk-input-type ' + (r.type === 'PID' ? 'pid' : 'spu') + '">' + r.type + '</span></td>'
+      + '<td>' + esc(r.spu) + '</td>'
+      + '<td class="lk-buyer">' + (r.buyer ? esc(r.buyer) : '<span class="lk-miss">—</span>') + '</td>'
+      + cols.map(function(c){ return cell(r[c], r.type === 'PID' && r.hitCountry === c); }).join('')
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  if (wrap) wrap.innerHTML = html;
+}
+
+function clearLookup() {
+  var input = document.getElementById('lookupInput');
+  if (input) input.value = '';
+  lastLookupRows = [];
+  var wrap = document.getElementById('lookupResultWrap');
+  var stats = document.getElementById('lookupStats');
+  var actions = document.getElementById('lookupResultActions');
+  if (wrap) wrap.innerHTML = '';
+  if (stats) stats.innerHTML = '';
+  if (actions) actions.style.display = 'none';
+}
+
+function lookupRowsToMatrix() {
+  var cols = lookupSelectedCols.length ? lookupSelectedCols : [];
+  var head = ['输入', '输入类型', 'SPU', '买手'].concat(cols).concat(['查询结果']);
+  var body = lastLookupRows.map(function(r){
+    var line = [r.input, r.type, r.found ? r.spu : '', r.found ? (r.buyer || '') : ''];
+    cols.forEach(function(c){ line.push(r.found ? (r[c] || '') : ''); });
+    line.push(r.found ? '命中' : '未找到');
+    return line;
+  });
+  return [head].concat(body);
+}
+
+function copyLookupResult() {
+  if (!lastLookupRows.length) { showToast('暂无结果可复制'); return; }
+  if (!lookupSelectedCols.length) { showToast('请至少勾选一个国家列'); return; }
+  var text = lookupRowsToMatrix().map(function(row){ return row.join('\t'); }).join('\n');
+  var done = function(){ showToast('已复制 ' + lastLookupRows.length + ' 条结果(可直接粘贴到表格)'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text, done); });
+  } else { fallbackCopy(text, done); }
+}
+
+function fallbackCopy(text, done) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); if (done) done(); } catch(e) { showToast('复制失败,请手动选择'); }
+  document.body.removeChild(ta);
+}
+
+function exportLookupResult(fmt) {
+  if (!lastLookupRows.length) { showToast('暂无结果可导出'); return; }
+  if (!lookupSelectedCols.length) { showToast('请至少勾选一个国家列'); return; }
+  var matrix = lookupRowsToMatrix();
+  var ts = new Date();
+  var stamp = ts.getFullYear() + ('0'+(ts.getMonth()+1)).slice(-2) + ('0'+ts.getDate()).slice(-2)
+    + '_' + ('0'+ts.getHours()).slice(-2) + ('0'+ts.getMinutes()).slice(-2);
+  if (fmt === 'xlsx' && window.XLSX) {
+    var ws = XLSX.utils.aoa_to_sheet(matrix);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SPU-PID互查');
+    XLSX.writeFile(wb, 'SPU-PID互查_' + stamp + '.xlsx');
+    showToast('已导出 Excel');
+    return;
+  }
+  var csv = matrix.map(function(row){
+    return row.map(function(v){
+      var s = String(v == null ? '' : v);
+      if (/[",\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }).join(',');
+  }).join('\r\n');
+  var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'SPU-PID互查_' + stamp + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  showToast('已导出 CSV');
 }
 
 // ===== Tag Guide =====
@@ -1269,6 +2214,23 @@ function renderSKUModal() {
   const colors = srcColors;
   const sizes = srcSizes;
   const infoCell = (label, val) => `<div class="sku-info-cell"><span class="sku-info-label">${label}</span><span class="sku-info-val">${val}</span></div>`;
+  // 近7日出单结构:百分比(分母=近7日总量 Q,兜底三渠道之和)
+  const chDenom = (p.sales7 && p.sales7 > 0) ? p.sales7 : ((p.sales7Video||0)+(p.sales7Live||0)+(p.sales7Shelf||0));
+  const chPct = n => chDenom > 0 ? Math.round((n||0)/chDenom*100) : 0;
+  const channelStruct = chDenom > 0
+    ? `短视频${chPct(p.sales7Video)}% / 直播${chPct(p.sales7Live)}% / 货架${chPct(p.sales7Shelf)}%`
+    : '-';
+  // 近3天环比增速脱敏:与卡面一致,向下取整到 10% 档,仅正值展示
+  const wowDesens = (function(){
+    if (p.wowRaw == null || isNaN(p.wowRaw)) return '';
+    const pct = p.wowRaw * 100;
+    if (pct <= 0) return '';
+    const floored = Math.floor(pct / 10) * 10;
+    if (floored < 10) return '';
+    return '↑' + floored + '%';
+  })();
+  // 商家标签:仅在重点商家时展示"重点商家",否则整条不显示
+  const isKeyMerchant = /SKM商家/.test(p.skm || '') && !/非SKM/.test(p.skm || '');
   document.getElementById('skuModalContent').innerHTML = `
     <button class="modal-close-btn" onclick="closeModal()" title="关闭">&times;</button>
     <div class="sku-layout">
@@ -1287,24 +2249,26 @@ function renderSKUModal() {
         </div>
         <div class="sku-section sku-info-grid-wrap">
           <div class="sku-info-grid">
-            ${infoCell('店铺名', p.store || '-')}
-            ${infoCell('店铺评分', p.rating ? '⭐' + p.rating : '-')}
-            ${infoCell('二级类目', p.category2 || '-')}
-            ${infoCell('三级类目', p.category3 || '-')}
-            ${infoCell('国家', p.country || '-')}
-            ${infoCell('商品标签', p.tag || '-')}
-            ${infoCell('可用库存', p.stock || '-')}
-            ${infoCell('销量排名', p.rank < 99999 ? '#' + p.rank : '-')}
-            ${infoCell('上架时间', p.uploadDate || '-')}
-            ${infoCell('GPM分层', p.gpm || '-')}
-            ${infoCell('是否在联盟', p.affiliate || '-')}
+            ${infoCell('原始国家', p.country || '-')}
+            ${isKeyMerchant ? infoCell('商家标签', '重点商家') : ''}
+            ${infoCell('类目组合', p.catCombo || '-')}
+            ${infoCell('季节标签', p.season || '-')}
+            ${infoCell('价格', p.promoPrice || '-')}
+            ${infoCell('上架日期', p.uploadDate || '-')}
+            ${infoCell('JIT标签', p.isJit ? 'JIT' : '-')}
+            ${wowDesens ? infoCell('近3天环比增速', wowDesens) : ''}
+            ${infoCell('近7日出单结构', channelStruct)}
+            ${infoCell('历史销量', rangeLabel(p.histRange) || '-')}
+            ${infoCell('近7日销量', rangeLabel(p.range7) || '-')}
+            ${infoCell('昨日销量', rangeLabel(p.rangeT1) || '-')}
+            ${infoCell('买手', p.developer || '-')}
           </div>
-          ${p.url ? `<div class="sku-url-row"><span class="sku-info-label">商品详情页</span><a href="${p.url}" target="_blank">${p.url}</a></div>` : ''}
+          ${(p.image || p.url) ? `<div class="sku-url-row sku-url-row-inline">${p.image ? `<a href="${p.image}" target="_blank" class="sku-url-link">首图链接</a>` : ''}${p.url ? `<a href="${p.url}" target="_blank" class="sku-url-link">商品详情页</a>` : ''}</div>` : ''}
         </div>
         <div class="sku-section">
           <div class="sku-section-title">颜色 <span class="sku-count">共 ${srcColors.length} 色</span></div>
           <div class="sku-options" id="colorOptions">
-            ${colors.length ? colors.map((c) => `<div class="sku-option" onclick="selectColor(this,'${c.replace(/'/g,"\\'")}')">${c}</div>`).join('') : '<span class="sku-empty">无颜色数据</span>'}
+            ${colors.length ? colors.map((c) => `<div class="sku-option" onclick="selectColor(this,'${c.replace(/'/g,"\\'")}')">${colorToCn(c)}</div>`).join('') : '<span class="sku-empty">无颜色数据</span>'}
           </div>
         </div>
         <div class="sku-section">
@@ -1375,7 +2339,7 @@ function addToCart() {
   updateCartCount();
 
   const fb = document.getElementById('skuFeedback');
-  fb.innerHTML = `<div class="sku-added-feedback">已加入: ${selectedColor} / ${selectedSize} x${qty}</div>`;
+  fb.innerHTML = `<div class="sku-added-feedback">已加入: ${colorToCn(selectedColor)} / ${selectedSize} x${qty}</div>`;
   setTimeout(() => { fb.innerHTML = ''; }, 2200);
 
   selectedColor = null;
@@ -1420,7 +2384,7 @@ function renderCart() {
         <div class="cart-sku-list">
           ${group.items.map((item, idx) => `
             <div class="cart-sku-row">
-              <span class="cart-sku-spec">${item.color} / ${item.size}</span>
+              <span class="cart-sku-spec">${colorToCn(item.color)} / ${item.size}</span>
               <span class="cart-sku-qty">x${item.qty}</span>
               <span class="cart-sku-del" onclick="removeCartItem('${pid}',${idx})">移除</span>
             </div>
@@ -1535,6 +2499,35 @@ document.addEventListener('click', function(e) {
   const wrap = document.querySelector('.search-select-wrap');
   if (wrap && !wrap.contains(e.target)) document.getElementById('agencyDropdown').classList.remove('open');
 });
+
+// ===== 渠道条自定义浮标(委托,兼容动态渲染的卡片) =====
+(function initChannelTooltip(){
+  let tip = document.getElementById('chTip');
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.id = 'chTip';
+    document.body.appendChild(tip);
+  }
+  const place = (e) => {
+    tip.style.left = e.clientX + 'px';
+    tip.style.top = (e.clientY - 10) + 'px';
+  };
+  document.addEventListener('mouseover', function(e){
+    const seg = e.target.closest && e.target.closest('.pc-ch-seg[data-tip]');
+    if (!seg) return;
+    tip.textContent = seg.getAttribute('data-tip') || '';
+    tip.classList.add('show');
+    place(e);
+  });
+  document.addEventListener('mousemove', function(e){
+    if (!tip.classList.contains('show')) return;
+    if (e.target.closest && e.target.closest('.pc-ch-seg[data-tip]')) place(e);
+  });
+  document.addEventListener('mouseout', function(e){
+    const seg = e.target.closest && e.target.closest('.pc-ch-seg[data-tip]');
+    if (seg) tip.classList.remove('show');
+  });
+})();
 
 // ===== Settings =====
 function loadSettings() {
