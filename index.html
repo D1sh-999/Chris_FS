@@ -806,6 +806,62 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <!-- Floating buttons (browse page) -->
   <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前圈品池的PID</button>
   <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
+  <!-- 场域条自检按钮(临时诊断用) -->
+  <button id="chDiagBtn" onclick="runChannelDiag()" style="position:fixed;bottom:22px;left:22px;z-index:98;padding:11px 18px;border-radius:980px;background:#ff3b30;color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.2);">🔍 场域条自检</button>
+  <div id="chDiagBox" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#fff;border-radius:16px;max-width:560px;width:90%;max-height:80vh;overflow:auto;padding:24px 26px;box-shadow:0 20px 60px rgba(0,0,0,0.3);font-family:-apple-system,'PingFang SC',sans-serif;">
+      <div style="font-size:18px;font-weight:800;margin-bottom:4px;">🔍 场域条自检报告</div>
+      <div style="font-size:12px;color:#86868b;margin-bottom:16px;">请把这个框整个截图发给助手即可,无需理解内容</div>
+      <pre id="chDiagOut" style="white-space:pre-wrap;word-break:break-all;font-family:'SF Mono',Menlo,monospace;font-size:12px;line-height:1.7;background:#f5f5f7;border-radius:10px;padding:14px 16px;color:#1d1d1f;margin:0 0 16px;"></pre>
+      <button onclick="document.getElementById('chDiagBox').style.display='none'" style="width:100%;padding:11px;background:#f5f5f7;border:none;border-radius:980px;font-size:14px;font-weight:600;cursor:pointer;">关闭</button>
+    </div>
+  </div>
+  <script>
+  function runChannelDiag(){
+    var L=[];
+    function add(k,v){L.push(k+': '+v);}
+    try{
+      // 1. 数据层:第一条商品的三个渠道字段
+      var arr = (window.__PRODUCTS_FOR_DIAG||window.PREVIEW_PRODUCTS||[]);
+      add('① 已加载商品数', Array.isArray(arr)?arr.length:'(拿不到数组)');
+      if(Array.isArray(arr)&&arr.length){
+        var found=null;
+        for(var i=0;i<arr.length;i++){var p=arr[i];if((p.sales7Video||0)+(p.sales7Live||0)+(p.sales7Shelf||0)>0){found=p;break;}}
+        var p0 = found||arr[0];
+        add('② 样本商品PID', p0.pid||'(无)');
+        add('   短视频/直播/货架', (p0.sales7Video||0)+' / '+(p0.sales7Live||0)+' / '+(p0.sales7Shelf||0));
+        add('   近7日总量(denom)', (p0.sales7||0));
+        add('   有非零渠道数据的商品', found?'是':'全是0');
+        try{ add('③ channelBar()返回', (typeof channelBar==='function')?(channelBar(p0)?('有内容,长度'+channelBar(p0).length):'空字符串(会不显示)'):'函数不存在'); }catch(e){ add('③ channelBar()报错', e.message); }
+      }
+      // 2. DOM层:页面里实际有几个场域条
+      var chs = document.querySelectorAll('.pc-channel');
+      add('④ 页面中.pc-channel元素数', chs.length);
+      if(chs.length){
+        var ch = chs[0];
+        var r = ch.getBoundingClientRect();
+        var cs = getComputedStyle(ch);
+        add('⑤ 第一个场域条宽×高', Math.round(r.width)+' × '+r.height.toFixed(2)+' px');
+        add('   display', cs.display);
+        add('   visibility/opacity', cs.visibility+' / '+cs.opacity);
+        add('   overflow', cs.overflow);
+        var segs = ch.querySelectorAll('.pc-ch-seg');
+        add('⑥ 色段数量', segs.length);
+        for(var j=0;j<segs.length;j++){
+          var sr=segs[j].getBoundingClientRect(); var scs=getComputedStyle(segs[j]);
+          add('   段'+(j+1)+' 宽×高 / 颜色', Math.round(sr.width)+'×'+sr.height.toFixed(1)+' / '+scs.backgroundColor);
+        }
+        // 父容器是否裁剪
+        var pi = ch.closest('.product-info');
+        if(pi){var pcs=getComputedStyle(pi); add('⑦ 卡片info容器 overflow/height', pcs.overflow+' / '+pcs.height);}
+      } else {
+        add('⑤ 结论', '场域条根本没进DOM → 是数据/JS问题,不是CSS');
+      }
+    }catch(e){ add('‼ 诊断异常', e.message); }
+    document.getElementById('chDiagOut').textContent = L.join('\n');
+    document.getElementById('chDiagBox').style.display='flex';
+  }
+  </script>
 
   <!-- Tag Guide Modal -->
   <div class="modal-overlay" id="guideModal">
@@ -1211,6 +1267,7 @@ function tryLoadCsv(candidates, idx, grid) {
       var list = mapRowsToProducts(results.data || []);
       if (!list.length) { tryLoadCsv(candidates, idx + 1, grid); return; }
       PRODUCTS = list;
+      try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
       filteredProducts = [...PRODUCTS];
       initApp();
     },
