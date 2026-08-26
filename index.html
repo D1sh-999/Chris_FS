@@ -283,6 +283,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .pc-subinfo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; min-height: 16px; }
 .pc-subinfo { flex: 1 1 auto; min-width: 0; font-size: 12px; color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pc-subinfo-row .pc-keymerchant { margin-left: auto; flex-shrink: 0; }
+/* 国家醒目标签:高对比配色 + 国旗,一眼定位站点 */
+.pc-country-tag { flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 800; letter-spacing: 0.02em; color: #fff; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); padding: 2px 9px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 6px rgba(255,90,77,0.28); }
 .pc-priceline { display: flex; align-items: baseline; gap: 10px; }
 .pc-priceline .product-price { font-size: 14px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 0; }
 .pc-priceline .pc-stock { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
@@ -632,6 +634,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
               <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMin" placeholder="最低">
               <span class="fr-sep">~</span>
               <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMax" placeholder="最高">
+            </div>
+            <div class="filter-range" title="大盘营销价(美金)区间">
+              <span class="fr-label">价格$</span>
+              <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMin" placeholder="最低">
+              <span class="fr-sep">~</span>
+              <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMax" placeholder="最高">
             </div>
             <button class="filter-btn primary" onclick="applyFilters()">搜索</button>
             <button class="filter-btn ghost" onclick="resetFilters()">重置</button>
@@ -1365,6 +1373,10 @@ function applyFilters() {
   const spsMaxRaw = document.getElementById('filterSpsMax').value;
   const spsMin = spsMinRaw.trim() === '' ? -Infinity : parseFloat(spsMinRaw);
   const spsMax = spsMaxRaw.trim() === '' ? Infinity : parseFloat(spsMaxRaw);
+  const priceMinRaw = document.getElementById('filterPriceMin').value;
+  const priceMaxRaw = document.getElementById('filterPriceMax').value;
+  const priceMin = priceMinRaw.trim() === '' ? -Infinity : parseFloat(priceMinRaw);
+  const priceMax = priceMaxRaw.trim() === '' ? Infinity : parseFloat(priceMaxRaw);
   const histRange = document.getElementById('filterHistRange').value;
   const range7 = document.getElementById('filterRange7').value;
   const rangeT1 = document.getElementById('filterRangeT1').value;
@@ -1389,6 +1401,11 @@ function applyFilters() {
       const sv = parseFloat(p.sps);
       if (isNaN(sv)) return false;
       if (sv < spsMin || sv > spsMax) return false;
+    }
+    if (priceMin !== -Infinity || priceMax !== Infinity) {
+      const pv = parsePrice(p.promoPrice);
+      if (!pv) return false;
+      if (pv < priceMin || pv > priceMax) return false;
     }
     if (histRange && p.histRange !== histRange) return false;
     if (range7 && p.range7 !== range7) return false;
@@ -1415,7 +1432,7 @@ function applyFilters() {
 }
 
 function resetFilters() {
-  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1','filterDeveloper'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterPriceMin','filterPriceMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1','filterDeveloper'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('filterSort').value = 'histDesc';
   currentPage = 1;
   filteredProducts = [...PRODUCTS];
@@ -1764,6 +1781,15 @@ function channelBar(p) {
     + `</div>`;
 }
 
+// 国家代码 → 国旗 emoji(区域指示符);无法识别时返回空串
+function countryFlag(code) {
+  if (!code) return '';
+  const cc = String(code).trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(cc)) return '';
+  const base = 0x1F1E6; // 区域指示符 A
+  return String.fromCodePoint(base + (cc.charCodeAt(0) - 65)) + String.fromCodePoint(base + (cc.charCodeAt(1) - 65)) + ' ';
+}
+
 function buildCardHtml(p) {
   const tagCls = tagClass(p.tag);
   const keyMerchant = /SKM商家/.test(p.skm || '') && !/非SKM/.test(p.skm || '') ? `<span class="pc-keymerchant">重点商家</span>` : '';
@@ -1776,11 +1802,10 @@ function buildCardHtml(p) {
   const spsScore = (p.sps && String(p.sps).trim() !== '') ? String(p.sps).trim() : '';
   // 类目组合:数据源里的 "+" 展示为 "/"
   const catCombo = (p.catCombo || '').replace(/\+/g, '/');
-  // 类目 | 国家 副信息行(参考图:标码女装 / 女士下装 | GB)
-  const subInfoParts = [];
-  if (catCombo) subInfoParts.push(catCombo);
-  if (p.country) subInfoParts.push(p.country);
-  const subInfo = subInfoParts.length ? subInfoParts.join(' | ') : '';
+  // 类目副信息行(参考图:标码女装 / 女士下装);国家单独抽出为醒目标签
+  const subInfo = catCombo || '';
+  // 国家:独立醒目标签(带国旗 emoji + 高对比配色),放在类目行最前
+  const countryTag = p.country ? `<span class="pc-country-tag" title="站点国家">${countryFlag(p.country)}${p.country}</span>` : '';
   // 库存(真实相加,不脱敏)
   const stockVal = (p.stock || 0) + (p.jitStock || 0);
   // 商品 tag(新老品/爆款…):放到 SPU 同一行、右对齐
@@ -1823,7 +1848,7 @@ function buildCardHtml(p) {
             <span class="pc-store-name" title="${storeName.replace(/"/g,'')}">${storeName || '-'}</span>
             ${spsScore ? `<span class="pc-store-score" title="店铺评分">店铺评分 <b>${spsScore}</b></span>` : ''}
           </div>
-          ${(subInfo || keyMerchant) ? `<div class="pc-subinfo-row"><span class="pc-subinfo" title="${subInfo.replace(/"/g,'')}">${subInfo}</span>${keyMerchant}</div>` : ''}
+          ${(subInfo || countryTag || keyMerchant) ? `<div class="pc-subinfo-row">${countryTag}<span class="pc-subinfo" title="${subInfo.replace(/"/g,'')}">${subInfo}</span>${keyMerchant}</div>` : ''}
           <div class="pc-priceline">
             <span class="product-price">${p.promoPrice || '-'}</span>
             ${stockVal > 0 ? `<span class="pc-stock">库存 ${stockVal}</span>` : ''}
