@@ -111,6 +111,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .filter-range .filter-input:focus { box-shadow: none; background: transparent; }
 .filter-range .fr-num { width: 54px; }
 .filter-range .fr-date { width: 130px; }
+/* ===== 多选筛选器(国家/买手/二级类目/三级类目) ===== */
+.ms-wrap { position: relative; display: inline-block; }
+.ms-trigger { display: inline-flex; align-items: center; gap: 6px; padding: 7px 30px 7px 12px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); font-size: 13px; background: var(--bg); color: var(--text-primary); cursor: pointer; position: relative; white-space: nowrap; transition: var(--transition); max-width: 220px; }
+.ms-trigger::after { content: ''; position: absolute; right: 10px; top: 50%; width: 10px; height: 6px; transform: translateY(-50%); background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2386868b'/%3E%3C/svg%3E") no-repeat center; }
+.ms-trigger .ms-label { overflow: hidden; text-overflow: ellipsis; }
+.ms-trigger .ms-count { flex-shrink: 0; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 980px; background: #ff5a4d; color: #fff; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+/* 强提醒:有选中时整个触发按钮换成高对比橙红态 */
+.ms-wrap.has-sel .ms-trigger { border-color: #ff5a4d; background: linear-gradient(135deg, rgba(255,90,77,0.10), rgba(255,138,61,0.10)); color: #d63426; font-weight: 700; box-shadow: 0 0 0 3px rgba(255,90,77,0.12); }
+.ms-wrap.has-sel .ms-trigger::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23d63426'/%3E%3C/svg%3E") no-repeat center; }
+.ms-panel { display: none; position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; min-width: 200px; max-width: 300px; max-height: 320px; overflow: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.16); padding: 6px; }
+.ms-wrap.open .ms-panel { display: block; }
+.ms-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px 6px; border-bottom: 1px solid var(--border-light); margin-bottom: 4px; }
+.ms-panel-head .ms-h-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
+.ms-panel-head .ms-clear { font-size: 12px; color: #ff5a4d; cursor: pointer; font-weight: 600; background: none; border: none; padding: 2px 4px; }
+.ms-opt { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-primary); transition: background 0.12s; user-select: none; }
+.ms-opt:hover { background: var(--surface); }
+.ms-opt .ms-box { flex-shrink: 0; width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid var(--border-light); display: inline-flex; align-items: center; justify-content: center; background: #fff; transition: all 0.12s; }
+.ms-opt .ms-box svg { width: 11px; height: 11px; opacity: 0; }
+/* 强提醒:选中项打勾变色 + 整行换底色 */
+.ms-opt.sel { background: linear-gradient(135deg, rgba(255,90,77,0.12), rgba(255,138,61,0.12)); color: #d63426; font-weight: 700; }
+.ms-opt.sel .ms-box { background: #ff5a4d; border-color: #ff5a4d; }
+.ms-opt.sel .ms-box svg { opacity: 1; }
+.ms-opt .ms-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .filter-btn { padding: 7px 16px; border-radius: 980px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); }
 .filter-btn.primary { background: var(--accent); color: #fff; }
 .filter-btn.primary:hover { background: var(--accent-hover); }
@@ -625,9 +648,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="filter-bar" id="filterBar">
           <div class="filter-basic">
             <input class="filter-input search-main" id="filterSearch" placeholder="搜索 PID / SPU / 店铺 / 供应商 / 买手...">
-            <select class="filter-select" id="filterCountry"><option value="">国家</option></select>
-            <select class="filter-select" id="filterCat2"><option value="">二级类目</option></select>
-            <select class="filter-select" id="filterCat3"><option value="">三级类目</option></select>
+            <div class="ms-wrap" id="msCountry" data-field="country" data-label="国家"></div>
+            <div class="ms-wrap" id="msCat2" data-field="category2" data-label="二级类目"></div>
+            <div class="ms-wrap" id="msCat3" data-field="category3" data-label="三级类目"></div>
             <select class="filter-select" id="filterTag"><option value="">商品标签</option></select>
             <div class="filter-range" title="店铺分数(SPS)区间">
               <span class="fr-label">SPS</span>
@@ -661,7 +684,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
             <select class="filter-select" id="filterRange7"><option value="">近7天销量</option></select>
             <select class="filter-select" id="filterRangeT1"><option value="">昨日销量</option></select>
             <select class="filter-select" id="filterDataDate"><option value="">数据更新日期</option></select>
-            <select class="filter-select" id="filterDeveloper"><option value="">买手</option></select>
+            <div class="ms-wrap" id="msDeveloper" data-field="developer" data-label="买手"></div>
             <select class="filter-select" id="filterSort">
               <option value="histDesc" selected>历史累计销量最高</option>
               <option value="sales7">近7日单量最高</option>
@@ -1016,6 +1039,16 @@ document.addEventListener('keydown', function(e) {
       applyFilters();
     }
   }
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  }
+});
+
+// 点击多选控件外部 → 关闭已展开的面板
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.ms-wrap')) {
+    document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  }
 });
 
 // ===== Load CSV Data =====
@@ -1280,6 +1313,87 @@ function updateWelcome() {
 }
 
 // ===== Filters =====
+// 多选筛选器状态:field -> Set(已选值)。国家/买手/二级类目/三级类目 走多选。
+const MS_FIELDS = ['country', 'category2', 'category3', 'developer'];
+const MS_STATE = { country: new Set(), category2: new Set(), category3: new Set(), developer: new Set() };
+const MS_WRAP_ID = { country: 'msCountry', category2: 'msCat2', category3: 'msCat3', developer: 'msDeveloper' };
+const MS_CHECK_SVG = `<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5l3 3 7-7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+// 用给定选项渲染一个多选控件(触发按钮 + 选项面板)
+function buildMultiSelect(field, opts) {
+  const wrap = document.getElementById(MS_WRAP_ID[field]);
+  if (!wrap) return;
+  const label = wrap.getAttribute('data-label') || '';
+  const optsHtml = opts.map(o => {
+    const val = String(o);
+    const esc = val.replace(/"/g, '&quot;');
+    return `<div class="ms-opt" data-val="${esc}" onclick="msToggleOpt('${field}', this)"><span class="ms-box">${MS_CHECK_SVG}</span><span class="ms-txt" title="${esc}">${esc}</span></div>`;
+  }).join('');
+  wrap.innerHTML = `
+    <button type="button" class="ms-trigger" onclick="msTogglePanel('${field}', event)">
+      <span class="ms-label">${label}</span>
+    </button>
+    <div class="ms-panel" onclick="event.stopPropagation()">
+      <div class="ms-panel-head"><span class="ms-h-title">${label}(可多选)</span><button type="button" class="ms-clear" onclick="msClear('${field}')">清空</button></div>
+      ${optsHtml || '<div class="ms-opt" style="cursor:default;color:var(--text-tertiary)">无可选项</div>'}
+    </div>`;
+  msRefresh(field);
+}
+
+// 展开/收起某个面板(同时关闭其它面板)
+function msTogglePanel(field, ev) {
+  if (ev) ev.stopPropagation();
+  const wrap = document.getElementById(MS_WRAP_ID[field]);
+  const isOpen = wrap.classList.contains('open');
+  document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  if (!isOpen) wrap.classList.add('open');
+}
+
+// 勾选/取消某个选项 → 更新状态 + 视觉 + 立即重新筛选
+function msToggleOpt(field, el) {
+  const val = el.getAttribute('data-val');
+  const set = MS_STATE[field];
+  if (set.has(val)) set.delete(val); else set.add(val);
+  msRefresh(field);
+  applyFilters();
+}
+
+// 清空某字段的全部选中
+function msClear(field) {
+  MS_STATE[field].clear();
+  msRefresh(field);
+  applyFilters();
+}
+
+// 根据状态刷新一个多选控件的所有视觉(打勾变色 / 行变色 / 触发按钮强提醒 / 计数)
+function msRefresh(field) {
+  const wrap = document.getElementById(MS_WRAP_ID[field]);
+  if (!wrap) return;
+  const set = MS_STATE[field];
+  const label = wrap.getAttribute('data-label') || '';
+  wrap.querySelectorAll('.ms-opt').forEach(opt => {
+    const v = opt.getAttribute('data-val');
+    if (v !== null) opt.classList.toggle('sel', set.has(v));
+  });
+  wrap.classList.toggle('has-sel', set.size > 0);
+  const trigger = wrap.querySelector('.ms-trigger .ms-label');
+  const btn = wrap.querySelector('.ms-trigger');
+  if (trigger && btn) {
+    // 移除旧计数徽标
+    const oldCount = btn.querySelector('.ms-count');
+    if (oldCount) oldCount.remove();
+    if (set.size === 0) {
+      trigger.textContent = label;
+    } else if (set.size === 1) {
+      trigger.textContent = [...set][0];
+      btn.insertAdjacentHTML('beforeend', `<span class="ms-count">1</span>`);
+    } else {
+      trigger.textContent = label;
+      btn.insertAdjacentHTML('beforeend', `<span class="ms-count">${set.size}</span>`);
+    }
+  }
+}
+
 function buildFilterOptions() {
   const countries = [...new Set(PRODUCTS.map(p => p.country))].filter(Boolean).sort();
   const cat2s = [...new Set(PRODUCTS.map(p => p.category2))].filter(Boolean).sort();
@@ -1300,15 +1414,15 @@ function buildFilterOptions() {
   // 数据更新日期(取数日期),最新在前
   const dataDates = [...new Set(PRODUCTS.map(p => p.dataDate).filter(Boolean))].sort((a,b) => String(b).localeCompare(String(a)));
 
-  fillSelect('filterCountry', countries, '国家');
-  fillSelect('filterCat2', cat2s, '二级类目');
-  fillSelect('filterCat3', cat3s, '三级类目');
+  buildMultiSelect('country', countries);
+  buildMultiSelect('category2', cat2s);
+  buildMultiSelect('category3', cat3s);
   fillSelect('filterTag', tags, '商品标签');
   fillSelect('filterDataDate', dataDates, '数据更新日期');
   fillRangeSelect('filterHistRange', histRanges, '历史累计销量');
   fillRangeSelect('filterRange7', range7s, '近7天销量');
   fillRangeSelect('filterRangeT1', rangeT1s, '昨日销量');
-  fillSelect('filterDeveloper', developers, '买手');
+  buildMultiSelect('developer', developers);
   // 上架日期区间输入框:填充可选日期边界(min/max)
   const uploadDates = PRODUCTS.map(p => p.uploadDate).filter(Boolean).map(normDate).filter(Boolean).sort();
   if (uploadDates.length) {
@@ -1363,9 +1477,11 @@ function parsePrice(str) {
 
 function applyFilters() {
   const q = document.getElementById('filterSearch').value.toLowerCase().trim();
-  const country = document.getElementById('filterCountry').value;
-  const cat3 = document.getElementById('filterCat3').value;
-  const cat2 = document.getElementById('filterCat2').value;
+  // 国家/二级类目/三级类目/买手 = 多选(Set),空 Set 表示不限
+  const countrySet = MS_STATE.country;
+  const cat2Set = MS_STATE.category2;
+  const cat3Set = MS_STATE.category3;
+  const developerSet = MS_STATE.developer;
   const tag = document.getElementById('filterTag').value;
   const uploadFrom = normDate(document.getElementById('filterUploadFrom').value);
   const uploadTo = normDate(document.getElementById('filterUploadTo').value);
@@ -1380,16 +1496,16 @@ function applyFilters() {
   const histRange = document.getElementById('filterHistRange').value;
   const range7 = document.getElementById('filterRange7').value;
   const rangeT1 = document.getElementById('filterRangeT1').value;
-  const developer = document.getElementById('filterDeveloper').value;
   const dataDate = document.getElementById('filterDataDate').value;
   const sort = document.getElementById('filterSort').value;
 
   currentPage = 1;
   filteredProducts = PRODUCTS.filter(p => {
     if (q && !(p.pid.includes(q) || p.spuCode.toLowerCase().includes(q) || (p.store||'').toLowerCase().includes(q) || (p.supplier||'').toLowerCase().includes(q) || (p.developer||'').toLowerCase().includes(q))) return false;
-    if (country && p.country !== country) return false;
-    if (cat3 && p.category3 !== cat3) return false;
-    if (cat2 && p.category2 !== cat2) return false;
+    if (countrySet.size && !countrySet.has(p.country)) return false;
+    if (cat3Set.size && !cat3Set.has(p.category3)) return false;
+    if (cat2Set.size && !cat2Set.has(p.category2)) return false;
+    if (developerSet.size && !developerSet.has(p.developer)) return false;
     if (tag && p.tag !== tag) return false;
     if (uploadFrom || uploadTo) {
       const d = normDate(p.uploadDate);
@@ -1410,7 +1526,6 @@ function applyFilters() {
     if (histRange && p.histRange !== histRange) return false;
     if (range7 && p.range7 !== range7) return false;
     if (rangeT1 && p.rangeT1 !== rangeT1) return false;
-    if (developer && p.developer !== developer) return false;
     if (dataDate && p.dataDate !== dataDate) return false;
     return true;
   });
@@ -1432,7 +1547,9 @@ function applyFilters() {
 }
 
 function resetFilters() {
-  ['filterSearch','filterCountry','filterCat3','filterCat2','filterTag','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterPriceMin','filterPriceMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1','filterDeveloper'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['filterSearch','filterTag','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterPriceMin','filterPriceMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  // 清空所有多选状态并刷新视觉
+  MS_FIELDS.forEach(f => { MS_STATE[f].clear(); msRefresh(f); });
   document.getElementById('filterSort').value = 'histDesc';
   currentPage = 1;
   filteredProducts = [...PRODUCTS];
