@@ -121,7 +121,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .ms-wrap.has-sel .ms-trigger { border-color: #ff5a4d; background: linear-gradient(135deg, rgba(255,90,77,0.10), rgba(255,138,61,0.10)); color: #d63426; font-weight: 700; box-shadow: 0 0 0 3px rgba(255,90,77,0.12); }
 .ms-wrap.has-sel .ms-trigger::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23d63426'/%3E%3C/svg%3E") no-repeat center; }
 .ms-panel { display: none; position: fixed; z-index: 3000; min-width: 200px; max-width: 300px; max-height: 60vh; overflow-y: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.16); padding: 6px; }
-.ms-wrap.open .ms-panel { display: block; }
+.ms-panel.open { display: block; }
 .ms-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px 6px; border-bottom: 1px solid var(--border-light); margin-bottom: 4px; }
 .ms-panel-head .ms-h-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
 .ms-panel-head .ms-clear { font-size: 12px; color: #ff5a4d; cursor: pointer; font-weight: 600; background: none; border: none; padding: 2px 4px; }
@@ -1040,27 +1040,27 @@ document.addEventListener('keydown', function(e) {
     }
   }
   if (e.key === 'Escape') {
-    document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+    msCloseAllPanels();
   }
 });
 
-// 点击多选控件外部 → 关闭已展开的面板
+// 点击多选控件外部 → 关闭已展开的面板(面板已挂到 body,需同时排除面板本体)
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.ms-wrap')) {
-    document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  if (!e.target.closest('.ms-wrap') && !e.target.closest('.ms-panel')) {
+    msCloseAllPanels();
   }
 });
 
 // 页面滚动/窗口尺寸变化时,重新定位或关闭已展开的 fixed 面板
 function msRepositionOpen() {
-  const wrap = document.querySelector('.ms-wrap.open');
-  if (wrap) msPositionPanel(wrap);
+  const panel = document.querySelector('.ms-panel.open');
+  if (panel) msPositionPanel(panel.getAttribute('data-field'));
 }
 window.addEventListener('resize', msRepositionOpen);
 window.addEventListener('scroll', function(e) {
   // 面板内部滚动不关闭;仅页面/容器滚动才关闭
   if (e.target && e.target.closest && e.target.closest('.ms-panel')) return;
-  document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+  msCloseAllPanels();
 }, true);
 
 // ===== Load CSV Data =====
@@ -1331,7 +1331,7 @@ const MS_STATE = { country: new Set(), category2: new Set(), category3: new Set(
 const MS_WRAP_ID = { country: 'msCountry', category2: 'msCat2', category3: 'msCat3', developer: 'msDeveloper' };
 const MS_CHECK_SVG = `<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5l3 3 7-7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-// 用给定选项渲染一个多选控件(触发按钮 + 选项面板)
+// 用给定选项渲染一个多选控件(触发按钮留在筛选栏内;面板挂到 body 顶层,避开筛选栏的 transform/overflow 裁剪)
 function buildMultiSelect(field, opts) {
   const wrap = document.getElementById(MS_WRAP_ID[field]);
   if (!wrap) return;
@@ -1341,39 +1341,54 @@ function buildMultiSelect(field, opts) {
     const esc = val.replace(/"/g, '&quot;');
     return `<div class="ms-opt" data-val="${esc}" onclick="msToggleOpt('${field}', this)"><span class="ms-box">${MS_CHECK_SVG}</span><span class="ms-txt" title="${esc}">${esc}</span></div>`;
   }).join('');
+  // 触发按钮:留在筛选栏
   wrap.innerHTML = `
     <button type="button" class="ms-trigger" onclick="msTogglePanel('${field}', event)">
       <span class="ms-label">${label}</span>
-    </button>
-    <div class="ms-panel" onclick="event.stopPropagation()">
-      <div class="ms-panel-head"><span class="ms-h-title">${label}(可多选)</span><button type="button" class="ms-clear" onclick="msClear('${field}')">清空</button></div>
-      ${optsHtml || '<div class="ms-opt" style="cursor:default;color:var(--text-tertiary)">无可选项</div>'}
-    </div>`;
+    </button>`;
+  // 面板:挂到 body,fixed 定位不受祖先 transform/overflow 影响
+  const panelId = 'msPanel_' + field;
+  let panel = document.getElementById(panelId);
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = panelId;
+    panel.className = 'ms-panel';
+    panel.setAttribute('data-field', field);
+    panel.addEventListener('click', function(e){ e.stopPropagation(); });
+    document.body.appendChild(panel);
+  }
+  panel.innerHTML = `
+    <div class="ms-panel-head"><span class="ms-h-title">${label}(可多选)</span><button type="button" class="ms-clear" onclick="msClear('${field}')">清空</button></div>
+    ${optsHtml || '<div class="ms-opt" style="cursor:default;color:var(--text-tertiary)">无可选项</div>'}`;
   msRefresh(field);
 }
 
-// 展开/收起某个面板(同时关闭其它面板);面板用 fixed 定位,避开筛选栏裁剪
+// 展开/收起某个面板(同时关闭其它面板);面板挂 body、fixed 定位
 function msTogglePanel(field, ev) {
   if (ev) ev.stopPropagation();
-  const wrap = document.getElementById(MS_WRAP_ID[field]);
-  const isOpen = wrap.classList.contains('open');
-  document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
-  if (!isOpen) {
-    wrap.classList.add('open');
-    msPositionPanel(wrap);
+  const wasOpen = document.querySelector('.ms-panel.open[data-field="' + field + '"]');
+  msCloseAllPanels();
+  if (!wasOpen) {
+    const panel = document.getElementById('msPanel_' + field);
+    const wrap = document.getElementById(MS_WRAP_ID[field]);
+    if (panel && wrap) { panel.classList.add('open'); wrap.classList.add('open'); msPositionPanel(field); }
   }
 }
 
+function msCloseAllPanels() {
+  document.querySelectorAll('.ms-panel.open').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+}
+
 // 依据触发按钮位置,把 fixed 面板定位到按钮正下方(下方空间不足则向上翻)
-function msPositionPanel(wrap) {
+function msPositionPanel(field) {
+  const wrap = document.getElementById(MS_WRAP_ID[field]);
+  const panel = document.getElementById('msPanel_' + field);
+  if (!wrap || !panel) return;
   const trigger = wrap.querySelector('.ms-trigger');
-  const panel = wrap.querySelector('.ms-panel');
-  if (!trigger || !panel) return;
+  if (!trigger) return;
   const r = trigger.getBoundingClientRect();
   const vw = window.innerWidth, vh = window.innerHeight;
-  // 先显示以便量到真实高度
-  panel.style.left = '-9999px';
-  panel.style.top = '0px';
   const ph = panel.offsetHeight;
   const pw = Math.max(panel.offsetWidth, r.width);
   let left = r.left;
@@ -1390,6 +1405,7 @@ function msToggleOpt(field, el) {
   const set = MS_STATE[field];
   if (set.has(val)) set.delete(val); else set.add(val);
   msRefresh(field);
+  msPositionPanel(field); // 计数/文本变化可能改变按钮宽度,重新对齐
   applyFilters();
 }
 
@@ -1403,18 +1419,20 @@ function msClear(field) {
 // 根据状态刷新一个多选控件的所有视觉(打勾变色 / 行变色 / 触发按钮强提醒 / 计数)
 function msRefresh(field) {
   const wrap = document.getElementById(MS_WRAP_ID[field]);
+  const panel = document.getElementById('msPanel_' + field);
   if (!wrap) return;
   const set = MS_STATE[field];
   const label = wrap.getAttribute('data-label') || '';
-  wrap.querySelectorAll('.ms-opt').forEach(opt => {
-    const v = opt.getAttribute('data-val');
-    if (v !== null) opt.classList.toggle('sel', set.has(v));
-  });
+  if (panel) {
+    panel.querySelectorAll('.ms-opt').forEach(opt => {
+      const v = opt.getAttribute('data-val');
+      if (v !== null) opt.classList.toggle('sel', set.has(v));
+    });
+  }
   wrap.classList.toggle('has-sel', set.size > 0);
   const trigger = wrap.querySelector('.ms-trigger .ms-label');
   const btn = wrap.querySelector('.ms-trigger');
   if (trigger && btn) {
-    // 移除旧计数徽标
     const oldCount = btn.querySelector('.ms-count');
     if (oldCount) oldCount.remove();
     if (set.size === 0) {
