@@ -120,7 +120,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 /* 强提醒:有选中时整个触发按钮换成高对比橙红态 */
 .ms-wrap.has-sel .ms-trigger { border-color: #ff5a4d; background: linear-gradient(135deg, rgba(255,90,77,0.10), rgba(255,138,61,0.10)); color: #d63426; font-weight: 700; box-shadow: 0 0 0 3px rgba(255,90,77,0.12); }
 .ms-wrap.has-sel .ms-trigger::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23d63426'/%3E%3C/svg%3E") no-repeat center; }
-.ms-panel { display: none; position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; min-width: 200px; max-width: 300px; max-height: 320px; overflow: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.16); padding: 6px; }
+.ms-panel { display: none; position: fixed; z-index: 3000; min-width: 200px; max-width: 300px; max-height: 60vh; overflow-y: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.16); padding: 6px; }
 .ms-wrap.open .ms-panel { display: block; }
 .ms-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 8px 6px; border-bottom: 1px solid var(--border-light); margin-bottom: 4px; }
 .ms-panel-head .ms-h-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
@@ -1051,6 +1051,18 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// 页面滚动/窗口尺寸变化时,重新定位或关闭已展开的 fixed 面板
+function msRepositionOpen() {
+  const wrap = document.querySelector('.ms-wrap.open');
+  if (wrap) msPositionPanel(wrap);
+}
+window.addEventListener('resize', msRepositionOpen);
+window.addEventListener('scroll', function(e) {
+  // 面板内部滚动不关闭;仅页面/容器滚动才关闭
+  if (e.target && e.target.closest && e.target.closest('.ms-panel')) return;
+  document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
+}, true);
+
 // ===== Load CSV Data =====
 // 字段兼容层:同一逻辑字段支持「中文表头」或「英文键」,任取其一命中即可。
 // 以后直接把原始中文表头 CSV 覆盖 data/products.csv 即可,无需转换。
@@ -1340,13 +1352,36 @@ function buildMultiSelect(field, opts) {
   msRefresh(field);
 }
 
-// 展开/收起某个面板(同时关闭其它面板)
+// 展开/收起某个面板(同时关闭其它面板);面板用 fixed 定位,避开筛选栏裁剪
 function msTogglePanel(field, ev) {
   if (ev) ev.stopPropagation();
   const wrap = document.getElementById(MS_WRAP_ID[field]);
   const isOpen = wrap.classList.contains('open');
   document.querySelectorAll('.ms-wrap.open').forEach(w => w.classList.remove('open'));
-  if (!isOpen) wrap.classList.add('open');
+  if (!isOpen) {
+    wrap.classList.add('open');
+    msPositionPanel(wrap);
+  }
+}
+
+// 依据触发按钮位置,把 fixed 面板定位到按钮正下方(下方空间不足则向上翻)
+function msPositionPanel(wrap) {
+  const trigger = wrap.querySelector('.ms-trigger');
+  const panel = wrap.querySelector('.ms-panel');
+  if (!trigger || !panel) return;
+  const r = trigger.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  // 先显示以便量到真实高度
+  panel.style.left = '-9999px';
+  panel.style.top = '0px';
+  const ph = panel.offsetHeight;
+  const pw = Math.max(panel.offsetWidth, r.width);
+  let left = r.left;
+  if (left + pw > vw - 8) left = Math.max(8, vw - 8 - pw); // 右侧溢出则左移
+  let top = r.bottom + 6;
+  if (top + ph > vh - 8 && r.top - 6 - ph > 8) top = r.top - 6 - ph; // 下方放不下且上方够 → 上翻
+  panel.style.left = left + 'px';
+  panel.style.top = top + 'px';
 }
 
 // 勾选/取消某个选项 → 更新状态 + 视觉 + 立即重新筛选
