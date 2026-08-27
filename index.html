@@ -68,6 +68,24 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .nav-tab:hover:not(.active) { color: var(--text-primary); }
 .nav-tab-link { text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
 .nav-tab-link::after { content: '↗'; font-size: 11px; opacity: 0.6; }
+/* 强推荐专题 Tab:高亮橙红底 + 火苗标签 */
+.nav-tab-topic { position: relative; color: #fff !important; font-weight: 700; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 2px 8px rgba(255,90,77,0.35); display: inline-flex; align-items: center; gap: 4px; }
+.nav-tab-topic .ntt-fire { font-size: 13px; line-height: 1; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); animation: nttPulse 1.6s ease-in-out infinite; }
+.nav-tab-topic:hover:not(.active) { color: #fff !important; filter: brightness(1.06); }
+.nav-tab-topic.active { color: #fff !important; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 3px 12px rgba(255,90,77,0.5); }
+@keyframes nttPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+/* 专题页返回条 */
+.topic-banner { display: none; align-items: center; gap: 12px; padding: 10px 16px; margin: 0 0 4px; background: linear-gradient(135deg, rgba(255,90,77,0.10), rgba(255,138,61,0.10)); border: 1px solid rgba(255,90,77,0.30); border-radius: 10px; }
+.topic-banner.show { display: flex; }
+.topic-banner .tb-fire { font-size: 18px; }
+.topic-banner .tb-title { font-size: 15px; font-weight: 800; color: #d63426; }
+.topic-banner .tb-sub { font-size: 12px; color: var(--text-secondary); }
+.topic-banner .tb-back { margin-left: auto; padding: 7px 16px; border-radius: 980px; border: 1px solid var(--border-light); background: #fff; color: var(--text-primary); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+.topic-banner .tb-back:hover { border-color: #ff5a4d; color: #d63426; }
+/* 专题页悬浮返回主池按钮:醒目、固定于底部居中 */
+.float-back-pool { display: none; position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 2500; padding: 13px 26px; border: none; border-radius: 980px; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); color: #fff; font-size: 15px; font-weight: 800; letter-spacing: 0.02em; cursor: pointer; box-shadow: 0 8px 24px rgba(255,90,77,0.45); transition: var(--transition); }
+.float-back-pool:hover { filter: brightness(1.06); box-shadow: 0 10px 30px rgba(255,90,77,0.55); transform: translateX(-50%) translateY(-2px); }
+.float-back-pool.show { display: inline-flex; align-items: center; gap: 6px; }
 .nav-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .agency-badge { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
 .nav-logout { font-size: 11px; color: var(--text-tertiary); cursor: pointer; padding: 4px 10px; border-radius: 980px; border: 1px solid var(--border-light); transition: var(--transition); }
@@ -618,6 +636,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="nav-tab" onclick="switchPage('lookup')">SPU-PID互查</div>
         <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044" target="_blank" rel="noopener">立即申样</a>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
+        <div class="nav-tab nav-tab-topic" id="tabTopicKnit" onclick="enterTopic('knit')"><span class="ntt-fire">🔥</span>女士针织衫精选</div>
       </div>
       <div class="nav-welcome" id="navWelcome">
         <span class="nav-welcome-main" id="welcomeText">Hi，欢迎来到女装选品小站</span>
@@ -644,6 +663,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <div class="products-page" id="productsPage">
     <div class="layout-wrap">
       <div class="main-content">
+        <div class="topic-banner" id="topicBanner">
+          <span class="tb-fire">🔥</span>
+          <div>
+            <div class="tb-title" id="topicBannerTitle">女士针织衫精选</div>
+            <div class="tb-sub" id="topicBannerSub">强推荐专题货盘 · 精选好货</div>
+          </div>
+          <button class="tb-back" onclick="exitTopic()">← 返回全部商品</button>
+        </div>
         <div class="frozen-head">
         <div class="filter-bar" id="filterBar">
           <div class="filter-basic">
@@ -652,13 +679,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
             <div class="ms-wrap" id="msCat2" data-field="category2" data-label="二级类目"></div>
             <div class="ms-wrap" id="msCat3" data-field="category3" data-label="三级类目"></div>
             <select class="filter-select" id="filterTag"><option value="">商品标签</option></select>
-            <div class="filter-range" title="店铺分数(SPS)区间">
+            <div class="filter-range" title="店铺分数(SPS)区间,只填最低或最高一侧即可筛选">
               <span class="fr-label">SPS</span>
               <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMin" placeholder="最低">
               <span class="fr-sep">~</span>
               <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMax" placeholder="最高">
             </div>
-            <div class="filter-range" title="大盘营销价(美金)区间">
+            <div class="filter-range" title="大盘营销价(美金)区间,只填最低或最高一侧即可筛选">
               <span class="fr-label">价格$</span>
               <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMin" placeholder="最低">
               <span class="fr-sep">~</span>
@@ -686,12 +713,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
             <select class="filter-select" id="filterDataDate"><option value="">数据更新日期</option></select>
             <div class="ms-wrap" id="msDeveloper" data-field="developer" data-label="买手"></div>
             <select class="filter-select" id="filterSort">
-              <option value="histDesc" selected>历史累计销量最高</option>
-              <option value="sales7">近7日单量最高</option>
-              <option value="wowDesc">近3天环比最高</option>
-              <option value="priceAsc">价格从低到高</option>
-              <option value="priceDesc">价格从高到低</option>
-              <option value="dateDesc">上架时间最新</option>
+              <option value="histDesc" selected>按历史销量从高到低</option>
+              <option value="histAsc">按历史销量从低到高</option>
+              <option value="sales7">按近7天销量从高到低</option>
+              <option value="sales7Asc">按近7天销量从低到高</option>
+              <option value="wowDesc">按近3天环比从高到低</option>
+              <option value="priceDesc">按价格从高到低</option>
+              <option value="priceAsc">按价格从低到高</option>
+              <option value="dateDesc">按上架时间从新到旧</option>
             </select>
           </div>
           <div class="filter-stats" id="filterStats"></div>
@@ -837,6 +866,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <!-- Floating buttons (browse page) -->
   <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前圈品池的PID</button>
   <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
+  <button class="float-back-pool" id="floatBackPool" onclick="exitTopic()" title="返回全部商品(主商品池)">← 返回主商品池</button>
 
   <!-- Tag Guide Modal -->
   <div class="modal-overlay" id="guideModal">
@@ -867,7 +897,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 
 <script>
 // ===== State =====
-let PRODUCTS = [];
+let PRODUCTS = [];          // 当前生效的数据池(指向大池子或专题池)
+let MAIN_POOL = [];         // 大池子:全量商品(data/products.csv)
+let TOPIC_POOL = null;      // 专题池:女士针织衫精选(懒加载,加载后缓存)
+let ACTIVE_POOL = 'main';   // 'main' | 'topic',标记当前商品浏览页展示的是哪个池子
 let cart = [];
 let userSettings = JSON.parse(localStorage.getItem('agencySettings') || '{}');
 let currentProduct = null;
@@ -1269,7 +1302,9 @@ function tryLoadCsv(candidates, idx, grid) {
     complete: function(results) {
       var list = mapRowsToProducts(results.data || []);
       if (!list.length) { tryLoadCsv(candidates, idx + 1, grid); return; }
-      PRODUCTS = list;
+      MAIN_POOL = list;
+      PRODUCTS = MAIN_POOL;
+      ACTIVE_POOL = 'main';
       try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
       filteredProducts = [...PRODUCTS];
       initApp();
@@ -1540,12 +1575,17 @@ function applyFilters() {
   const uploadTo = normDate(document.getElementById('filterUploadTo').value);
   const spsMinRaw = document.getElementById('filterSpsMin').value;
   const spsMaxRaw = document.getElementById('filterSpsMax').value;
-  const spsMin = spsMinRaw.trim() === '' ? -Infinity : parseFloat(spsMinRaw);
-  const spsMax = spsMaxRaw.trim() === '' ? Infinity : parseFloat(spsMaxRaw);
+  // 单侧筛选:只填下限或只填上限均可生效;空或非法值退化为无界
+  const spsMinN = parseFloat(spsMinRaw);
+  const spsMaxN = parseFloat(spsMaxRaw);
+  const spsMin = (spsMinRaw.trim() === '' || isNaN(spsMinN)) ? -Infinity : spsMinN;
+  const spsMax = (spsMaxRaw.trim() === '' || isNaN(spsMaxN)) ? Infinity : spsMaxN;
   const priceMinRaw = document.getElementById('filterPriceMin').value;
   const priceMaxRaw = document.getElementById('filterPriceMax').value;
-  const priceMin = priceMinRaw.trim() === '' ? -Infinity : parseFloat(priceMinRaw);
-  const priceMax = priceMaxRaw.trim() === '' ? Infinity : parseFloat(priceMaxRaw);
+  const priceMinN = parseFloat(priceMinRaw);
+  const priceMaxN = parseFloat(priceMaxRaw);
+  const priceMin = (priceMinRaw.trim() === '' || isNaN(priceMinN)) ? -Infinity : priceMinN;
+  const priceMax = (priceMaxRaw.trim() === '' || isNaN(priceMaxN)) ? Infinity : priceMaxN;
   const histRange = document.getElementById('filterHistRange').value;
   const range7 = document.getElementById('filterRange7').value;
   const rangeT1 = document.getElementById('filterRangeT1').value;
@@ -1589,7 +1629,9 @@ function applyFilters() {
       case 'priceDesc': return parsePrice(b.promoPrice) - parsePrice(a.promoPrice);
       case 'dateDesc': return (b.uploadDate||'').localeCompare(a.uploadDate||'');
       case 'sales7': return b.sales7 - a.sales7;
+      case 'sales7Asc': return a.sales7 - b.sales7;
       case 'wowDesc': return (b.wowRaw==null?-Infinity:b.wowRaw) - (a.wowRaw==null?-Infinity:a.wowRaw);
+      case 'histAsc': return a.histSales - b.histSales;
       case 'histDesc':
       default: return b.histSales - a.histSales;
     }
@@ -1611,18 +1653,98 @@ function resetFilters() {
 }
 
 // ===== Pages =====
+// 用稳定的 onclick 特征而非下标来定位 Tab,避免「立即申样」<a> 挤乱索引
+function setActiveTab(matchFn) {
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    const oc = (t.getAttribute('onclick') || '') + '|' + (t.id || '');
+    t.classList.toggle('active', matchFn(oc, t));
+  });
+}
+
 function switchPage(page) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('productsPage').classList.toggle('hidden', page !== 'products');
   document.getElementById('lookupPage').classList.toggle('active', page === 'lookup');
   document.getElementById('cartPage').classList.toggle('active', page === 'cart');
   document.getElementById('settingsPage').classList.toggle('active', page === 'settings');
   document.getElementById('cartBottomBar').classList.toggle('active', page === 'cart' && cart.length > 0);
-  const tabs = document.querySelectorAll('.nav-tab');
-  if (page === 'products') tabs[0].classList.add('active');
-  if (page === 'cart') { tabs[1].classList.add('active'); renderCart(); }
-  if (page === 'lookup') { tabs[2].classList.add('active'); initLookup(); }
-  if (page === 'settings') tabs[3].classList.add('active');
+  // 切到普通页时,若当前处于专题池则先切回大池子
+  if (page === 'products' && ACTIVE_POOL !== 'main') { exitTopic(true); }
+  setActiveTab(function(oc){ return oc.indexOf("switchPage('" + page + "')") !== -1; });
+  if (page === 'cart') renderCart();
+  if (page === 'lookup') initLookup();
+  updateFloatButtons();
+}
+
+// ===== 强推荐专题:女士针织衫精选 =====
+// 复用同一套筛选/排序/渲染引擎,只切换当前生效的数据池(PRODUCTS)
+const TOPIC_META = {
+  knit: { file: 'data/topic_knit.csv', title: '女士针织衫精选', sub: '强推荐专题货盘 · 精选好货' }
+};
+
+function enterTopic(key) {
+  const meta = TOPIC_META[key];
+  if (!meta) return;
+  // 进入商品浏览页容器
+  document.getElementById('productsPage').classList.remove('hidden');
+  document.getElementById('lookupPage').classList.remove('active');
+  document.getElementById('cartPage').classList.remove('active');
+  document.getElementById('settingsPage').classList.remove('active');
+  document.getElementById('cartBottomBar').classList.remove('active');
+  setActiveTab(function(oc){ return oc.indexOf("enterTopic('" + key + "')") !== -1; });
+
+  const applyTopic = function() {
+    PRODUCTS = TOPIC_POOL;
+    ACTIVE_POOL = 'topic';
+    try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
+    // 展示返回条 + 专题标题
+    const banner = document.getElementById('topicBanner');
+    document.getElementById('topicBannerTitle').textContent = meta.title;
+    document.getElementById('topicBannerSub').textContent = meta.sub + ' · 共 ' + PRODUCTS.length + ' 款';
+    banner.classList.add('show');
+    document.getElementById('navWelcome') && (document.getElementById('navWelcome').style.display = 'none');
+    const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.add('show');
+    // 重建筛选项(反映小池子)并从头渲染
+    resetFilters();
+    buildFilterOptions();
+    applyFilters();
+    const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
+    updateFloatButtons();
+  };
+
+  if (TOPIC_POOL) { applyTopic(); return; }
+  // 懒加载专题 CSV(与主数据同一套字段映射)
+  const grid = document.getElementById('productGrid');
+  grid.className = '';
+  grid.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">加载专题货盘...</div></div>';
+  Papa.parse(meta.file + '?v=' + (window.DATA_VERSION || Date.now()), {
+    download: true, header: true, skipEmptyLines: true,
+    complete: function(results) {
+      const list = mapRowsToProducts(results.data || []);
+      if (!list.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">专题数据加载失败,请刷新重试</div></div>'; return; }
+      TOPIC_POOL = list;
+      applyTopic();
+    },
+    error: function() {
+      grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">专题数据加载失败,请刷新重试</div></div>';
+    }
+  });
+}
+
+// 返回大池子;silent=true 时仅切换数据不重复设置 Tab(供 switchPage 调用)
+function exitTopic(silent) {
+  PRODUCTS = MAIN_POOL;
+  ACTIVE_POOL = 'main';
+  try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
+  document.getElementById('topicBanner').classList.remove('show');
+  const nw = document.getElementById('navWelcome'); if (nw) nw.style.display = '';
+  const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.remove('show');
+  resetFilters();
+  buildFilterOptions();
+  applyFilters();
+  const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
+  if (!silent) {
+    setActiveTab(function(oc){ return oc.indexOf("switchPage('products')") !== -1; });
+  }
   updateFloatButtons();
 }
 
@@ -2637,6 +2759,8 @@ function updateFloatButtons() {
   const hasItems = cart.length > 0;
   document.getElementById('floatCart').classList.toggle('show', onBrowse);
   document.getElementById('floatCopyPid').classList.toggle('show', onBrowse && hasItems);
+  const fbp = document.getElementById('floatBackPool');
+  if (fbp) fbp.classList.toggle('show', onBrowse && ACTIVE_POOL === 'topic');
 }
 
 // 快速添加：默认 热销色 / S M L混发 / 6件
