@@ -1323,6 +1323,20 @@ function initApp() {
   updateCartCount();
   updateWelcome();
   maybePromptProfile();
+  // 深链:若 URL 带 #topic=xxx 后缀,加载完主数据后自动跳进对应专题池
+  applyHashRoute();
+  window.addEventListener('hashchange', applyHashRoute);
+}
+
+// 解析地址栏 hash 后缀并路由:#topic=<key> → 进入专题;无/空 → 回主池
+function applyHashRoute() {
+  var m = (location.hash || '').match(/topic=([A-Za-z0-9_-]+)/);
+  var key = m ? m[1] : '';
+  if (key && TOPIC_META[key]) {
+    if (ACTIVE_POOL !== 'topic') enterTopic(key);
+  } else {
+    if (ACTIVE_POOL === 'topic') exitTopic();
+  }
 }
 
 // 首次进入(未填写机构信息)时,弹窗提醒用户先完善个人信息设置
@@ -1692,6 +1706,9 @@ function enterTopic(key) {
   document.getElementById('cartBottomBar').classList.remove('active');
   setActiveTab(function(oc){ return oc.indexOf("enterTopic('" + key + "')") !== -1; });
 
+  // 同步地址栏后缀,便于复制/分享"直达专题"链接(如 #topic=knit)
+  try { if (('#topic=' + key) !== location.hash) history.replaceState(null, '', '#topic=' + key); } catch(e){}
+
   const applyTopic = function() {
     PRODUCTS = TOPIC_POOL;
     ACTIVE_POOL = 'topic';
@@ -1735,6 +1752,8 @@ function exitTopic(silent) {
   PRODUCTS = MAIN_POOL;
   ACTIVE_POOL = 'main';
   try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
+  // 清除地址栏专题后缀,回到主商品池 URL
+  try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   document.getElementById('topicBanner').classList.remove('show');
   const nw = document.getElementById('navWelcome'); if (nw) nw.style.display = '';
   const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.remove('show');
