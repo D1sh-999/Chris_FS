@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LE641F413F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LE641F413F');
+</script>
 <title>女装选品小站</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -68,11 +76,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .nav-tab:hover:not(.active) { color: var(--text-primary); }
 .nav-tab-link { text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
 .nav-tab-link::after { content: '↗'; font-size: 11px; opacity: 0.6; }
-/* 强推荐专题 Tab:高亮橙红底 + 火苗标签 */
-.nav-tab-topic { position: relative; color: #fff !important; font-weight: 700; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 2px 8px rgba(255,90,77,0.35); display: inline-flex; align-items: center; gap: 4px; }
-.nav-tab-topic .ntt-fire { font-size: 13px; line-height: 1; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); animation: nttPulse 1.6s ease-in-out infinite; }
-.nav-tab-topic:hover:not(.active) { color: #fff !important; filter: brightness(1.06); }
-.nav-tab-topic.active { color: #fff !important; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 3px 12px rgba(255,90,77,0.5); }
+/* ===== 专题导航条(Banner 位) ===== */
+.topic-nav { display: flex; align-items: center; gap: 10px; padding: 6px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.topic-nav-label { font-size: 12px; font-weight: 700; color: var(--text-tertiary); letter-spacing: 0.04em; flex-shrink: 0; }
+.topic-nav-items { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.topic-chip { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 14px; border-radius: 980px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); transition: var(--transition); white-space: nowrap; }
+.topic-chip .tc-fire { font-size: 12px; line-height: 1; }
+/* 强展示资源位:高亮橙红 */
+.topic-chip.strong { color: #fff; border-color: transparent; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 2px 8px rgba(255,90,77,0.32); }
+.topic-chip.strong .tc-fire { animation: nttPulse 1.6s ease-in-out infinite; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
+.topic-chip.strong:hover { filter: brightness(1.06); }
+.topic-chip.strong.active { box-shadow: 0 3px 12px rgba(255,90,77,0.5); }
+.topic-chip:hover:not(.strong):not(.reserved) { color: var(--text-primary); border-color: var(--text-tertiary); }
+.topic-chip.active:not(.strong) { color: var(--text-primary); border-color: var(--brand, #ff5a4d); background: var(--card-bg); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+/* 预留位:占位、不可点、灰显 */
+.topic-chip.reserved { cursor: default; opacity: 0.55; color: var(--text-tertiary); border-style: dashed; background: transparent; }
 @keyframes nttPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
 /* 专题页返回条 */
 .topic-banner { display: none; align-items: center; gap: 12px; padding: 10px 16px; margin: 0 0 4px; background: linear-gradient(135deg, rgba(255,90,77,0.10), rgba(255,138,61,0.10)); border: 1px solid rgba(255,90,77,0.30); border-radius: 10px; }
@@ -225,6 +243,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .product-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition); cursor: pointer; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; height: 100%; }
 .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: rgba(0,113,227,0.15); }
 .product-img-wrap { position: relative; overflow: hidden; }
+.pc-new-badge { position: absolute; top: 8px; left: 8px; z-index: 3; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.02em; color: #fff; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 2px 6px rgba(255,90,77,0.4); pointer-events: none; }
 .product-img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; background: #f5f5f7; transition: transform 0.4s ease; }
 .product-img.img-fallback { background: linear-gradient(135deg,#f5f5f7,#e8e8ed); }
 .img-fallback-tip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #b0b0b8; pointer-events: none; }
@@ -548,6 +567,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .cart-sku-qty { font-weight: 600; color: var(--text-primary); width: 50px; text-align: center; }
 .cart-sku-del { color: var(--text-tertiary); cursor: pointer; font-size: 12px; width: 40px; text-align: right; transition: var(--transition); }
 .cart-sku-del:hover { color: var(--danger); }
+/* ===== 圈品池卡片式布局 ===== */
+.cart-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: stretch; }
+@media (max-width: 1500px) { .cart-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1050px) { .cart-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px)  { .cart-grid { grid-template-columns: 1fr; } }
+.cart-card { position: relative; display: flex; flex-direction: column; background: var(--card-bg); border-radius: var(--radius-md); border: 0.5px solid rgba(0,0,0,0.08); overflow: hidden; transition: var(--transition); }
+.cart-card:hover { box-shadow: var(--shadow-sm); }
+.cart-card.selected { border-color: var(--accent, #ff5a4d); box-shadow: 0 0 0 1.5px var(--accent, #ff5a4d); }
+.cart-card-check { position: absolute; top: 10px; left: 10px; z-index: 3; width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+.cart-card-imgwrap { position: relative; cursor: zoom-in; background: var(--surface); }
+.cart-card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+.cart-card-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.cart-card-spu { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cart-card-meta { font-size: 12px; color: var(--text-tertiary); font-family: 'SF Mono', monospace; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.cart-card-country { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: #2563eb; background: rgba(37,99,235,0.08); padding: 1px 7px; border-radius: 5px; }
+.cart-sku-edit { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+.cart-sku-erow { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 6px; padding: 6px; background: var(--surface); border-radius: 6px; }
+.cart-sku-color { font-size: 12px; color: var(--text-secondary); grid-column: 1 / -1; }
+.cart-edit-field { display: flex; align-items: center; gap: 4px; }
+.cart-edit-field label { font-size: 11px; color: var(--text-tertiary); }
+.cart-edit-input { width: 62px; padding: 4px 6px; font-size: 12px; border: 1px solid var(--border); border-radius: 5px; text-align: center; box-sizing: border-box; }
+.cart-edit-input.qty { width: 48px; }
+.cart-edit-input:focus { outline: none; border-color: var(--accent, #ff5a4d); }
+.cart-sku-erow .cart-sku-del { width: auto; }
+.cart-card-total { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: auto; }
 
 /* ===== Fixed Bottom Bar ===== */
 .cart-bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.8); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-top: 0.5px solid rgba(0,0,0,0.09); padding: 12px 22px; display: none; z-index: 90; }
@@ -585,6 +629,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .search-select-item { padding: 10px 14px; cursor: pointer; font-size: 13px; transition: background 0.12s; }
 .search-select-item:hover { background: var(--surface); }
 .search-select-item.selected { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+.agency-custom-tag { display: inline-block; margin-left: 8px; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; color: var(--accent); background: var(--accent-light); vertical-align: middle; }
+.agency-create-item { display: flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 600; border-top: 1px dashed var(--border); }
+.agency-create-item:hover { background: var(--accent-light); }
+.agency-create-hint { margin-left: auto; font-size: 10px; font-weight: 400; color: var(--text-secondary); }
 .search-select-empty { padding: 10px 14px; color: var(--text-tertiary); font-size: 12px; }
 
 /* ===== Toast ===== */
@@ -636,7 +684,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="nav-tab" onclick="switchPage('lookup')">SPU-PID互查</div>
         <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044" target="_blank" rel="noopener">立即申样</a>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
-        <div class="nav-tab nav-tab-topic" id="tabTopicKnit" onclick="enterTopic('knit')"><span class="ntt-fire">🔥</span>女士针织衫精选</div>
       </div>
       <div class="nav-welcome" id="navWelcome">
         <span class="nav-welcome-main" id="welcomeText">Hi，欢迎来到女装选品小站</span>
@@ -651,6 +698,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
       </div>
     </div>
   </nav>
+
+  <!-- 专题导航条(Banner 位):介于顶部导航与筛选栏之间,展示强展示专题 + 预留位 -->
+  <div class="topic-nav" id="topicNav">
+    <span class="topic-nav-label">专题</span>
+    <div class="topic-nav-items" id="topicNavItems"></div>
+  </div>
 
   <div class="toast" id="toast"></div>
 
@@ -678,7 +731,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
             <div class="ms-wrap" id="msCountry" data-field="country" data-label="国家"></div>
             <div class="ms-wrap" id="msCat2" data-field="category2" data-label="二级类目"></div>
             <div class="ms-wrap" id="msCat3" data-field="category3" data-label="三级类目"></div>
-            <select class="filter-select" id="filterTag"><option value="">商品标签</option></select>
+            <div class="ms-wrap" id="msTag" data-field="tag" data-label="商品标签"></div>
             <div class="filter-range" title="店铺分数(SPS)区间,只填最低或最高一侧即可筛选">
               <span class="fr-label">SPS</span>
               <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMin" placeholder="最低">
@@ -800,6 +853,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
       <div class="cart-actions">
         <button class="btn-export-pid" onclick="copyCartPIDs()">复制 PID</button>
         <button class="btn-export-pid" onclick="exportPID()">导出 PID 列表</button>
+        <button class="btn-export-pid" onclick="copyCartRecords()">复制申样记录</button>
         <button class="btn-export-full" onclick="exportFull()">导出批量申样记录</button>
       </div>
     </div>
@@ -1144,7 +1198,8 @@ const FIELD_ALIASES = {
   image:      ['首图链接', '首图 url', '首图url', '首图', '主图', 'image', 'img', 'image_url'],
   url:        ['商品详情页URL', '商品详情页url', '商品详情页', 'url', 'detail_url'],
   supplier:   ['供应商名称', 'supplier'],
-  developer:  ['开发员名称', 'developer', '开发员']
+  developer:  ['开发员名称', 'developer', '开发员'],
+  intakeDate: ['入池日期', 'intake_date', 'intakeDate', '入库日期', '入池时间']
 };
 // 从一行数据中,按别名列表取第一个存在(且非空表头)的值
 function pickField(row, key) {
@@ -1187,6 +1242,22 @@ function dedupeByPid(list) {
   return Array.from(map.values());
 }
 
+// 跨批次"本期新增"标注:
+// 依据每条商品的「入池日期」,取全池最大的日期=本期,次大=上一期。
+// 入池日期 == 本期 的商品标记 isNew=true(相对上一期新增)。
+// 若数据源没有「入池日期」列(全空),整体降级:不打标签、不改排序。
+function annotateNewBatch(list) {
+  const dates = [...new Set(list.map(p => (p.intakeDate || '').trim()).filter(Boolean))].sort();
+  // 复位
+  list.forEach(p => { p.isNew = false; });
+  if (dates.length === 0) { list.__hasIntake = false; list.__latestBatch = ''; return list; }
+  const latest = dates[dates.length - 1];
+  list.__hasIntake = true;
+  list.__latestBatch = latest;
+  list.forEach(p => { p.isNew = ((p.intakeDate || '').trim() === latest); });
+  return list;
+}
+
 // 环比增速原始值:兼容 小数(1.4) 或 百分比串("140.00%"),统一转为小数;空/非法返回 null
 function wowDecimal(raw) {
   if (raw === '' || raw === null || raw === undefined) return null;
@@ -1215,6 +1286,7 @@ function mapRowsToProducts(rows) {
     const wowRaw = g('wow');
     return {
       dataDate: g('dataDate'),
+      intakeDate: normDate(g('intakeDate')) || g('intakeDate'),   // 入池日期(用于跨批次"本期新增"判定)
       tag: g('tag'),                     // 商品标签:爆款/高潜/新品
       country: g('country'),             // 原始国家
       marketGroup: g('marketGroup'),     // 市场组
@@ -1272,6 +1344,8 @@ function mapRowsToProducts(rows) {
     return bv - av;
   });
   list.forEach((p, i) => { p.rank = i + 1; });
+  // 标注跨批次"本期新增"(依据入池日期);无该列则整体降级
+  annotateNewBatch(list);
   return list;
 }
 
@@ -1318,6 +1392,7 @@ function tryLoadCsv(candidates, idx, grid) {
 // ===== Init App =====
 function initApp() {
   buildFilterOptions();
+  renderTopicNav();
   renderProducts();
   loadSettings();
   updateCartCount();
@@ -1375,9 +1450,9 @@ function updateWelcome() {
 
 // ===== Filters =====
 // 多选筛选器状态:field -> Set(已选值)。国家/买手/二级类目/三级类目 走多选。
-const MS_FIELDS = ['country', 'category2', 'category3', 'developer'];
-const MS_STATE = { country: new Set(), category2: new Set(), category3: new Set(), developer: new Set() };
-const MS_WRAP_ID = { country: 'msCountry', category2: 'msCat2', category3: 'msCat3', developer: 'msDeveloper' };
+const MS_FIELDS = ['country', 'category2', 'category3', 'developer', 'tag'];
+const MS_STATE = { country: new Set(), category2: new Set(), category3: new Set(), developer: new Set(), tag: new Set() };
+const MS_WRAP_ID = { country: 'msCountry', category2: 'msCat2', category3: 'msCat3', developer: 'msDeveloper', tag: 'msTag' };
 const MS_CHECK_SVG = `<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5l3 3 7-7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // 用给定选项渲染一个多选控件(触发按钮留在筛选栏内;面板挂到 body 顶层,避开筛选栏的 transform/overflow 裁剪)
@@ -1519,7 +1594,13 @@ function buildFilterOptions() {
   buildMultiSelect('country', countries);
   buildMultiSelect('category2', cat2s);
   buildMultiSelect('category3', cat3s);
-  fillSelect('filterTag', tags, '商品标签');
+  // 商品标签(数据源 D 列)多选:筛选项标题动态取当前池子里所有去重标签组合(如"爆品/高潜/新品")
+  const msTagWrap = document.getElementById('msTag');
+  if (msTagWrap) {
+    const dynLabel = tags.length ? tags.join('/') : '商品标签';
+    msTagWrap.setAttribute('data-label', dynLabel);
+  }
+  buildMultiSelect('tag', tags);
   fillSelect('filterDataDate', dataDates, '数据更新日期');
   fillRangeSelect('filterHistRange', histRanges, '历史累计销量');
   fillRangeSelect('filterRange7', range7s, '近7天销量');
@@ -1584,7 +1665,7 @@ function applyFilters() {
   const cat2Set = MS_STATE.category2;
   const cat3Set = MS_STATE.category3;
   const developerSet = MS_STATE.developer;
-  const tag = document.getElementById('filterTag').value;
+  const tagSet = MS_STATE.tag;
   const uploadFrom = normDate(document.getElementById('filterUploadFrom').value);
   const uploadTo = normDate(document.getElementById('filterUploadTo').value);
   const spsMinRaw = document.getElementById('filterSpsMin').value;
@@ -1613,7 +1694,7 @@ function applyFilters() {
     if (cat3Set.size && !cat3Set.has(p.category3)) return false;
     if (cat2Set.size && !cat2Set.has(p.category2)) return false;
     if (developerSet.size && !developerSet.has(p.developer)) return false;
-    if (tag && p.tag !== tag) return false;
+    if (tagSet.size && !tagSet.has(p.tag)) return false;
     if (uploadFrom || uploadTo) {
       const d = normDate(p.uploadDate);
       if (!d) return false;
@@ -1651,12 +1732,20 @@ function applyFilters() {
     }
   });
 
+  // 本期新增置顶:仅当池子含"入池日期"时生效,稳定排序保留组内既有次序
+  if (PRODUCTS && PRODUCTS.__hasIntake) {
+    filteredProducts = filteredProducts
+      .map((p, i) => ({ p, i }))
+      .sort((x, y) => ((y.p.isNew ? 1 : 0) - (x.p.isNew ? 1 : 0)) || (x.i - y.i))
+      .map(o => o.p);
+  }
+
   renderProducts();
   document.getElementById('filterStats').textContent = `显示 ${filteredProducts.length} / ${PRODUCTS.length} 件商品`;
 }
 
 function resetFilters() {
-  ['filterSearch','filterTag','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterPriceMin','filterPriceMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['filterSearch','filterUploadFrom','filterUploadTo','filterSpsMin','filterSpsMax','filterPriceMin','filterPriceMax','filterDataDate','filterHistRange','filterRange7','filterRangeT1'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   // 清空所有多选状态并刷新视觉
   MS_FIELDS.forEach(f => { MS_STATE[f].clear(); msRefresh(f); });
   document.getElementById('filterSort').value = 'histDesc';
@@ -1692,8 +1781,41 @@ function switchPage(page) {
 // ===== 强推荐专题:女士针织衫精选 =====
 // 复用同一套筛选/排序/渲染引擎,只切换当前生效的数据池(PRODUCTS)
 const TOPIC_META = {
-  knit: { file: 'data/topic_knit.csv', title: '女士针织衫精选', sub: '强推荐专题货盘 · 精选好货' }
+  knit: { file: 'data/topic_knit.csv', title: '女士针织衫精选', sub: '强推荐专题货盘 · 精选好货', strong: true }
 };
+// 专题导航条渲染顺序;数组里的 key 必须存在于 TOPIC_META
+const TOPIC_ORDER = ['knit'];
+// 预留占位专题数量(展示为灰色 dashed chip,暂不可点)
+const TOPIC_RESERVED = 3;
+
+// 渲染专题导航条:强展示资源位 + 预留位
+function renderTopicNav() {
+  const box = document.getElementById('topicNavItems');
+  if (!box) return;
+  let html = TOPIC_ORDER.map(function(key){
+    const meta = TOPIC_META[key];
+    if (!meta) return '';
+    const cls = 'topic-chip' + (meta.strong ? ' strong' : '');
+    const fire = meta.strong ? '<span class="tc-fire">🔥</span>' : '';
+    return '<div class="' + cls + '" data-topic="' + key + '" onclick="enterTopic(\'' + key + '\')">' + fire + meta.title + '</div>';
+  }).join('');
+  for (let i = 0; i < TOPIC_RESERVED; i++) {
+    html += '<div class="topic-chip reserved" title="专题位预留中,敬请期待">专题' + (i + 1) + '(预留)</div>';
+  }
+  box.innerHTML = html;
+  updateTopicNavActive();
+}
+
+// 同步专题导航条 chip 的高亮态:当前处于某专题池时高亮对应 chip
+function updateTopicNavActive() {
+  const box = document.getElementById('topicNavItems');
+  if (!box) return;
+  const activeKey = (ACTIVE_POOL === 'topic') ? CURRENT_TOPIC_KEY : '';
+  box.querySelectorAll('.topic-chip[data-topic]').forEach(function(c){
+    c.classList.toggle('active', c.getAttribute('data-topic') === activeKey);
+  });
+}
+let CURRENT_TOPIC_KEY = '';
 
 function enterTopic(key) {
   const meta = TOPIC_META[key];
@@ -1704,7 +1826,9 @@ function enterTopic(key) {
   document.getElementById('cartPage').classList.remove('active');
   document.getElementById('settingsPage').classList.remove('active');
   document.getElementById('cartBottomBar').classList.remove('active');
-  setActiveTab(function(oc){ return oc.indexOf("enterTopic('" + key + "')") !== -1; });
+  // 顶部功能 Tab 全部取消高亮(专题入口已移到专题导航条)
+  setActiveTab(function(){ return false; });
+  CURRENT_TOPIC_KEY = key;
 
   // 同步地址栏后缀,便于复制/分享"直达专题"链接(如 #topic=knit)
   try { if (('#topic=' + key) !== location.hash) history.replaceState(null, '', '#topic=' + key); } catch(e){}
@@ -1713,6 +1837,7 @@ function enterTopic(key) {
     PRODUCTS = TOPIC_POOL;
     ACTIVE_POOL = 'topic';
     try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
+    updateTopicNavActive();
     // 展示返回条 + 专题标题
     const banner = document.getElementById('topicBanner');
     document.getElementById('topicBannerTitle').textContent = meta.title;
@@ -1751,6 +1876,8 @@ function enterTopic(key) {
 function exitTopic(silent) {
   PRODUCTS = MAIN_POOL;
   ACTIVE_POOL = 'main';
+  CURRENT_TOPIC_KEY = '';
+  updateTopicNavActive();
   try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
   // 清除地址栏专题后缀,回到主商品池 URL
   try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch(e){}
@@ -2146,6 +2273,7 @@ function buildCardHtml(p) {
     <div class="product-card">
       <div class="product-img-wrap" onclick="openSKU('${p.pid}')">
         ${productImgTag('product-img', p.image)}
+        ${p.isNew ? '<span class="pc-new-badge" title="本期相对上一期新增">新增</span>' : ''}
         <button class="product-img-btn" onclick="event.stopPropagation();openLightbox('${p.image}')">查看大图</button>
       </div>
       <div class="product-info" onclick="openSKU('${p.pid}')" style="cursor:pointer;">
@@ -2707,32 +2835,47 @@ function renderCart() {
   const totalItems = cart.reduce((s, i) => s + i.qty, 0);
   document.getElementById('cartSubtitle').textContent = `${totalPIDs} 个商品，共 ${totalItems} 件`;
 
-  content.innerHTML = Object.entries(grouped).map(([pid, group]) => {
+  content.innerHTML = '<div class="cart-grid">' + Object.entries(grouped).map(([pid, group]) => {
     const totalQty = group.items.reduce((sum, i) => sum + i.qty, 0);
     const checked = selectedPIDs.has(pid) ? 'checked' : '';
-    return `
-      <div class="cart-item">
-        <input type="checkbox" class="cart-item-checkbox" ${checked} onchange="togglePIDSelect('${pid}', this.checked)">
-        <div class="cart-item-imgwrap" onclick="openLightbox('${group.product.image}')" title="点击查看大图">
-          ${productImgTag('cart-item-img', group.product.image)}
+    const selCls = selectedPIDs.has(pid) ? ' selected' : '';
+    const prod = group.product;
+    const spu = prod.spuCode || '-';
+    const country = prod.country ? `<span class="cart-card-country">${countryFlag(prod.country)}${prod.country}</span>` : '';
+    const skuRows = group.items.map((item, idx) => `
+      <div class="cart-sku-erow">
+        <span class="cart-sku-color">颜色:${colorToCn(item.color)}</span>
+        <div class="cart-edit-field">
+          <label>尺码</label>
+          <input class="cart-edit-input size" type="text" value="${(item.size||'').replace(/"/g,'&quot;')}"
+            placeholder="如 S/M/L" title="尺码:仅可输入字母"
+            oninput="this.value=this.value.replace(/[^A-Za-z ]/g,'')"
+            onchange="updateCartSize('${pid}',${idx},this.value)">
         </div>
-        <div class="cart-item-main">
-          <div class="cart-item-detail">
-            <div class="cart-item-title">${group.product.store || group.product.spuCode} · ${group.product.category3 || ''}</div>
-            <div class="cart-item-pid">PID: ${pid} &middot; ${totalQty} 件</div>
-          </div>
-          <div class="cart-sku-list">
-            ${group.items.map((item, idx) => `
-              <div class="cart-sku-row">
-                <span class="cart-sku-spec">${colorToCn(item.color)} / ${item.size}</span>
-                <span class="cart-sku-qty">x${item.qty}</span>
-                <span class="cart-sku-del" onclick="removeCartItem('${pid}',${idx})">移除</span>
-              </div>
-            `).join('')}
-          </div>
+        <div class="cart-edit-field">
+          <label>件数</label>
+          <input class="cart-edit-input qty" type="text" inputmode="numeric" value="${item.qty}"
+            placeholder="件数" title="件数:仅可输入数字"
+            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+            onchange="updateCartQty('${pid}',${idx},this.value)">
+        </div>
+        <span class="cart-sku-del" onclick="removeCartItem('${pid}',${idx})">移除</span>
+      </div>
+    `).join('');
+    return `
+      <div class="cart-card${selCls}">
+        <input type="checkbox" class="cart-card-check" ${checked} onchange="togglePIDSelect('${pid}', this.checked); renderCart();">
+        <div class="cart-card-imgwrap" onclick="openLightbox('${prod.image}')" title="点击查看大图">
+          ${productImgTag('cart-card-img', prod.image)}
+        </div>
+        <div class="cart-card-body">
+          <div class="cart-card-spu">${prod.store || spu} · ${prod.category3 || ''}</div>
+          <div class="cart-card-meta"><span>SPU ${spu}</span><span>PID ${pid}</span>${country}</div>
+          <div class="cart-sku-edit">${skuRows}</div>
+          <div class="cart-card-total">合计 ${totalQty} 件</div>
         </div>
       </div>`;
-  }).join('');
+  }).join('') + '</div>';
   bottomBar.classList.add('active');
   updateSelectAllBtn();
 }
@@ -2761,6 +2904,30 @@ function removeCartItem(pid, idx) {
   const target = grouped[pid][idx];
   cart = cart.filter(i => i !== target);
   if (!cart.find(i => i.pid === pid)) selectedPIDs.delete(pid);
+  updateCartCount();
+  renderCart();
+}
+
+// 尺码自定义编辑(仅字母);空值兜底为"-"
+function updateCartSize(pid, idx, value) {
+  const grouped = {};
+  cart.forEach(item => { if (!grouped[item.pid]) grouped[item.pid] = []; grouped[item.pid].push(item); });
+  const target = grouped[pid] && grouped[pid][idx];
+  if (!target) return;
+  const clean = String(value).replace(/[^A-Za-z ]/g, '').trim();
+  target.size = clean || '-';
+  // 不整表重渲染,避免打断连续编辑;仅同步件数合计
+}
+
+// 件数自定义编辑(仅数字);最小为 1
+function updateCartQty(pid, idx, value) {
+  const grouped = {};
+  cart.forEach(item => { if (!grouped[item.pid]) grouped[item.pid] = []; grouped[item.pid].push(item); });
+  const target = grouped[pid] && grouped[pid][idx];
+  if (!target) return;
+  let n = parseInt(String(value).replace(/[^0-9]/g, ''), 10);
+  if (isNaN(n) || n < 1) n = 1;
+  target.qty = n;
   updateCartCount();
   renderCart();
 }
@@ -2816,20 +2983,89 @@ function fallbackCopy(text, cb) {
   document.body.removeChild(ta);
 }
 
+function copyCartRecords() {
+  if (selectedPIDs.size === 0) { showToast('请至少选择一个商品'); return; }
+  if (!userSettings.agencyName) { showToast('请先在机构设置中选择机构名称'); return; }
+
+  const selectedItems = cart.filter(i => selectedPIDs.has(i.pid));
+  const grouped = {};
+  selectedItems.forEach(i => { if (!grouped[i.pid]) grouped[i.pid] = []; grouped[i.pid].push(i); });
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+
+  const headers = ['【auto】需求创建日期','【auto】需求编号','【机构必填】机构名称','机构提报人','【auto】申样状态','【机构选填】协作同事自主+','链接','达人链接主页','【机构必填】达人名称','【机构必填】达人handle','【机构必填】寄样类型','【机构必填】PID_product id','【机构必填】颜色','【机构必填】尺码','【机构必填】申请样衣件数','【机构必填】收件人国家','【机构必填】收件人_名称','【机构必填】收件人联系电话','【机构必填】详细地址','【机构必填】收件人_市','【机构必填】收件人_洲'];
+
+  const rows = [headers];
+  Object.entries(grouped).forEach(([pid, items]) => {
+    const colorGroups = {};
+    items.forEach(i => { if (!colorGroups[i.color]) colorGroups[i.color] = []; colorGroups[i.color].push(i); });
+    const mValue = Object.entries(colorGroups).map(([color, skus]) => {
+      return `${color}（${skus.map(s => `${s.qty}件${s.size}`).join(' ')}）`;
+    }).join('、');
+    const totalQty = items.reduce((s,i) => s + i.qty, 0);
+    rows.push([dateStr,'',userSettings.agencyName,'','','',userSettings.link||'','',userSettings.creatorName||'',userSettings.creatorHandle||'','国内机构寄样',pid,mValue,'请看前面的信息',totalQty,'CN 中国',userSettings.receiverName||'',userSettings.receiverPhone||'',userSettings.address||'',userSettings.city||'',userSettings.province||'']);
+  });
+
+  // Tab-separated; sanitize any tab/newline inside cell to keep grid intact
+  const text = rows.map(function(r){
+    return r.map(function(c){ return String(c == null ? '' : c).replace(/[\t\r\n]+/g, ' '); }).join('\t');
+  }).join('\n');
+  const n = rows.length - 1;
+  const done = () => showToast(`已复制 ${n} 条申样记录到剪贴板(可直接粘贴到表格)`);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else { fallbackCopy(text, done); }
+}
+
 // ===== Agency Search =====
+// 自定义机构(本地新增,仅存本浏览器,不同步给其他用户)
+let CUSTOM_AGENCIES = [];
+try { CUSTOM_AGENCIES = JSON.parse(localStorage.getItem('customAgencies') || '[]'); } catch (e) { CUSTOM_AGENCIES = []; }
+if (!Array.isArray(CUSTOM_AGENCIES)) CUSTOM_AGENCIES = [];
+function getAllAgencies() {
+  const base = (typeof AGENCIES !== 'undefined' && Array.isArray(AGENCIES)) ? AGENCIES : [];
+  // 自定义机构排在前面,且去重(不与固定列表重复)
+  const seen = new Set(base.map(a => a.toLowerCase()));
+  const extras = CUSTOM_AGENCIES.filter(a => a && !seen.has(a.toLowerCase()));
+  return extras.concat(base);
+}
+function escHtml(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function openAgencyDropdown() { filterAgenciesList(); document.getElementById('agencyDropdown').classList.add('open'); }
 function filterAgenciesList() {
-  const q = document.getElementById('agencySearchInput').value.toLowerCase().trim();
+  const raw = document.getElementById('agencySearchInput').value.trim();
+  const q = raw.toLowerCase();
   const dd = document.getElementById('agencyDropdown');
-  const filtered = q ? AGENCIES.filter(a => a.toLowerCase().includes(q)) : AGENCIES;
-  if (!filtered.length) { dd.innerHTML = '<div class="search-select-empty">无匹配结果</div>'; }
-  else {
-    dd.innerHTML = filtered.slice(0, 30).map(a => {
+  const all = getAllAgencies();
+  const filtered = q ? all.filter(a => a.toLowerCase().includes(q)) : all;
+  const exactMatch = q && all.some(a => a.toLowerCase() === q);
+  let html = '';
+  if (filtered.length) {
+    html += filtered.slice(0, 30).map(a => {
       const cls = userSettings.agencyName === a ? 'search-select-item selected' : 'search-select-item';
-      return `<div class="${cls}" onclick="selectAgency(\`${a}\`)">${a}</div>`;
+      const tag = CUSTOM_AGENCIES.indexOf(a) !== -1 ? '<span class="agency-custom-tag">自定义</span>' : '';
+      return `<div class="${cls}" onclick="selectAgency(\`${a}\`)">${escHtml(a)}${tag}</div>`;
     }).join('') + (filtered.length > 30 ? `<div class="search-select-empty">还有 ${filtered.length - 30} 个结果，请继续输入筛选</div>` : '');
+  } else {
+    html += '<div class="search-select-empty">无匹配结果</div>';
   }
+  // 输入了内容且无完全匹配时,提供"创建机构"入口
+  if (raw && !exactMatch) {
+    html += `<div class="search-select-item agency-create-item" onclick="createCustomAgency(\`${raw}\`)">＋ 创建机构「${escHtml(raw)}」<span class="agency-create-hint">仅本地保存</span></div>`;
+  }
+  dd.innerHTML = html;
   dd.classList.add('open');
+}
+function createCustomAgency(name) {
+  name = String(name || '').trim();
+  if (!name) { showToast('机构名称不能为空'); return; }
+  const all = getAllAgencies();
+  if (!all.some(a => a.toLowerCase() === name.toLowerCase())) {
+    CUSTOM_AGENCIES.unshift(name);
+    try { localStorage.setItem('customAgencies', JSON.stringify(CUSTOM_AGENCIES)); } catch (e) {}
+    showToast(`已创建并保存自定义机构「${name}」(仅本浏览器)`);
+  }
+  selectAgency(name);
 }
 function selectAgency(name) {
   userSettings.agencyName = name;
@@ -2874,7 +3110,7 @@ document.addEventListener('click', function(e) {
 
 // ===== 圈品池商品图点击弹出大图(委托,兼容动态渲染) =====
 document.addEventListener('click', function(e){
-  const img = e.target.closest && e.target.closest('.cart-item-img');
+  const img = e.target.closest && e.target.closest('.cart-card-img');
   if (!img) return;
   const src = img.getAttribute('src');
   if (src) openLightbox(src);
