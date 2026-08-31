@@ -3004,9 +3004,7 @@ function copyCartRecords() {
   const today = new Date();
   const dateStr = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
 
-  const headers = ['【auto】需求创建日期','【auto】需求编号','【机构必填】机构名称','机构提报人','【auto】申样状态','【机构选填】协作同事自主+','链接','达人链接主页','【机构必填】达人名称','【机构必填】达人handle','【机构必填】寄样类型','【机构必填】PID_product id','【机构必填】颜色','【机构必填】尺码','【机构必填】申请样衣件数','【机构必填】收件人国家','【机构必填】收件人_名称','【机构必填】收件人联系电话','【机构必填】详细地址','【机构必填】收件人_市','【机构必填】收件人_洲'];
-
-  const rows = [headers];
+  const rows = [];
   Object.entries(grouped).forEach(([pid, items]) => {
     const colorGroups = {};
     items.forEach(i => { if (!colorGroups[i.color]) colorGroups[i.color] = []; colorGroups[i.color].push(i); });
@@ -3021,7 +3019,7 @@ function copyCartRecords() {
   const text = rows.map(function(r){
     return r.map(function(c){ return String(c == null ? '' : c).replace(/[\t\r\n]+/g, ' '); }).join('\t');
   }).join('\n');
-  const n = rows.length - 1;
+  const n = rows.length;
   const done = () => showToast(`已复制 ${n} 条申样记录到剪贴板(可直接粘贴到表格)`);
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
