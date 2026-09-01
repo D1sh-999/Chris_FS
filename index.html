@@ -243,7 +243,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .product-card { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition); cursor: pointer; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; height: 100%; }
 .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: rgba(0,113,227,0.15); }
 .product-img-wrap { position: relative; overflow: hidden; }
-.pc-new-badge { position: absolute; top: 8px; left: 8px; z-index: 3; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.02em; color: #fff; background: linear-gradient(135deg, #ff5a4d, #ff8a3d); box-shadow: 0 2px 6px rgba(255,90,77,0.4); pointer-events: none; }
+.pc-new-badge { position: absolute; top: 10px; right: 10px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em; color: rgba(255,255,255,0.96); background: rgba(20,20,22,0.42); -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%); border: 0.5px solid rgba(255,255,255,0.28); box-shadow: 0 1px 4px rgba(0,0,0,0.14); pointer-events: none; }
+.pc-new-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #34c759; box-shadow: 0 0 5px rgba(52,199,89,0.9); }
 .product-img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; background: #f5f5f7; transition: transform 0.4s ease; }
 .product-img.img-fallback { background: linear-gradient(135deg,#f5f5f7,#e8e8ed); }
 .img-fallback-tip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #b0b0b8; pointer-events: none; }
@@ -509,6 +510,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .products-page.hidden { display: none !important; }
 .settings-page { display: none; }
 .settings-page.active { display: flex; }
+.buyers-page { display: none; }
+.buyers-page.active { display: flex; }
+.buyers-search-bar { margin: 0 0 20px; }
+.buyers-search-input { width: 100%; max-width: 360px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 980px; font-size: 13px; color: var(--text-primary); background: var(--surface); outline: none; transition: var(--transition); }
+.buyers-search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.buyers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+.buyer-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.buyer-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.10); transform: translateY(-2px); }
+.buyer-qr-wrap { position: relative; width: 100%; aspect-ratio: 1/1; background: #f7f7f8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.buyer-qr-wrap img { width: 100%; height: 100%; object-fit: contain; }
+.buyer-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+.buyer-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.buyer-tags { display: flex; flex-wrap: wrap; gap: 5px; min-height: 4px; }
+.buyer-tag { display: inline-block; padding: 2px 9px; border-radius: 980px; font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-light); }
+.buyer-add-btn { margin-top: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 9px 12px; border: none; border-radius: 980px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; color: #fff; background: var(--accent); transition: var(--transition); }
+.buyer-add-btn:hover { filter: brightness(0.95); }
 
 /* ===== SPU-PID Lookup Page ===== */
 .lookup-page { display: none; }
@@ -600,6 +617,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .select-all-btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: 980px; font-size: 12px; cursor: pointer; background: transparent; color: var(--text-primary); transition: var(--transition); font-weight: 500; }
 .select-all-btn:hover { border-color: var(--accent); color: var(--accent); }
 .select-all-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+.cart-batch-size { display: inline-flex; align-items: center; gap: 6px; }
+.cart-batch-input { width: 148px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 980px; font-size: 12px; color: var(--text-primary); background: var(--surface); outline: none; transition: var(--transition); }
+.cart-batch-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.cart-batch-btn { padding: 8px 14px; border: none; border-radius: 980px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; transition: var(--transition); white-space: nowrap; }
+.cart-batch-btn:hover { filter: brightness(0.95); }
 .cart-actions { display: flex; gap: 8px; flex: 1; justify-content: flex-end; }
 .cart-actions button { padding: 8px 20px; border-radius: 980px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); }
 .btn-export-pid { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border-light); }
@@ -683,6 +705,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="nav-tab" onclick="switchPage('cart')">圈品池</div>
         <div class="nav-tab" onclick="switchPage('lookup')">SPU-PID互查</div>
         <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044" target="_blank" rel="noopener">立即申样</a>
+        <div class="nav-tab" onclick="switchPage('buyers')">联系买手</div>
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
       </div>
       <div class="nav-welcome" id="navWelcome">
@@ -855,6 +878,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <div class="cart-bottom-bar" id="cartBottomBar">
     <div class="cart-bottom-inner">
       <div class="select-all-btn" id="selectAllBtn" onclick="toggleSelectAll()">全选</div>
+      <div class="cart-batch-size" title="对已勾选商品批量统一设置尺码">
+        <input class="cart-batch-input" id="batchSizeInput" type="text" placeholder="批量改尺码 如 S/M/L"
+          oninput="this.value=this.value.replace(/[^A-Za-z ]/g,'')"
+          onkeydown="if(event.key==='Enter')applyBatchSize()">
+        <button class="cart-batch-btn" onclick="applyBatchSize()">应用</button>
+      </div>
       <div class="cart-actions">
         <button class="btn-export-pid" onclick="copyCartPIDs()">复制 PID</button>
         <button class="btn-export-pid" onclick="exportPID()">导出 PID 列表</button>
@@ -914,6 +943,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         </div>
       </div>
       <button class="save-btn" onclick="saveSettings()">保存设置</button>
+    </div>
+  </div>
+
+  <!-- Buyers Page (联系买手 · 纯买手名片墙) -->
+  <div class="layout-wrap buyers-page" id="buyersPage">
+    <div class="main-content" style="max-width:1760px;margin:0 auto;width:100%;">
+      <div class="page-header">
+        <div class="page-title">联系买手</div>
+        <div class="page-subtitle">扫码或点击添加对应品类买手，直接对接选品需求</div>
+      </div>
+      <div class="buyers-search-bar">
+        <input class="buyers-search-input" id="buyersSearch" placeholder="搜索买手姓名或标签…" oninput="renderBuyers()">
+      </div>
+      <div id="buyersContent"></div>
     </div>
   </div>
 
@@ -1408,16 +1451,28 @@ function initApp() {
   window.addEventListener('hashchange', applyHashRoute);
 }
 
-// 解析地址栏 hash 后缀并路由:#topic=<key> → 进入专题;无/空 → 回主池
+// 解析地址栏 hash 后缀并路由:#topic=<key> → 进入专题;#page=<tab> → 切换导航页;无/空 → 回主池
 function applyHashRoute() {
-  var m = (location.hash || '').match(/topic=([A-Za-z0-9_-]+)/);
+  var h = location.hash || '';
+  var m = h.match(/topic=([A-Za-z0-9_-]+)/);
   var key = m ? m[1] : '';
   if (key && TOPIC_META[key]) {
     if (ACTIVE_POOL !== 'topic') enterTopic(key);
+    return;
   } else {
     if (ACTIVE_POOL === 'topic') exitTopic();
   }
+  // 页面 tab 深链:#page=cart / lookup / settings / buyers
+  var pm = h.match(/page=([A-Za-z0-9_-]+)/);
+  var pkey = pm ? pm[1] : '';
+  var validPages = { cart:1, lookup:1, settings:1, buyers:1, products:1 };
+  if (pkey && validPages[pkey] && !hashRouteInternal) {
+    hashRouteInternal = true;
+    switchPage(pkey);
+    hashRouteInternal = false;
+  }
 }
+var hashRouteInternal = false;
 
 // 首次进入(未填写机构信息)时,弹窗提醒用户先完善个人信息设置
 function maybePromptProfile() {
@@ -1777,13 +1832,45 @@ function switchPage(page) {
   document.getElementById('lookupPage').classList.toggle('active', page === 'lookup');
   document.getElementById('cartPage').classList.toggle('active', page === 'cart');
   document.getElementById('settingsPage').classList.toggle('active', page === 'settings');
+  var buyersEl = document.getElementById('buyersPage');
+  if (buyersEl) buyersEl.classList.toggle('active', page === 'buyers');
   document.getElementById('cartBottomBar').classList.toggle('active', page === 'cart' && cart.length > 0);
   // 切到普通页时,若当前处于专题池则先切回大池子
   if (page === 'products' && ACTIVE_POOL !== 'main') { exitTopic(true); }
   setActiveTab(function(oc){ return oc.indexOf("switchPage('" + page + "')") !== -1; });
   if (page === 'cart') renderCart();
   if (page === 'lookup') initLookup();
+  if (page === 'buyers') renderBuyers();
   updateFloatButtons();
+  // 写入地址栏 hash 后缀(便于分享/回退,并让 GA4 能按 tab 统计)
+  updatePageHash(page);
+  trackTabView(page);
+}
+
+// 各页对应的 URL 后缀 与 GA4 虚拟页标题
+var PAGE_HASH = { products:'', cart:'cart', lookup:'lookup', settings:'settings', buyers:'buyers' };
+var PAGE_TITLE = { products:'商品浏览', cart:'圈品池', lookup:'SPU-PID互查', settings:'机构设置', buyers:'联系买手' };
+
+// 更新地址栏 #page=xxx,但不覆盖已有的 #topic=xxx(专题深链优先)
+function updatePageHash(page) {
+  if ((location.hash || '').indexOf('topic=') !== -1) return;
+  var suffix = PAGE_HASH[page];
+  var newHash = suffix ? ('#page=' + suffix) : '';
+  if (newHash) { if (location.hash !== newHash) history.replaceState(null, '', newHash); }
+  else if (location.hash) { history.replaceState(null, '', location.pathname + location.search); }
+}
+
+// 向 GA4 上报一次"虚拟页面浏览"(SPA hash 切换不会自动触发 page_view)
+function trackTabView(page) {
+  if (typeof gtag !== 'function') return;
+  var suffix = PAGE_HASH[page] || 'products';
+  var title = PAGE_TITLE[page] || page;
+  gtag('event', 'page_view', {
+    page_title: '选品小站 - ' + title,
+    page_location: location.origin + location.pathname + (suffix ? ('#page=' + suffix) : ''),
+    page_path: location.pathname + (suffix ? ('#page=' + suffix) : ''),
+    tab_name: title
+  });
 }
 
 // ===== 强推荐专题:女士针织衫精选 =====
@@ -2740,7 +2827,7 @@ function renderSKUModal() {
             ${infoCell('昨日销量', rangeLabel(p.rangeT1) || '-')}
             ${infoCell('买手', p.developer || '-')}
           </div>
-          ${(p.image || p.url) ? `<div class="sku-url-row sku-url-row-inline">${p.image ? `<a href="${p.image}" target="_blank" class="sku-url-link">首图链接</a>` : ''}${p.url ? `<a href="${p.url}" target="_blank" class="sku-url-link">商品详情页</a>` : ''}</div>` : ''}
+          ${(p.image || p.url) ? `<div class="sku-url-row sku-url-row-inline">${p.image ? `<a href="${p.image}" target="_blank" rel="noopener noreferrer" class="sku-url-link">首图链接</a>` : ''}${p.url ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer" class="sku-url-link">商品详情页</a>` : ''}</div>` : ''}
         </div>
         <div class="sku-section">
           <div class="sku-section-title">颜色 <span class="sku-count">共 ${srcColors.length} 色</span></div>
@@ -2830,6 +2917,37 @@ function closeModal() { document.getElementById('skuModal').classList.remove('ac
 document.getElementById('skuModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
 // ===== Cart =====
+// ===== 联系买手(纯买手名片墙) =====
+var BUYERS = [{"name":"王瑶","img":"data/buyers/buyer_0.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=451ne8c0-bb42-4993-bc5f-1e67a6a83df9&unique_id=dDfo1Gmj_i007AXJ7UOfqQ==","tag":"女士下装；标码短视频负责人"},{"name":"徐熙雅","img":"data/buyers/buyer_1.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=85ak8ac5-c31a-4856-a7ef-c2f534a02415&unique_id=si4znoxDJIxlOYCwPNpX3g==","tag":"女士穆斯林&特殊服饰"},{"name":"游宇航","img":"data/buyers/buyer_2.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=02cv6c0c-c64e-452e-9707-7ddddafda07a&unique_id=-woM-BMTyGp3dBwwtWHpnw==","tag":"女士套装及西服"},{"name":"郑川粤","img":"data/buyers/buyer_3.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=bdajc34b-d15b-4eed-a698-1f3d1f340dc8&unique_id=ev53o8bK6n2gCuumCJmtow==","tag":"大码女装；大码短视频负责人"},{"name":"张宇","img":"data/buyers/buyer_4.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=6c6o88cf-6adf-48c0-942f-b3c125e04538&unique_id=sYbkGQx6CikcdUNNvY3JUA==","tag":"大码女装；大码直播负责人"},{"name":"王可心","img":"data/buyers/buyer_5.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=5f0v98da-4a06-4fc4-9d2e-87896163eea1&unique_id=vA1k4qDrmPdOd1Pcw5_3bA==","tag":"女士针织衫；AIGC"},{"name":"沈亦莎","img":"data/buyers/buyer_6.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=7f2m28c4-371c-4842-9e5b-40059e617a14&unique_id=cZEzLdr825pceE3A3oOPyQ==","tag":"女士针织衫"},{"name":"刘雪莹","img":"data/buyers/buyer_7.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=893qc6ba-3dcd-4df6-9803-92897bd64874&unique_id=IuMwUsXwUwjMiVCnkSFjFQ==","tag":"女士套装及西服"},{"name":"张健","img":"data/buyers/buyer_8.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=f2fm0fc9-d225-4cd3-b20e-0202261b4ff2&unique_id=PNTPwONvrs4C9VR0hskjcQ==","tag":"女士下装"},{"name":"黄依婷","img":"data/buyers/buyer_9.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=09dn8a05-7833-49e1-a2bf-13af76eb8ed4&unique_id=Syrgh_mXKJe81EJfLhsCOg==","tag":"女士套装及西服"},{"name":"王谍","img":"data/buyers/buyer_10.png","link":"https://www-my.larkoffice.com/invitation/page/add_contact/?token=921p4808-054c-4a9b-b737-b8ff00917391&unique_id=DGFcs7Kb6kCjZmUnhFcI3w==","tag":"女士下装；标码直播负责人"}];
+function buyerEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function renderBuyers(){
+  var box = document.getElementById('buyersContent');
+  if(!box) return;
+  var kw = ((document.getElementById('buyersSearch')||{}).value||'').trim().toLowerCase();
+  var list = BUYERS.filter(function(b){
+    if(!kw) return true;
+    return (b.name||'').toLowerCase().indexOf(kw)!==-1 || (b.tag||'').toLowerCase().indexOf(kw)!==-1;
+  });
+  if(list.length===0){
+    box.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F464;</div><div class="empty-state-text">没有匹配的买手</div></div>';
+    return;
+  }
+  box.innerHTML = '<div class="buyers-grid">' + list.map(function(b){
+    var tags = (b.tag||'').split(/[；;、,\/]/).map(function(t){return t.trim();}).filter(Boolean)
+      .map(function(t){ return '<span class="buyer-tag">'+buyerEsc(t)+'</span>'; }).join('');
+    var link = buyerEsc(b.link||'');
+    var img = buyerEsc(b.img||'');
+    var name = buyerEsc(b.name||'');
+    return '<div class="buyer-card">'
+      + '<div class="buyer-qr-wrap"><img src="'+img+'" alt="'+name+' 二维码" loading="lazy"></div>'
+      + '<div class="buyer-body">'
+      + '<div class="buyer-name">'+name+'</div>'
+      + '<div class="buyer-tags">'+tags+'</div>'
+      + (link ? '<a class="buyer-add-btn" href="'+link+'" target="_blank" rel="noopener noreferrer">立即添加买手</a>' : '')
+      + '</div></div>';
+  }).join('') + '</div>';
+}
+
 function renderCart() {
   const content = document.getElementById('cartContent');
   const bottomBar = document.getElementById('cartBottomBar');
@@ -2916,6 +3034,20 @@ function removeCartItem(pid, idx) {
   if (!cart.find(i => i.pid === pid)) selectedPIDs.delete(pid);
   updateCartCount();
   renderCart();
+}
+
+// 批量改尺码:把输入的尺码统一应用到"已勾选商品"的所有 SKU 行
+function applyBatchSize() {
+  const inp = document.getElementById('batchSizeInput');
+  const raw = inp ? inp.value : '';
+  const size = String(raw).replace(/[^A-Za-z ]/g, '').trim();
+  if (!size) { showToast('请先输入要批量设置的尺码(仅字母)'); return; }
+  if (selectedPIDs.size === 0) { showToast('请先勾选要批量修改的商品'); return; }
+  let n = 0;
+  cart.forEach(item => { if (selectedPIDs.has(item.pid)) { item.size = size; n++; } });
+  if (inp) inp.value = '';
+  renderCart();
+  showToast(`已将 ${selectedPIDs.size} 个商品(${n} 个SKU)的尺码统一改为 ${size}`);
 }
 
 // 尺码自定义编辑(仅字母);空值兜底为"-"
