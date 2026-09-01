@@ -879,10 +879,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
     <div class="cart-bottom-inner">
       <div class="select-all-btn" id="selectAllBtn" onclick="toggleSelectAll()">全选</div>
       <div class="cart-batch-size" title="对已勾选商品批量统一设置尺码">
-        <input class="cart-batch-input" id="batchSizeInput" type="text" placeholder="批量改尺码 如 S/M/L"
-          oninput="this.value=this.value.replace(/[^A-Za-z ]/g,'')"
+        <input class="cart-batch-input" id="batchSizeInput" type="text" placeholder="批量改尺码 如 S/M/均码"
           onkeydown="if(event.key==='Enter')applyBatchSize()">
         <button class="cart-batch-btn" onclick="applyBatchSize()">应用</button>
+      </div>
+      <div class="cart-batch-size" title="对已勾选商品批量统一设置件数">
+        <input class="cart-batch-input" id="batchQtyInput" type="text" inputmode="numeric" placeholder="批量改件数 纯数字"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+          onkeydown="if(event.key==='Enter')applyBatchQty()">
+        <button class="cart-batch-btn" onclick="applyBatchQty()">应用</button>
       </div>
       <div class="cart-actions">
         <button class="btn-export-pid" onclick="copyCartPIDs()">复制 PID</button>
@@ -1441,7 +1446,7 @@ function tryLoadCsv(candidates, idx, grid) {
 function initApp() {
   buildFilterOptions();
   renderTopicNav();
-  renderProducts();
+  applyFilters();   // 走完整筛选+"本期新增置顶"排序,保证首屏就把最新批次新增品排在最前(直接 renderProducts 会漏掉置顶)
   loadSettings();
   updateCartCount();
   updateWelcome();
@@ -2976,8 +2981,7 @@ function renderCart() {
         <div class="cart-edit-field">
           <label>尺码</label>
           <input class="cart-edit-input size" type="text" value="${(item.size||'').replace(/"/g,'&quot;')}"
-            placeholder="如 S/M/L" title="尺码:仅可输入字母"
-            oninput="this.value=this.value.replace(/[^A-Za-z ]/g,'')"
+            placeholder="如 S/M/均码" title="尺码:可输入字母/中文/数字"
             onchange="updateCartSize('${pid}',${idx},this.value)">
         </div>
         <div class="cart-edit-field">
@@ -3040,8 +3044,8 @@ function removeCartItem(pid, idx) {
 function applyBatchSize() {
   const inp = document.getElementById('batchSizeInput');
   const raw = inp ? inp.value : '';
-  const size = String(raw).replace(/[^A-Za-z ]/g, '').trim();
-  if (!size) { showToast('请先输入要批量设置的尺码(仅字母)'); return; }
+  const size = String(raw).trim();
+  if (!size) { showToast('请先输入要批量设置的尺码'); return; }
   if (selectedPIDs.size === 0) { showToast('请先勾选要批量修改的商品'); return; }
   let n = 0;
   cart.forEach(item => { if (selectedPIDs.has(item.pid)) { item.size = size; n++; } });
@@ -3050,13 +3054,28 @@ function applyBatchSize() {
   showToast(`已将 ${selectedPIDs.size} 个商品(${n} 个SKU)的尺码统一改为 ${size}`);
 }
 
-// 尺码自定义编辑(仅字母);空值兜底为"-"
+// 批量修改件数(仅纯数字,最小为 1);作用范围=已勾选商品
+function applyBatchQty() {
+  const inp = document.getElementById('batchQtyInput');
+  const raw = inp ? inp.value : '';
+  let qty = parseInt(String(raw).replace(/[^0-9]/g, ''), 10);
+  if (isNaN(qty) || qty < 1) { showToast('请输入大于 0 的纯数字件数'); return; }
+  if (selectedPIDs.size === 0) { showToast('请先勾选要批量修改的商品'); return; }
+  let n = 0;
+  cart.forEach(item => { if (selectedPIDs.has(item.pid)) { item.qty = qty; n++; } });
+  if (inp) inp.value = '';
+  updateCartCount();
+  renderCart();
+  showToast(`已将 ${selectedPIDs.size} 个商品(${n} 个SKU)的件数统一改为 ${qty}`);
+}
+
+// 尺码自定义编辑(不限字符,允许中文/字母/数字);空值兜底为"-"
 function updateCartSize(pid, idx, value) {
   const grouped = {};
   cart.forEach(item => { if (!grouped[item.pid]) grouped[item.pid] = []; grouped[item.pid].push(item); });
   const target = grouped[pid] && grouped[pid][idx];
   if (!target) return;
-  const clean = String(value).replace(/[^A-Za-z ]/g, '').trim();
+  const clean = String(value).trim();
   target.size = clean || '-';
   // 不整表重渲染,避免打断连续编辑;仅同步件数合计
 }
