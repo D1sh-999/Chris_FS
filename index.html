@@ -515,7 +515,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .buyers-search-bar { margin: 0 0 20px; }
 .buyers-search-input { width: 100%; max-width: 360px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 980px; font-size: 13px; color: var(--text-primary); background: var(--surface); outline: none; transition: var(--transition); }
 .buyers-search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-.buyers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+.buyers-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
+@media (max-width: 1400px){ .buyers-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px){ .buyers-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px){ .buyers-grid { grid-template-columns: repeat(2, 1fr); } }
 .buyer-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .buyer-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.10); transform: translateY(-2px); }
 .buyer-qr-wrap { position: relative; width: 100%; aspect-ratio: 1/1; background: #f7f7f8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -957,9 +960,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
       <div class="page-header">
         <div class="page-title">联系买手</div>
         <div class="page-subtitle">扫码或点击添加对应品类买手，直接对接选品需求</div>
-      </div>
-      <div class="buyers-search-bar">
-        <input class="buyers-search-input" id="buyersSearch" placeholder="搜索买手姓名或标签…" oninput="renderBuyers()">
       </div>
       <div id="buyersContent"></div>
     </div>
@@ -2923,18 +2923,14 @@ document.getElementById('skuModal').addEventListener('click', function(e) { if (
 
 // ===== Cart =====
 // ===== 联系买手(纯买手名片墙) =====
-var BUYERS = [{"name":"王瑶","img":"data/buyers/buyer_0.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=451ne8c0-bb42-4993-bc5f-1e67a6a83df9&unique_id=dDfo1Gmj_i007AXJ7UOfqQ==","tag":"女士下装；标码短视频负责人"},{"name":"徐熙雅","img":"data/buyers/buyer_1.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=85ak8ac5-c31a-4856-a7ef-c2f534a02415&unique_id=si4znoxDJIxlOYCwPNpX3g==","tag":"女士穆斯林&特殊服饰"},{"name":"游宇航","img":"data/buyers/buyer_2.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=02cv6c0c-c64e-452e-9707-7ddddafda07a&unique_id=-woM-BMTyGp3dBwwtWHpnw==","tag":"女士套装及西服"},{"name":"郑川粤","img":"data/buyers/buyer_3.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=bdajc34b-d15b-4eed-a698-1f3d1f340dc8&unique_id=ev53o8bK6n2gCuumCJmtow==","tag":"大码女装；大码短视频负责人"},{"name":"张宇","img":"data/buyers/buyer_4.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=6c6o88cf-6adf-48c0-942f-b3c125e04538&unique_id=sYbkGQx6CikcdUNNvY3JUA==","tag":"大码女装；大码直播负责人"},{"name":"王可心","img":"data/buyers/buyer_5.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=5f0v98da-4a06-4fc4-9d2e-87896163eea1&unique_id=vA1k4qDrmPdOd1Pcw5_3bA==","tag":"女士针织衫；AIGC"},{"name":"沈亦莎","img":"data/buyers/buyer_6.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=7f2m28c4-371c-4842-9e5b-40059e617a14&unique_id=cZEzLdr825pceE3A3oOPyQ==","tag":"女士针织衫"},{"name":"刘雪莹","img":"data/buyers/buyer_7.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=893qc6ba-3dcd-4df6-9803-92897bd64874&unique_id=IuMwUsXwUwjMiVCnkSFjFQ==","tag":"女士套装及西服"},{"name":"张健","img":"data/buyers/buyer_8.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=f2fm0fc9-d225-4cd3-b20e-0202261b4ff2&unique_id=PNTPwONvrs4C9VR0hskjcQ==","tag":"女士下装"},{"name":"黄依婷","img":"data/buyers/buyer_9.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=09dn8a05-7833-49e1-a2bf-13af76eb8ed4&unique_id=Syrgh_mXKJe81EJfLhsCOg==","tag":"女士套装及西服"},{"name":"王谍","img":"data/buyers/buyer_10.png","link":"https://www-my.larkoffice.com/invitation/page/add_contact/?token=921p4808-054c-4a9b-b737-b8ff00917391&unique_id=DGFcs7Kb6kCjZmUnhFcI3w==","tag":"女士下装；标码直播负责人"}];
+var BUYERS = [{"name":"王瑶","img":"data/buyers/buyer_0.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=451ne8c0-bb42-4993-bc5f-1e67a6a83df9&unique_id=dDfo1Gmj_i007AXJ7UOfqQ==","tag":"女士下装；标码短视频负责人"},{"name":"郑川粤","img":"data/buyers/buyer_3.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=bdajc34b-d15b-4eed-a698-1f3d1f340dc8&unique_id=ev53o8bK6n2gCuumCJmtow==","tag":"大码女装；大码短视频负责人"},{"name":"王谍","img":"data/buyers/buyer_10.png","link":"https://www-my.larkoffice.com/invitation/page/add_contact/?token=921p4808-054c-4a9b-b737-b8ff00917391&unique_id=DGFcs7Kb6kCjZmUnhFcI3w==","tag":"女士下装；标码直播负责人"},{"name":"张宇","img":"data/buyers/buyer_4.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=6c6o88cf-6adf-48c0-942f-b3c125e04538&unique_id=sYbkGQx6CikcdUNNvY3JUA==","tag":"大码女装；大码直播负责人"},{"name":"王可心","img":"data/buyers/buyer_5.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=5f0v98da-4a06-4fc4-9d2e-87896163eea1&unique_id=vA1k4qDrmPdOd1Pcw5_3bA==","tag":"女士针织衫；AIGC"},{"name":"沈亦莎","img":"data/buyers/buyer_6.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=7f2m28c4-371c-4842-9e5b-40059e617a14&unique_id=cZEzLdr825pceE3A3oOPyQ==","tag":"女士针织衫"},{"name":"张健","img":"data/buyers/buyer_8.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=f2fm0fc9-d225-4cd3-b20e-0202261b4ff2&unique_id=PNTPwONvrs4C9VR0hskjcQ==","tag":"女士下装"},{"name":"游宇航","img":"data/buyers/buyer_2.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=02cv6c0c-c64e-452e-9707-7ddddafda07a&unique_id=-woM-BMTyGp3dBwwtWHpnw==","tag":"女士套装及西服"},{"name":"刘雪莹","img":"data/buyers/buyer_7.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=893qc6ba-3dcd-4df6-9803-92897bd64874&unique_id=IuMwUsXwUwjMiVCnkSFjFQ==","tag":"女士套装及西服"},{"name":"黄依婷","img":"data/buyers/buyer_9.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=09dn8a05-7833-49e1-a2bf-13af76eb8ed4&unique_id=Syrgh_mXKJe81EJfLhsCOg==","tag":"女士套装及西服"},{"name":"徐熙雅","img":"data/buyers/buyer_1.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=85ak8ac5-c31a-4856-a7ef-c2f534a02415&unique_id=si4znoxDJIxlOYCwPNpX3g==","tag":"女士穆斯林&特殊服饰"},{"name":"郭越","img":"data/buyers/buyer_11.png","link":"https://www.larkoffice.com/invitation/page/add_contact/?token=c7cg4a21-9e47-4c7c-9a62-9f736755f38c&unique_id=0bJHolE_mcdIxd0JNzqB1Q==","tag":""}];
 function buyerEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function renderBuyers(){
   var box = document.getElementById('buyersContent');
   if(!box) return;
-  var kw = ((document.getElementById('buyersSearch')||{}).value||'').trim().toLowerCase();
-  var list = BUYERS.filter(function(b){
-    if(!kw) return true;
-    return (b.name||'').toLowerCase().indexOf(kw)!==-1 || (b.tag||'').toLowerCase().indexOf(kw)!==-1;
-  });
+  var list = BUYERS;
   if(list.length===0){
-    box.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F464;</div><div class="empty-state-text">没有匹配的买手</div></div>';
+    box.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F464;</div><div class="empty-state-text">暂无买手</div></div>';
     return;
   }
   box.innerHTML = '<div class="buyers-grid">' + list.map(function(b){
