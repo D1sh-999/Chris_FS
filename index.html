@@ -521,11 +521,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 @media (max-width: 600px){ .buyers-grid { grid-template-columns: repeat(2, 1fr); } }
 .buyer-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .buyer-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.10); transform: translateY(-2px); }
-.buyer-qr-wrap { position: relative; width: 100%; aspect-ratio: 1/1; background: #f7f7f8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.buyer-qr-wrap img { width: 100%; height: 100%; object-fit: contain; }
+.buyer-qr-wrap { position: relative; width: 100%; aspect-ratio: 1/1; max-height: 300px; background: #f7f7f8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.buyer-qr-wrap img { width: 100%; height: 100%; max-width: 300px; object-fit: contain; }
 .buyer-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .buyer-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
-.buyer-tags { display: flex; flex-wrap: nowrap; gap: 5px; min-height: 22px; overflow: hidden; }
+.buyer-tags { display: flex; flex-wrap: nowrap; gap: 5px; min-height: 22px; }
 .buyer-tag { display: inline-block; padding: 2px 9px; border-radius: 980px; font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-light); white-space: nowrap; }
 .buyer-add-btn { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 9px 12px; border: none; border-radius: 980px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; color: #fff; background: var(--accent); transition: var(--transition); }
 .buyer-add-btn:hover { filter: brightness(0.95); }
@@ -956,7 +956,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 
   <!-- Buyers Page (联系买手 · 纯买手名片墙) -->
   <div class="layout-wrap buyers-page" id="buyersPage">
-    <div class="main-content" style="max-width:2200px;margin:0 auto;width:100%;padding-left:32px;padding-right:32px;box-sizing:border-box;">
+    <div class="main-content" style="max-width:none;margin:0;width:100%;padding-left:40px;padding-right:40px;box-sizing:border-box;">
       <div class="page-header">
         <div class="page-title">联系买手</div>
         <div class="page-subtitle">扫码或点击添加对应品类买手，直接对接选品需求</div>
