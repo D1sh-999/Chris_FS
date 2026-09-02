@@ -1725,6 +1725,8 @@ function parsePrice(str) {
 
 function applyFilters() {
   const q = document.getElementById('filterSearch').value.toLowerCase().trim();
+  // 批量查询:按空格/英文逗号/中文逗号/顿号/分号/换行拆成多个关键词,任意一个命中即算匹配(并集语义,支持一次粘贴多个 PID/SPU)
+  const qTerms = q ? q.split(/[\s,，、;；\n\r]+/).filter(Boolean) : [];
   // 国家/二级类目/三级类目/买手 = 多选(Set),空 Set 表示不限
   const countrySet = MS_STATE.country;
   const cat2Set = MS_STATE.category2;
@@ -1755,7 +1757,10 @@ function applyFilters() {
 
   currentPage = 1;
   filteredProducts = PRODUCTS.filter(p => {
-    if (q && !(p.pid.includes(q) || p.spuCode.toLowerCase().includes(q) || (p.store||'').toLowerCase().includes(q) || (p.supplier||'').toLowerCase().includes(q) || (p.developer||'').toLowerCase().includes(q))) return false;
+    if (qTerms.length) {
+      const hay = (p.pid + '\n' + p.spuCode.toLowerCase() + '\n' + (p.store||'').toLowerCase() + '\n' + (p.supplier||'').toLowerCase() + '\n' + (p.developer||'').toLowerCase());
+      if (!qTerms.some(t => hay.includes(t))) return false;
+    }
     if (countrySet.size && !countrySet.has(p.country)) return false;
     if (cat3Set.size && !cat3Set.has(p.category3)) return false;
     if (cat2Set.size && !cat2Set.has(p.category2)) return false;
