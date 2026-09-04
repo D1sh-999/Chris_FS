@@ -1814,7 +1814,7 @@ function applyFilters() {
     switch(sort) {
       case 'priceAsc': return parsePrice(a.promoPrice) - parsePrice(b.promoPrice);
       case 'priceDesc': return parsePrice(b.promoPrice) - parsePrice(a.promoPrice);
-      case 'dateDesc': return (b.uploadDate||'').localeCompare(a.uploadDate||'');
+      case 'dateDesc': return (normDate(b.uploadDate)||'').localeCompare(normDate(a.uploadDate)||'');
       case 'sales7': return b.sales7 - a.sales7;
       case 'sales7Asc': return a.sales7 - b.sales7;
       case 'wowDesc': return (b.wowRaw==null?-Infinity:b.wowRaw) - (a.wowRaw==null?-Infinity:a.wowRaw);
@@ -1974,6 +1974,9 @@ function enterTopic(key) {
     const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.add('show');
     // 重建筛选项(反映小池子)并从头渲染
     resetFilters();
+    // 专题「女士针织衫精选」默认排序:按上架日期从新到旧(区别于主推池的按入池批次分层)
+    var sortSel = document.getElementById('filterSort');
+    if (sortSel && key === 'knit') sortSel.value = 'dateDesc';
     buildFilterOptions();
     applyFilters();
     const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
