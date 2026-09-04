@@ -794,7 +794,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
             <select class="filter-select" id="filterHistRange"><option value="">历史累计销量</option></select>
             <select class="filter-select" id="filterRange7"><option value="">近7天销量</option></select>
             <select class="filter-select" id="filterRangeT1"><option value="">昨日销量</option></select>
-            <select class="filter-select" id="filterDataDate"><option value="">数据更新日期</option></select>
+            <select class="filter-select" id="filterDataDate"><option value="">更新日期</option></select>
             <div class="ms-wrap" id="msDeveloper" data-field="developer" data-label="买手"></div>
             <select class="filter-select" id="filterSort">
               <option value="histDesc" selected>按历史销量从高到低</option>
@@ -1303,20 +1303,30 @@ function dedupeByPid(list) {
   return Array.from(map.values());
 }
 
-// 跨批次"本期新增"标注:
-// 依据每条商品的「入池日期」,取全池最大的日期=本期,次大=上一期。
-// 入池日期 == 本期 的商品标记 isNew=true(相对上一期新增)。
+// 跨批次"本期新增"标注(差集口径):
+// 入参 dedupedList 是「已按 PID 去重、每个 PID 只保留最新批次那行」的列表;
+// batchPidSets 是「去重前」按入池日期批次收集的 PID 集合(Map: intakeDate -> Set(pid))。
+// 定义:最新批次 = 最大入池日期;上一批次 = 次大入池日期。
+//   isNew = true 仅当该 PID 属于最新批次 且 不在上一批次里(即相对上一批真正新增)。
+//   属于最新批次但上一批也有的 PID(历史出现过) → isNew=false,但仍归在最新批次层。
+// 每个商品的 batchRank 用于分层排序:0=最新批次;1=更早批次(按其归属入池日期降序细分)。
 // 若数据源没有「入池日期」列(全空),整体降级:不打标签、不改排序。
-function annotateNewBatch(list) {
-  const dates = [...new Set(list.map(p => (p.intakeDate || '').trim()).filter(Boolean))].sort();
-  // 复位
-  list.forEach(p => { p.isNew = false; });
-  if (dates.length === 0) { list.__hasIntake = false; list.__latestBatch = ''; return list; }
+function annotateNewBatch(dedupedList, batchPidSets) {
+  dedupedList.forEach(p => { p.isNew = false; });
+  const dates = [...(batchPidSets ? batchPidSets.keys() : [])].filter(Boolean).sort(); // ISO 升序
+  if (dates.length === 0) { dedupedList.__hasIntake = false; dedupedList.__latestBatch = ''; return dedupedList; }
   const latest = dates[dates.length - 1];
-  list.__hasIntake = true;
-  list.__latestBatch = latest;
-  list.forEach(p => { p.isNew = ((p.intakeDate || '').trim() === latest); });
-  return list;
+  const prev = dates.length >= 2 ? dates[dates.length - 2] : '';
+  const prevSet = prev ? (batchPidSets.get(prev) || new Set()) : new Set();
+  dedupedList.__hasIntake = true;
+  dedupedList.__latestBatch = latest;
+  dedupedList.forEach(p => {
+    const d = (p.intakeDate || '').trim();
+    // 去重后每个 PID 已归属其最新出现的批次;是否为最新批次 PID 直接看它的 intakeDate 是否 == latest
+    const inLatest = (d === latest);
+    p.isNew = inLatest && !prevSet.has(p.pid);   // 最新批次 且 上一批次没有 → 真新增
+  });
+  return dedupedList;
 }
 
 // 环比增速原始值:兼容 小数(1.4) 或 百分比串("140.00%"),统一转为小数;空/非法返回 null
@@ -1396,7 +1406,15 @@ function mapRowsToProducts(rows) {
       isJit: (function(v){ const s = String(v).trim().toLowerCase(); return s.includes('jit') && !s.includes('非'); })(g('jit'))
     };
   }).filter(p => p.pid);
-  // 按 PID 去重:同一 PID 只保留近7日单量最高的一条
+  // 去重前:按入池日期批次收集各批次的 PID 全集(供"本期新增"差集判定用,去重后会丢失旧批次成员信息)
+  const batchPidSets = new Map();
+  for (const p of list) {
+    const d = (p.intakeDate || '').trim();
+    if (!d) continue;
+    if (!batchPidSets.has(d)) batchPidSets.set(d, new Set());
+    batchPidSets.get(d).add(p.pid);
+  }
+  // 按 PID 去重:同一 PID 优先保留「入池日期最新」的一条(见 dedupeByPid),保证卡片只出现一次且取最新批次指标
   list = dedupeByPid(list);
   // 默认按历史累计支付子单量降序;脱敏版无单量时,退化用「历史累计销量区间」下界排序,并赋予展示用排名
   list.sort((a, b) => {
@@ -1405,8 +1423,8 @@ function mapRowsToProducts(rows) {
     return bv - av;
   });
   list.forEach((p, i) => { p.rank = i + 1; });
-  // 标注跨批次"本期新增"(依据入池日期);无该列则整体降级
-  annotateNewBatch(list);
+  // 标注跨批次"本期新增"(差集口径:最新批次有、上一批次无);无入池日期列则整体降级
+  annotateNewBatch(list, batchPidSets);
   return list;
 }
 
@@ -1661,8 +1679,8 @@ function buildFilterOptions() {
   const rangeT1s = rangeSort([...new Set(PRODUCTS.map(p => p.rangeT1).filter(Boolean))]);
   // 买手 = 开发员名称
   const developers = [...new Set(PRODUCTS.map(p => p.developer).filter(Boolean))].sort();
-  // 数据更新日期(取数日期),最新在前
-  const dataDates = [...new Set(PRODUCTS.map(p => p.dataDate).filter(Boolean))].sort((a,b) => String(b).localeCompare(String(a)));
+  // 更新日期(数据源=入池日期),最新在前
+  const dataDates = [...new Set(PRODUCTS.map(p => (p.intakeDate||'').trim()).filter(Boolean))].sort((a,b) => String(b).localeCompare(String(a)));
 
   buildMultiSelect('country', countries);
   buildMultiSelect('category2', cat2s);
@@ -1674,7 +1692,7 @@ function buildFilterOptions() {
     msTagWrap.setAttribute('data-label', dynLabel);
   }
   buildMultiSelect('tag', tags);
-  fillSelect('filterDataDate', dataDates, '数据更新日期');
+  fillSelect('filterDataDate', dataDates, '更新日期');
   fillRangeSelect('filterHistRange', histRanges, '历史累计销量');
   fillRangeSelect('filterRange7', range7s, '近7天销量');
   fillRangeSelect('filterRangeT1', rangeT1s, '昨日销量');
@@ -1795,21 +1813,36 @@ function applyFilters() {
     if (histRange && p.histRange !== histRange) return false;
     if (range7 && p.range7 !== range7) return false;
     if (rangeT1 && p.rangeT1 !== rangeT1) return false;
-    if (dataDate && p.dataDate !== dataDate) return false;
+    if (dataDate && p.intakeDate !== dataDate) return false;
     return true;
   });
 
   const hasIntake = !!(PRODUCTS && PRODUCTS.__hasIntake);
-  // 方案B:默认排序(histDesc)下按"入池批次新旧"分层——最新一期在最上,段内按历史单量降序;
-  // 用户主动切换排序(价格/近7天/环比/上架时间等)时,退回全局排序,不分层,但仍把"本期新增"整体置顶。
+  const latestBatch = (PRODUCTS && PRODUCTS.__latestBatch) || '';
+  // 方案B + 三层分层:默认排序(histDesc)下按"入池批次新旧 + 最新批次内新增优先"分层。
+  //   第1层:最新批次 且 相对上一批真新增(isNew)      —— 最顶
+  //   第2层:最新批次 但 历史出现过(非新增)
+  //   第3层及以后:更早批次,按入池日期降序细分
+  //   各层内按历史累计单量降序。
+  // 用户主动切换排序(价格/近7天/环比/上架时间等)时,退回全局排序,不分层,但仍把真新增整体置顶。
   const layered = hasIntake && sort === 'histDesc';
+  // 分层排序键:数值越小越靠前。最新批次内 isNew=0 / 非新增=1;更早批次统一从 2 起、按入池日期越新越小。
+  const tierKey = p => {
+    const d = (p.intakeDate||'').trim();
+    if (d === latestBatch) return p.isNew ? '0' : '1';
+    // 更早批次:用 "2" + (反转的日期串) 保证越新越靠前;简单用负向比较放到 compare 里处理
+    return '2';
+  };
 
   filteredProducts.sort((a,b) => {
     if (layered) {
-      // 一级:入池日期降序(ISO 归一化后字典序即时间序,新批次在前);二级:历史累计单量降序
-      const ka = (a.intakeDate||'').trim(), kb = (b.intakeDate||'').trim();
-      if (ka !== kb) return kb.localeCompare(ka);
-      return b.histSales - a.histSales;
+      const ta = tierKey(a), tb = tierKey(b);
+      if (ta !== tb) return ta < tb ? -1 : 1;            // 层级:0(新增) < 1(最新非新增) < 2(更早)
+      if (ta === '2') {                                   // 同为"更早批次":按入池日期降序细分
+        const ka = (a.intakeDate||'').trim(), kb = (b.intakeDate||'').trim();
+        if (ka !== kb) return kb.localeCompare(ka);
+      }
+      return b.histSales - a.histSales;                   // 层内:历史累计单量降序
     }
     switch(sort) {
       case 'priceAsc': return parsePrice(a.promoPrice) - parsePrice(b.promoPrice);
@@ -2382,7 +2415,7 @@ function buildCardHtml(p) {
   const attrRow = '';
   // 季节标签:放到价格行,位于库存右侧
   const seasonInline = p.season ? `<span class="pc-price-season">${p.season}</span>` : '';
-  // 上架日期:胶囊标签,放在颜色圆块行左侧(位于数据更新日期上方)
+  // 上架日期:胶囊标签,放在颜色圆块行左侧(位于更新日期上方)
   const uploadInline = p.uploadDate ? `<span class="pc-cap pc-cap-list pc-upload-inline" title="全球首次上架日期">上架 ${p.uploadDate}</span>` : '';
   // 销量标签:直接取数据源区间字段,转成「XX-XX」(历史累计销量区间/近7天出单区间/T-1出单区间)
   const histLabel = rangeLabel(p.histRange);
@@ -2432,7 +2465,7 @@ function buildCardHtml(p) {
           ${dots}
         </div>
         <div class="pc-bottom">
-          <span class="pc-date" title="数据更新日期(取数日期)">${p.dataDate ? '数据更新 ' + p.dataDate : ''}</span>
+          <span class="pc-date" title="更新日期(入池日期)">${p.intakeDate ? '更新 ' + p.intakeDate : ''}</span>
           <button class="quick-add-btn" title="快速加入（热销色 / S M L混发 / 6件）" onclick="event.stopPropagation();quickAdd('${p.pid}')">+</button>
         </div>
       </div>
