@@ -1288,9 +1288,17 @@ function rangeWeight(raw) {
 function dedupeByPid(list) {
   const map = new Map();
   const score = p => (p.sales7 > 0 ? p.sales7 : rangeWeight(p.range7));
+  // 同一 PID 出现在多期货盘时,优先保留「入池日期最新」的那一条(保证最新批次的品能被判为本期新增);
+  // 入池日期相同才比较近7日单量/出单区间,取高者。这样全量载入历史后,去重仍以最新批次为准。
+  const intakeKey = p => (p.intakeDate || '').trim();
+  const better = (a, b) => {   // a 是否应取代 b
+    const ka = intakeKey(a), kb = intakeKey(b);
+    if (ka !== kb) return ka > kb;   // ISO 归一化后的日期串可直接字典序比较,新日期胜出
+    return score(a) > score(b);
+  };
   for (const p of list) {
     const cur = map.get(p.pid);
-    if (!cur || score(p) > score(cur)) map.set(p.pid, p);
+    if (!cur || better(p, cur)) map.set(p.pid, p);
   }
   return Array.from(map.values());
 }
@@ -1791,7 +1799,18 @@ function applyFilters() {
     return true;
   });
 
+  const hasIntake = !!(PRODUCTS && PRODUCTS.__hasIntake);
+  // 方案B:默认排序(histDesc)下按"入池批次新旧"分层——最新一期在最上,段内按历史单量降序;
+  // 用户主动切换排序(价格/近7天/环比/上架时间等)时,退回全局排序,不分层,但仍把"本期新增"整体置顶。
+  const layered = hasIntake && sort === 'histDesc';
+
   filteredProducts.sort((a,b) => {
+    if (layered) {
+      // 一级:入池日期降序(ISO 归一化后字典序即时间序,新批次在前);二级:历史累计单量降序
+      const ka = (a.intakeDate||'').trim(), kb = (b.intakeDate||'').trim();
+      if (ka !== kb) return kb.localeCompare(ka);
+      return b.histSales - a.histSales;
+    }
     switch(sort) {
       case 'priceAsc': return parsePrice(a.promoPrice) - parsePrice(b.promoPrice);
       case 'priceDesc': return parsePrice(b.promoPrice) - parsePrice(a.promoPrice);
@@ -1805,8 +1824,9 @@ function applyFilters() {
     }
   });
 
-  // 本期新增置顶:仅当池子含"入池日期"时生效,稳定排序保留组内既有次序
-  if (PRODUCTS && PRODUCTS.__hasIntake) {
+  // 本期新增置顶:仅在"未分层"(用户主动切换了排序)时需要,把 isNew 整体提到最前;稳定排序保留组内既有次序。
+  // 分层模式下最新批次已在段首,无需再置顶(执行也是无害的稳定 no-op,这里直接跳过省一次排序)。
+  if (hasIntake && !layered) {
     filteredProducts = filteredProducts
       .map((p, i) => ({ p, i }))
       .sort((x, y) => ((y.p.isNew ? 1 : 0) - (x.p.isNew ? 1 : 0)) || (x.i - y.i))
