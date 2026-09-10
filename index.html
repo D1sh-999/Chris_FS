@@ -11,8 +11,9 @@
   gtag('js', new Date());
   gtag('config', 'G-LE641F413F');
 </script>
-<title>女装选品小站</title>
+<title>嘉尔组女装选品小站</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="config.js"></script>
 <style>
@@ -629,6 +630,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .cart-actions button { padding: 8px 20px; border-radius: 980px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); }
 .btn-export-pid { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border-light); }
 .btn-export-pid:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.btn-clear-selected { background: #fff; color: #d92d20; border: 1px solid #f2b8b5; }
+.btn-clear-selected:hover { background: #fef3f2; border-color: #d92d20; }
 .btn-export-full { background: var(--accent); color: #fff; }
 .btn-export-full:hover { background: var(--accent-hover); }
 
@@ -702,7 +705,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 <div class="app-wrap" id="appWrap">
   <nav class="nav">
     <div class="nav-left">
-      <div class="nav-logo">女装选品小站</div>
+      <div class="nav-logo">嘉尔组女装选品小站</div>
       <div class="nav-tabs">
         <div class="nav-tab active" onclick="switchPage('products')">商品浏览</div>
         <div class="nav-tab" onclick="switchPage('cart')">圈品池</div>
@@ -712,7 +715,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
       </div>
       <div class="nav-welcome" id="navWelcome">
-        <span class="nav-welcome-main" id="welcomeText">Hi，欢迎来到女装选品小站</span>
+        <span class="nav-welcome-main" id="welcomeText">Hi，欢迎来到嘉尔组女装选品小站</span>
         <span class="nav-welcome-sub">挑选心仪商品加入圈品池，批量导出申样记录</span>
       </div>
     </div>
@@ -893,6 +896,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
         <button class="cart-batch-btn" onclick="applyBatchQty()">应用</button>
       </div>
       <div class="cart-actions">
+        <button class="btn-clear-selected" onclick="removeSelectedFromCart()">批量清除选中</button>
         <button class="btn-export-pid" onclick="copyCartPIDs()">复制 PID</button>
         <button class="btn-export-pid" onclick="exportPID()">导出 PID 列表</button>
         <button class="btn-export-pid" onclick="copyCartRecords()">复制申样记录</button>
@@ -1165,7 +1169,7 @@ function maybeShowSettingsTip() {
     if (userSettings && userSettings.agencyName) return;
     if (localStorage.getItem('settingsTipShown') === '1') return;
     setTimeout(function() {
-      var go = confirm('欢迎来到女装选品小站！\n\n建议您先前往「机构设置」完善机构名称、收件人等个人信息，之后导出申样记录会更顺畅。\n\n点击「确定」现在去设置，点击「取消」稍后再说。');
+      var go = confirm('欢迎来到嘉尔组女装选品小站！\n\n建议您先前往「机构设置」完善机构名称、收件人等个人信息，之后导出申样记录会更顺畅。\n\n点击「确定」现在去设置，点击「取消」稍后再说。');
       localStorage.setItem('settingsTipShown', '1');
       if (go) switchPage('settings');
     }, 600);
@@ -1511,7 +1515,7 @@ function maybePromptProfile() {
   if (sessionStorage.getItem('profilePrompted') === '1') return; // 本次会话只提醒一次
   sessionStorage.setItem('profilePrompted', '1');
   setTimeout(function() {
-    var ok = window.confirm('欢迎来到女装选品小站！\n\n为方便后续一键导出申样记录，建议先完善「机构设置」中的个人信息（机构名称、达人、收件人等）。\n\n点击「确定」立即前往设置，点击「取消」先浏览商品。');
+    var ok = window.confirm('欢迎来到嘉尔组女装选品小站！\n\n为方便后续一键导出申样记录，建议先完善「机构设置」中的个人信息（机构名称、达人、收件人等）。\n\n点击「确定」立即前往设置，点击「取消」先浏览商品。');
     if (ok) switchPage('settings');
   }, 600);
 }
@@ -1536,7 +1540,7 @@ function buildSidebar() {
 function updateWelcome() {
   const name = userSettings.agencyName;
   const el = document.getElementById('welcomeText');
-  el.textContent = name ? `Hi ${name}，欢迎来到女装选品小站` : 'Hi，欢迎来到女装选品小站';
+  el.textContent = name ? `Hi ${name}，欢迎来到嘉尔组女装选品小站` : 'Hi，欢迎来到嘉尔组女装选品小站';
 }
 
 // ===== Filters =====
@@ -3097,6 +3101,18 @@ function removeCartItem(pid, idx) {
   renderCart();
 }
 
+// 批量清除:把当前已勾选(selectedPIDs)的商品连同其所有 SKU 行一次性移出圈品池
+function removeSelectedFromCart() {
+  if (selectedPIDs.size === 0) { showToast('请先勾选要清除的商品'); return; }
+  const n = selectedPIDs.size;
+  if (!window.confirm(`确定从圈品池移除已勾选的 ${n} 个商品吗?此操作不可撤销。`)) return;
+  cart = cart.filter(i => !selectedPIDs.has(i.pid));
+  selectedPIDs.clear();
+  updateCartCount();
+  renderCart();
+  showToast(`已清除 ${n} 个商品`);
+}
+
 // 批量改尺码:把输入的尺码统一应用到"已勾选商品"的所有 SKU 行
 function applyBatchSize() {
   const inp = document.getElementById('batchSizeInput');
@@ -3375,16 +3391,108 @@ function parseAddress(addr) {
 }
 
 // ===== Export =====
-function exportPID() {
+// 拉取图片并转为 {base64, ext};沿候选链逐个尝试,全失败返回 null
+async function fetchImageAsBase64(rawUrl) {
+  const cands = imageCandidates(rawUrl);
+  for (const u of cands) {
+    try {
+      const resp = await fetch(u, { referrerPolicy: 'no-referrer', mode: 'cors' });
+      if (!resp.ok) continue;
+      const blob = await resp.blob();
+      if (!blob || !blob.type || blob.type.indexOf('image') !== 0) {
+        // 有些 CDN 不返回精确 mime,按后缀兜底判断
+        if (!/\.(jpe?g|png|webp|gif)/i.test(u) && blob.size < 100) continue;
+      }
+      const buf = await blob.arrayBuffer();
+      let ext = 'png';
+      if (/jpe?g/i.test(blob.type) || /\.jpe?g/i.test(u)) ext = 'jpeg';
+      else if (/png/i.test(blob.type) || /\.png/i.test(u)) ext = 'png';
+      else if (/gif/i.test(blob.type) || /\.gif/i.test(u)) ext = 'gif';
+      else ext = 'png';
+      // ExcelJS 只支持 png/jpeg/gif,webp 等统一按 png 尝试(多数 CDN 返回 jpeg)
+      if (ext !== 'jpeg' && ext !== 'png' && ext !== 'gif') ext = 'png';
+      return { buffer: buf, ext };
+    } catch (e) { /* 跨域/超时 → 试下一个候选 */ }
+  }
+  return null;
+}
+
+async function exportPID() {
   if (selectedPIDs.size === 0) { showToast('请至少选择一个商品'); return; }
   const pids = [...selectedPIDs];
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([['PID_product id'], ...pids.map(p => [p])]);
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for (let r = range.s.r; r <= range.e.r; r++) { const c = ws[XLSX.utils.encode_cell({r,c:0})]; if(c) c.t='s'; }
-  XLSX.utils.book_append_sheet(wb, ws, 'PID列表');
-  XLSX.writeFile(wb, `PID列表_${new Date().toISOString().slice(0,10)}.xlsx`);
-  showToast(`已导出 ${pids.length} 个 PID`);
+
+  // 无 ExcelJS 时回退到纯 PID 导出(SheetJS)
+  if (!window.ExcelJS) {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([['PID_product id'], ...pids.map(p => [p])]);
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let r = range.s.r; r <= range.e.r; r++) { const c = ws[XLSX.utils.encode_cell({r,c:0})]; if(c) c.t='s'; }
+    XLSX.utils.book_append_sheet(wb, ws, 'PID列表');
+    XLSX.writeFile(wb, `PID列表_${new Date().toISOString().slice(0,10)}.xlsx`);
+    showToast(`已导出 ${pids.length} 个 PID(图片组件未就绪,已导出纯 PID)`);
+    return;
+  }
+
+  // 取每个 PID 的首图链接(取圈品池里该 PID 任一 SKU 行的 product.image)
+  const pidImg = {};
+  cart.forEach(i => { if (selectedPIDs.has(i.pid) && !pidImg[i.pid]) pidImg[i.pid] = (i.product && i.product.image) || ''; });
+
+  showToast(`正在生成带图片的 PID 列表(共 ${pids.length} 个,拉取图片中…)`);
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('PID列表');
+  ws.columns = [
+    { header: 'PID_product id', key: 'pid', width: 26 },
+    { header: '首图', key: 'img', width: 16 }
+  ];
+  ws.getRow(1).font = { bold: true };
+  ws.getRow(1).height = 20;
+
+  const IMG_PX = 96;      // 缩略图边长(像素)
+  const ROW_HEIGHT = 74;  // 行高(磅) ≈ 98px
+
+  let okCount = 0, failCount = 0;
+  for (let idx = 0; idx < pids.length; idx++) {
+    const pid = pids[idx];
+    const rowNum = idx + 2;             // 第 1 行是表头
+    const row = ws.getRow(rowNum);
+    row.height = ROW_HEIGHT;
+    const pidCell = row.getCell(1);
+    pidCell.value = String(pid);        // 强制文本,防 19 位 PID 被科学计数
+    pidCell.numFmt = '@';
+    pidCell.alignment = { vertical: 'middle', horizontal: 'left' };
+
+    const img = await fetchImageAsBase64(pidImg[pid]);
+    if (img) {
+      try {
+        const imageId = wb.addImage({ buffer: img.buffer, extension: img.ext });
+        // 放入 B 列(col index 1,0-based),留 3px 内边距
+        ws.addImage(imageId, {
+          tl: { col: 1.05, row: rowNum - 1 + 0.05 },
+          ext: { width: IMG_PX, height: IMG_PX },
+          editAs: 'oneCell'
+        });
+        okCount++;
+      } catch (e) {
+        row.getCell(2).value = '图片写入失败';
+        failCount++;
+      }
+    } else {
+      row.getCell(2).value = '图片暂不可用';
+      failCount++;
+    }
+    if (idx % 20 === 0) showToast(`拉取图片中… ${idx + 1}/${pids.length}`);
+  }
+
+  const buf = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `PID列表_${new Date().toISOString().slice(0,10)}.xlsx`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+
+  showToast(`已导出 ${pids.length} 个 PID(含图 ${okCount} 个${failCount ? `,${failCount} 个图片缺失` : ''})`);
 }
 
 function exportFull() {
