@@ -1012,6 +1012,13 @@ let PRODUCTS = [];          // 当前生效的数据池(指向大池子或专题
 let MAIN_POOL = [];         // 大池子:全量商品(data/products.csv)
 let TOPIC_POOL = null;      // 专题池:女士针织衫精选(懒加载,加载后缓存)
 let ACTIVE_POOL = 'main';   // 'main' | 'topic',标记当前商品浏览页展示的是哪个池子
+// 站点配置:全站唯一数据源(方案A)+ 侧边栏货盘列表。此前该定义缺失导致 loadProductData 抛 ReferenceError、主商品池卡在"加载数据"。
+const SITE_CONFIG = {
+  dataFile: 'data/products.csv',   // 优先加载路径,失败时 tryLoadCsv 会自动回退到其它候选
+  pallets: [
+    { key: 'all', name: '嘉尔组女装货盘', color: 'blue', enabled: true }
+  ]
+};
 let cart = [];
 let userSettings = JSON.parse(localStorage.getItem('agencySettings') || '{}');
 let currentProduct = null;
