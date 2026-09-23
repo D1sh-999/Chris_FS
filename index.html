@@ -113,6 +113,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .cart-badge:hover { background: var(--accent-hover); transform: scale(1.02); }
 .cart-count { position: absolute; top: -4px; right: -4px; background: var(--danger); color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
 
+/* ===== Language 切换 ===== */
+.lang-switch { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; padding: 6px 12px; border: 1px solid var(--border-light); border-radius: 980px; font-size: 12px; font-weight: 500; color: var(--text-secondary); transition: var(--transition); user-select: none; }
+.lang-switch:hover { color: var(--accent); border-color: var(--accent); }
+.lang-switch .lang-ico { font-size: 13px; line-height: 1; }
+.lang-switch.en-active { color: var(--accent); border-color: var(--accent); background: rgba(0,113,227,0.06); }
+
+/* 欢迎语高亮(Apple.cn 风格:精致排版,日期强调) */
+.welcome-hi { font-weight: 500; color: var(--text-secondary); }
+.welcome-agency { font-weight: 700; color: var(--text-primary); }
+.welcome-date { font-weight: 700; color: var(--accent); letter-spacing: 0.01em; }
+
+/* 英文模式:浏览器机翻提示条 */
+.translate-hint { display: none; max-width: 1360px; margin: 8px auto 0; padding: 8px 22px; font-size: 12px; color: var(--text-secondary); background: rgba(0,113,227,0.05); border-radius: 10px; }
+body.lang-en .translate-hint { display: block; }
+
 /* ===== Welcome Banner (已迁移到顶部导航栏 .nav-welcome) ===== */
 
 /* ===== Layout ===== */
@@ -412,6 +427,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .float-cart.show { display: flex; }
 .float-cart .fc-count { background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
 
+/* ===== 一键全选浮动侧控件(browse-select-dock;紧凑无底板,不遮挡卡片) ===== */
+.browse-select-dock { display: none; position: fixed; top: 42%; right: 0; transform: translateY(-50%); z-index: 98; flex-direction: column; align-items: flex-end; gap: 6px; padding: 0; background: none; border: none; box-shadow: none; }
+.browse-select-dock.show { display: flex; }
+.browse-select-dock.dock-left { right: auto; left: 0; align-items: flex-start; }
+.bsd-side-toggle { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.9); color: var(--text-secondary); font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+.bsd-side-toggle:hover { background: var(--accent); color: #fff; }
+.bsd-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 12px; border: none; border-radius: 980px; font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.14); }
+.browse-select-dock.dock-left .bsd-btn { border-radius: 980px; }
+.bsd-btn:hover { transform: scale(1.04); }
+.bsd-btn .bsd-count { min-width: 16px; height: 16px; border-radius: 8px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; padding: 0 4px; }
+.bsd-selectall { background: rgba(255,255,255,0.92); color: var(--text-primary); backdrop-filter: saturate(180%) blur(8px); }
+.bsd-selectall.active { background: var(--accent); color: #fff; }
+.bsd-selectall .bsd-count { background: rgba(0,0,0,0.1); color: inherit; }
+.bsd-selectall.active .bsd-count { background: rgba(255,255,255,0.28); }
+.bsd-actions { display: none; flex-direction: column; align-items: inherit; gap: 6px; }
+.bsd-actions.show { display: flex; }
+.bsd-add { background: var(--accent); color: #fff; }
+.bsd-add .bsd-count { background: var(--danger); color: #fff; }
+.bsd-copy { background: rgba(29,29,31,0.9); color: #fff; backdrop-filter: saturate(180%) blur(8px); }
+.bsd-copy .bsd-count { background: rgba(255,255,255,0.22); color: #fff; }
+
 /* ===== Side floating action buttons (每个按钮独立可拖动) ===== */
 .side-fab { position: fixed; right: 0; z-index: 96; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 60px; padding: 12px 6px; border: none; cursor: grab; color: #fff; font-size: 11px; font-weight: 600; line-height: 1.25; border-radius: 14px 0 0 14px; box-shadow: -2px 3px 12px rgba(0,0,0,0.16); transition: box-shadow 0.2s ease, transform 0.2s ease; text-align: center; text-decoration: none; touch-action: none; user-select: none; -webkit-user-select: none; }
 .side-fab:hover { transform: translateX(-3px); box-shadow: -4px 4px 16px rgba(0,0,0,0.22); }
@@ -707,26 +743,32 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
     <div class="nav-left">
       <div class="nav-logo">嘉尔组女装选品小站</div>
       <div class="nav-tabs">
-        <div class="nav-tab active" onclick="switchPage('products')">商品浏览</div>
-        <div class="nav-tab" onclick="switchPage('cart')">圈品池</div>
-        <div class="nav-tab" onclick="switchPage('lookup')">SPU-PID互查</div>
-        <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044" target="_blank" rel="noopener">立即申样</a>
-        <div class="nav-tab" onclick="switchPage('buyers')">联系买手</div>
-        <div class="nav-tab" onclick="switchPage('settings')">机构设置</div>
+        <div class="nav-tab active" data-i18n="nav.products" onclick="switchPage('products')">商品浏览</div>
+        <div class="nav-tab" data-i18n="nav.cart" onclick="switchPage('cart')">圈品池</div>
+        <div class="nav-tab" data-i18n="nav.lookup" onclick="switchPage('lookup')">SPU-PID互查</div>
+        <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/base/RxMqb4I5yaNXo0sMkNUlC6T0gVb?table=tbl17giD6xvXjeKf&view=vewwJET044" target="_blank" rel="noopener" data-i18n="nav.apply">立即申样</a>
+        <a class="nav-tab nav-tab-link" href="https://bytedance.sg.larkoffice.com/docx/S0OddkgAIoaVKQxas5xlZpgagr1" target="_blank" rel="noopener" data-i18n="nav.tutorial">新手教程</a>
+        <div class="nav-tab" data-i18n="nav.buyers" onclick="switchPage('buyers')">联系买手</div>
+        <div class="nav-tab" data-i18n="nav.settings" onclick="switchPage('settings')">机构设置</div>
       </div>
       <div class="nav-welcome" id="navWelcome">
-        <span class="nav-welcome-main" id="welcomeText">Hi，欢迎来到嘉尔组女装选品小站</span>
-        <span class="nav-welcome-sub">挑选心仪商品加入圈品池，批量导出申样记录</span>
+        <span class="nav-welcome-main" id="welcomeText">Hi，欢迎来到嘉尔组选品小站</span>
       </div>
     </div>
     <div class="nav-right">
       <div class="agency-badge" id="agencyBadge">未选择机构</div>
+      <div class="lang-switch" id="langSwitch" onclick="toggleLang()" title="切换中文 / English">
+        <span class="lang-ico">🌐</span><span class="lang-label" id="langLabel">Language</span>
+      </div>
       <div class="cart-badge" onclick="switchPage('cart')">
-        圈品池
+        <span data-i18n="nav.cart">圈品池</span>
         <span class="cart-count" id="cartCount">0</span>
       </div>
     </div>
   </nav>
+
+  <!-- 英文模式:浏览器机翻提示条(商品数据字段不翻译,引导用户用浏览器内置整页翻译) -->
+  <div class="translate-hint" id="translateHint"></div>
 
   <!-- 专题导航条(Banner 位):介于顶部导航与筛选栏之间,展示强展示专题 + 预留位 -->
   <div class="topic-nav" id="topicNav">
@@ -979,6 +1021,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
   <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
   <button class="float-back-pool" id="floatBackPool" onclick="exitTopic()" title="返回全部商品(主商品池)">← 返回主商品池</button>
 
+  <!-- 一键全选浮动侧控件(商品浏览页;新增,独立状态 browseSelected,不与圈品池冲突) -->
+  <div class="browse-select-dock" id="browseSelectDock">
+    <div class="bsd-side-toggle" id="bsdSideToggle" onclick="toggleDockSide()" title="切换到左侧 / 右侧">⇄</div>
+    <button class="bsd-btn bsd-selectall" id="bsdSelectAll" onclick="toggleSelectAllFiltered()">
+      <span class="bsd-ico">☑</span>
+      <span class="bsd-txt" id="bsdSelectAllTxt" data-i18n="bsd.selectAll">全选当前结果</span>
+      <span class="bsd-count" id="bsdMatchCount">0</span>
+    </button>
+    <div class="bsd-actions" id="bsdActions">
+      <button class="bsd-btn bsd-add" id="bsdAddCart" onclick="browseAddAllToCart()">
+        <span class="bsd-txt" data-i18n="bsd.addCart">+ 加入圈品池</span>
+        <span class="bsd-count" id="bsdAddCount">0</span>
+      </button>
+      <button class="bsd-btn bsd-copy" id="bsdCopyPid" onclick="browseCopyPids()">
+        <span class="bsd-txt" data-i18n="bsd.copyPid">复制PID</span>
+        <span class="bsd-count" id="bsdPidCount">0</span>
+      </button>
+      <button class="bsd-btn bsd-copy" id="bsdCopySpu" onclick="browseCopySpus()">
+        <span class="bsd-txt" data-i18n="bsd.copySpu">复制SPU</span>
+        <span class="bsd-count" id="bsdSpuCount">0</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Tag Guide Modal -->
   <div class="modal-overlay" id="guideModal">
     <div class="guide-modal">
@@ -1026,6 +1092,9 @@ let selectedColor = null;
 let selectedSize = null;
 let selectedPIDs = new Set();
 let filteredProducts = [];
+let browseSelected = new Set();   // 商品浏览页「一键全选」独立选中集(仅去重PID,不与圈品池去重)
+let browseSelectActive = false;   // 是否处于全选状态
+let LANG = localStorage.getItem('siteLang') || 'zh';  // 'zh' | 'en'
 let currentPage = 1;
 const PAGE_SIZE = 28; // 每页 4 行 × 7 列
 let currentUser = null;
@@ -1486,7 +1555,10 @@ function initApp() {
   applyFilters();   // 走完整筛选+"本期新增置顶"排序,保证首屏就把最新批次新增品排在最前(直接 renderProducts 会漏掉置顶)
   loadSettings();
   updateCartCount();
-  updateWelcome();
+  // 恢复停靠侧 + 应用语言(applyLang 内部会调 updateWelcome)
+  try { if (localStorage.getItem('bsdSide') === 'left') { const d = document.getElementById('browseSelectDock'); if (d) d.classList.add('dock-left'); } } catch(e){}
+  applyLang();
+  refreshBrowseSelectUI();
   maybePromptProfile();
   // 深链:若 URL 带 #topic=xxx 后缀,加载完主数据后自动跳进对应专题池
   applyHashRoute();
@@ -1522,7 +1594,7 @@ function maybePromptProfile() {
   if (sessionStorage.getItem('profilePrompted') === '1') return; // 本次会话只提醒一次
   sessionStorage.setItem('profilePrompted', '1');
   setTimeout(function() {
-    var ok = window.confirm('欢迎来到嘉尔组女装选品小站！\n\n为方便后续一键导出申样记录，建议先完善「机构设置」中的个人信息（机构名称、达人、收件人等）。\n\n点击「确定」立即前往设置，点击「取消」先浏览商品。');
+    var ok = window.confirm('欢迎来到嘉尔组女装选品小站！\n\n为方便后续一键导出申样记录，建议先完善「机构设置」中的个人信息（机构名称、达人、收件人等）。\n\n💡 新手教程：如需了解本站使用方法，可点击顶部导航「新手教程」查看使用指南（https://bytedance.sg.larkoffice.com/docx/S0OddkgAIoaVKQxas5xlZpgagr1）。\n\n点击「确定」立即前往设置，点击「取消」先浏览商品。');
     if (ok) switchPage('settings');
   }, 600);
 }
@@ -1544,10 +1616,75 @@ function buildSidebar() {
   `;
 }
 
+// ===== i18n(方案2:UI 固定文案中英双语切换;商品数据字段不翻译) =====
+const I18N = {
+  zh: {
+    'nav.products': '商品浏览', 'nav.cart': '圈品池', 'nav.lookup': 'SPU-PID互查',
+    'nav.apply': '立即申样', 'nav.tutorial': '新手教程', 'nav.buyers': '联系买手', 'nav.settings': '机构设置',
+    'lang.label': 'Language',
+    'welcome.hi': 'Hi', 'welcome.tpl': '{hi}{agency}，欢迎来到嘉尔组选品小站！最近一次更新是{date}，祝你拥有开心的一天',
+    'bsd.selectAll': '全选当前结果', 'bsd.addCart': '+ 加入圈品池', 'bsd.copyPid': '复制PID', 'bsd.copySpu': '复制SPU',
+    'translate.hint': ''
+  },
+  en: {
+    'nav.products': 'Products', 'nav.cart': 'Selection', 'nav.lookup': 'SPU-PID Lookup',
+    'nav.apply': 'Request Sample', 'nav.tutorial': 'Guide', 'nav.buyers': 'Contact Buyer', 'nav.settings': 'Agency Settings',
+    'lang.label': '中文',
+    'welcome.hi': 'Hi', 'welcome.tpl': '{hi}{agency}, welcome to the Jiaer Group selection station. Last updated on {date}. Have a great day!',
+    'bsd.selectAll': 'Select all results', 'bsd.addCart': '+ Add to selection', 'bsd.copyPid': 'Copy PID', 'bsd.copySpu': 'Copy SPU',
+    'translate.hint': '💡 Product details (store names, categories, tags) are not translated here. For a full-page translation, use your browser\'s built-in "Translate this page" feature.'
+  }
+};
+
+function toggleLang() {
+  LANG = (LANG === 'zh') ? 'en' : 'zh';
+  localStorage.setItem('siteLang', LANG);
+  applyLang();
+}
+
+function applyLang() {
+  const t = I18N[LANG] || I18N.zh;
+  document.body.classList.toggle('lang-en', LANG === 'en');
+  // 固定文案:data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(function(node) {
+    const key = node.getAttribute('data-i18n');
+    if (t[key] != null) node.textContent = t[key];
+  });
+  // Language 按钮标签
+  const ll = document.getElementById('langLabel');
+  if (ll) ll.textContent = t['lang.label'];
+  const ls = document.getElementById('langSwitch');
+  if (ls) ls.classList.toggle('en-active', LANG === 'en');
+  // 机翻提示条
+  const th = document.getElementById('translateHint');
+  if (th) th.textContent = t['translate.hint'];
+  // 欢迎语(含高亮日期,随语言重算)
+  updateWelcome();
+}
+
 function updateWelcome() {
-  const name = userSettings.agencyName;
   const el = document.getElementById('welcomeText');
-  el.textContent = name ? `Hi ${name}，欢迎来到嘉尔组女装选品小站` : 'Hi，欢迎来到嘉尔组女装选品小站';
+  if (!el) return;
+  const name = (userSettings && userSettings.agencyName) ? String(userSettings.agencyName).trim() : '';
+  // X月X日 = products 数据集中「入池日期」的最新一天(自动计算,取全批次最大值)
+  const pool = (MAIN_POOL && MAIN_POOL.length) ? MAIN_POOL : PRODUCTS;
+  const dates = (pool || []).map(p => (p.intakeDate || '').trim()).filter(Boolean).sort();
+  const latest = dates.length ? dates[dates.length - 1] : '';
+  const dm = latest.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  const t = LANG === 'en' ? I18N.en : I18N.zh;
+  const dateStr = dm
+    ? (LANG === 'en'
+        ? new Date(+dm[1], +dm[2]-1, +dm[3]).toLocaleDateString('en-US', {month:'long', day:'numeric'})
+        : `${+dm[2]}月${+dm[3]}日`)
+    : '';
+  const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const hi = t['welcome.hi'];
+  const agencyPart = name ? ` <span class="welcome-agency">${esc(name)}</span>` : '';
+  const dateSpan = dateStr ? `<span class="welcome-date">${esc(dateStr)}</span>` : '';
+  el.innerHTML = t['welcome.tpl']
+    .replace('{hi}', `<span class="welcome-hi">${hi}</span>`)
+    .replace('{agency}', agencyPart)
+    .replace('{date}', dateSpan);
 }
 
 // ===== Filters =====
@@ -1879,6 +2016,9 @@ function applyFilters() {
 
   renderProducts();
   document.getElementById('filterStats').textContent = `显示 ${filteredProducts.length} / ${PRODUCTS.length} 件商品`;
+  // 筛选结果变化 -> 清空一键全选(避免跨结果集残留),刷新侧控件计数
+  browseSelected.clear(); browseSelectActive = false;
+  refreshBrowseSelectUI();
 }
 
 function resetFilters() {
@@ -1890,6 +2030,8 @@ function resetFilters() {
   filteredProducts = [...PRODUCTS];
   renderProducts();
   document.getElementById('filterStats').textContent = '';
+  browseSelected.clear(); browseSelectActive = false;
+  refreshBrowseSelectUI();
 }
 
 // ===== Pages =====
@@ -3188,6 +3330,99 @@ function updateFloatButtons() {
   document.getElementById('floatCopyPid').classList.toggle('show', onBrowse && hasItems);
   const fbp = document.getElementById('floatBackPool');
   if (fbp) fbp.classList.toggle('show', onBrowse && ACTIVE_POOL === 'topic');
+  // 一键全选侧控件:仅商品浏览页显示
+  const dock = document.getElementById('browseSelectDock');
+  if (dock) dock.classList.toggle('show', onBrowse);
+}
+
+// ===== 一键全选(商品浏览页;独立 browseSelected 集,仅去重PID,不与圈品池去重) =====
+// 切换控件停靠左右侧
+function toggleDockSide() {
+  const dock = document.getElementById('browseSelectDock');
+  if (!dock) return;
+  dock.classList.toggle('dock-left');
+  try { localStorage.setItem('bsdSide', dock.classList.contains('dock-left') ? 'left' : 'right'); } catch(e){}
+}
+
+// 当前筛选结果的全部去重 PID 列表(整份 filteredProducts,不止当前页)
+function currentFilteredPids() {
+  const seen = new Set(), out = [];
+  (filteredProducts || []).forEach(function(p) {
+    if (p && p.pid && !seen.has(p.pid)) { seen.add(p.pid); out.push(p.pid); }
+  });
+  return out;
+}
+
+// 全选 / 取消全选(当前筛选条件下的全部商品)
+function toggleSelectAllFiltered() {
+  if (browseSelectActive) {
+    browseSelected.clear();
+    browseSelectActive = false;
+  } else {
+    browseSelected = new Set(currentFilteredPids());
+    browseSelectActive = browseSelected.size > 0;
+  }
+  refreshBrowseSelectUI();
+}
+
+// 刷新侧控件的计数与展开态
+function refreshBrowseSelectUI() {
+  const matchN = currentFilteredPids().length;
+  const selN = browseSelected.size;
+  const setTxt = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  setTxt('bsdMatchCount', matchN);
+  setTxt('bsdAddCount', selN);
+  setTxt('bsdPidCount', selN);
+  setTxt('bsdSpuCount', selN);
+  const sa = document.getElementById('bsdSelectAll');
+  if (sa) sa.classList.toggle('active', browseSelectActive && selN > 0);
+  const actions = document.getElementById('bsdActions');
+  if (actions) actions.classList.toggle('show', browseSelectActive && selN > 0);
+}
+
+// 批量加入圈品池:等价于逐个点卡片「+」,不跳过已在圈品池中的商品
+function browseAddAllToCart() {
+  if (browseSelected.size === 0) { showToast('尚未选中任何商品'); return; }
+  let n = 0;
+  browseSelected.forEach(function(pid) {
+    const product = (PRODUCTS || []).find(p => p.pid === pid);
+    if (!product) return;
+    const color = '热销色', size = 'S M L混发', qty = 6;
+    const existing = cart.find(i => i.pid === pid && i.color === color && i.size === size);
+    if (existing) { existing.qty += qty; } else { cart.push({ pid, color, size, qty, product }); }
+    selectedPIDs.add(pid);
+    n++;
+  });
+  updateCartCount();
+  showToast(`已批量加入 ${n} 个商品到圈品池（热销色 / S M L混发 x6）`);
+}
+
+// 复制选中 PID(换行分隔;内部去重,不与圈品池去重)
+function browseCopyPids() {
+  if (browseSelected.size === 0) { showToast('尚未选中任何商品'); return; }
+  const pids = [...browseSelected];
+  const text = pids.join('\n');
+  const done = () => showToast(`已复制 ${pids.length} 个 PID 到剪贴板`);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else { fallbackCopy(text, done); }
+}
+
+// 复制选中 SPU(换行分隔;先由选中 PID 映射到 SPU,再按 SPU 去重)
+function browseCopySpus() {
+  if (browseSelected.size === 0) { showToast('尚未选中任何商品'); return; }
+  const seen = new Set(), spus = [];
+  browseSelected.forEach(function(pid) {
+    const product = (PRODUCTS || []).find(p => p.pid === pid);
+    const spu = product && (product.spuCode || product.spu);
+    if (spu && !seen.has(spu)) { seen.add(spu); spus.push(spu); }
+  });
+  if (spus.length === 0) { showToast('选中商品无可用 SPU'); return; }
+  const text = spus.join('\n');
+  const done = () => showToast(`已复制 ${spus.length} 个 SPU 到剪贴板`);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else { fallbackCopy(text, done); }
 }
 
 // 快速添加：默认 热销色 / S M L混发 / 6件
