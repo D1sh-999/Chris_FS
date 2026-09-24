@@ -798,74 +798,74 @@ body.lang-en .translate-hint { display: block; }
         <div class="frozen-head">
         <div class="filter-bar" id="filterBar">
           <div class="filter-basic">
-            <input class="filter-input search-main" id="filterSearch" placeholder="搜索 PID / SPU / 店铺 / 供应商 / 买手...">
-            <div class="ms-wrap" id="msCountry" data-field="country" data-label="国家"></div>
-            <div class="ms-wrap" id="msCat2" data-field="category2" data-label="二级类目"></div>
-            <div class="ms-wrap" id="msCat3" data-field="category3" data-label="三级类目"></div>
-            <div class="ms-wrap" id="msTag" data-field="tag" data-label="商品标签"></div>
+            <input class="filter-input search-main" id="filterSearch" data-i18n-ph="filter.searchPh" placeholder="搜索 PID / SPU / 店铺 / 供应商 / 买手...">
+            <div class="ms-wrap" id="msCountry" data-field="country" data-label="国家" data-i18n-label="filter.country"></div>
+            <div class="ms-wrap" id="msCat2" data-field="category2" data-label="二级类目" data-i18n-label="filter.cat2"></div>
+            <div class="ms-wrap" id="msCat3" data-field="category3" data-label="三级类目" data-i18n-label="filter.cat3"></div>
+            <div class="ms-wrap" id="msTag" data-field="tag" data-label="商品标签" data-i18n-label="filter.tag"></div>
             <select class="filter-select" id="filterNew" title="按是否为本期新增商品筛选" onchange="applyFilters()">
-              <option value="">本期新增</option>
-              <option value="yes">是</option>
-              <option value="no">否</option>
+              <option value="" data-i18n="filter.new">本期新增</option>
+              <option value="yes" data-i18n="filter.newYes">是</option>
+              <option value="no" data-i18n="filter.newNo">否</option>
             </select>
             <div class="filter-range" title="店铺分数(SPS)区间,只填最低或最高一侧即可筛选">
               <span class="fr-label">SPS</span>
-              <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMin" placeholder="最低">
+              <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMin" data-i18n-ph="filter.min" placeholder="最低">
               <span class="fr-sep">~</span>
-              <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMax" placeholder="最高">
+              <input class="filter-input fr-num" type="number" step="0.01" id="filterSpsMax" data-i18n-ph="filter.max" placeholder="最高">
             </div>
             <div class="filter-range" title="大盘营销价(美金)区间,只填最低或最高一侧即可筛选">
-              <span class="fr-label">价格$</span>
-              <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMin" placeholder="最低">
+              <span class="fr-label" data-i18n="filter.price">价格$</span>
+              <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMin" data-i18n-ph="filter.min" placeholder="最低">
               <span class="fr-sep">~</span>
-              <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMax" placeholder="最高">
+              <input class="filter-input fr-num" type="number" step="0.01" min="0" id="filterPriceMax" data-i18n-ph="filter.max" placeholder="最高">
             </div>
-            <button class="filter-btn primary" onclick="applyFilters()">搜索</button>
-            <button class="filter-btn ghost" onclick="resetFilters()">重置</button>
+            <button class="filter-btn primary" onclick="applyFilters()" data-i18n="filter.search">搜索</button>
+            <button class="filter-btn ghost" onclick="resetFilters()" data-i18n="filter.reset">重置</button>
             <div class="channel-legend" title="商品卡下方渠道占比条的颜色含义">
-              <span class="cl-item"><span class="cl-swatch cl-video"></span>短视频</span>
-              <span class="cl-item"><span class="cl-swatch cl-live"></span>直播</span>
-              <span class="cl-item"><span class="cl-swatch cl-shelf"></span>货架</span>
+              <span class="cl-item"><span class="cl-swatch cl-video"></span><span data-i18n="filter.legendVideo">短视频</span></span>
+              <span class="cl-item"><span class="cl-swatch cl-live"></span><span data-i18n="filter.legendLive">直播</span></span>
+              <span class="cl-item"><span class="cl-swatch cl-shelf"></span><span data-i18n="filter.legendShelf">货架</span></span>
             </div>
-            <button class="filter-guide-btn" onclick="openGuide()" title="查看爆款/高潜/新品标签定义">&#x1F4D6; 标签说明</button>
+            <button class="filter-guide-btn" onclick="openGuide()" title="查看爆款/高潜/新品标签定义" data-i18n="filter.guide">&#x1F4D6; 标签说明</button>
           </div>
           <div class="filter-advanced" id="filterAdvanced">
             <div class="filter-range" title="上架日期区间">
-              <span class="fr-label">上架</span>
+              <span class="fr-label" data-i18n="filter.listUp">上架</span>
               <input class="filter-input fr-date" type="date" id="filterUploadFrom" title="上架起始日期">
               <span class="fr-sep">~</span>
               <input class="filter-input fr-date" type="date" id="filterUploadTo" title="上架截止日期">
             </div>
-            <select class="filter-select" id="filterHistRange"><option value="">历史累计销量</option></select>
-            <select class="filter-select" id="filterRange7"><option value="">近7天销量</option></select>
-            <select class="filter-select" id="filterRangeT1"><option value="">昨日销量</option></select>
-            <select class="filter-select" id="filterDataDate"><option value="">更新日期</option></select>
-            <div class="ms-wrap" id="msDeveloper" data-field="developer" data-label="买手"></div>
+            <select class="filter-select" id="filterHistRange"><option value="" data-i18n="filter.histRange">历史累计销量</option></select>
+            <select class="filter-select" id="filterRange7"><option value="" data-i18n="filter.range7">近7天销量</option></select>
+            <select class="filter-select" id="filterRangeT1"><option value="" data-i18n="filter.rangeT1">昨日销量</option></select>
+            <select class="filter-select" id="filterDataDate"><option value="" data-i18n="filter.dataDate">更新日期</option></select>
+            <div class="ms-wrap" id="msDeveloper" data-field="developer" data-label="买手" data-i18n-label="filter.buyer"></div>
             <select class="filter-select" id="filterSort">
-              <option value="histDesc" selected>按历史销量从高到低</option>
-              <option value="histAsc">按历史销量从低到高</option>
-              <option value="sales7">按近7天销量从高到低</option>
-              <option value="sales7Asc">按近7天销量从低到高</option>
-              <option value="wowDesc">按近3天环比从高到低</option>
-              <option value="priceDesc">按价格从高到低</option>
-              <option value="priceAsc">按价格从低到高</option>
-              <option value="dateDesc">按上架时间从新到旧</option>
+              <option value="histDesc" selected data-i18n="filter.sort.histDesc">按历史销量从高到低</option>
+              <option value="histAsc" data-i18n="filter.sort.histAsc">按历史销量从低到高</option>
+              <option value="sales7" data-i18n="filter.sort.sales7">按近7天销量从高到低</option>
+              <option value="sales7Asc" data-i18n="filter.sort.sales7Asc">按近7天销量从低到高</option>
+              <option value="wowDesc" data-i18n="filter.sort.wowDesc">按近3天环比从高到低</option>
+              <option value="priceDesc" data-i18n="filter.sort.priceDesc">按价格从高到低</option>
+              <option value="priceAsc" data-i18n="filter.sort.priceAsc">按价格从低到高</option>
+              <option value="dateDesc" data-i18n="filter.sort.dateDesc">按上架时间从新到旧</option>
             </select>
           </div>
           <div class="filter-stats" id="filterStats"></div>
         </div>
         <button class="filterbar-toggle" id="filterBarToggle" onclick="toggleFilterBar()" title="隐藏/显示搜索筛选栏">
-          <span class="fbt-label">隐藏搜索栏</span> <span class="fbt-arrow">&#x25B2;</span>
+          <span class="fbt-label" data-i18n="filter.hideBar">隐藏搜索栏</span> <span class="fbt-arrow">&#x25B2;</span>
         </button>
         </div><!-- /.frozen-head -->
         <div class="filter-show-row" id="filterShowRow">
-          <button class="filter-show-btn" id="filterShowBtn" onclick="toggleFilterBar()" title="展开搜索与筛选栏">&#x1F50D; 显示搜索栏 <span class="fbt-arrow">&#x25BC;</span></button>
+          <button class="filter-show-btn" id="filterShowBtn" onclick="toggleFilterBar()" title="展开搜索与筛选栏">&#x1F50D; <span data-i18n="filter.showBar">显示搜索栏</span> <span class="fbt-arrow">&#x25BC;</span></button>
           <div class="channel-legend" title="商品卡下方渠道占比条的颜色含义">
-            <span class="cl-item"><span class="cl-swatch cl-video"></span>短视频</span>
-            <span class="cl-item"><span class="cl-swatch cl-live"></span>直播</span>
-            <span class="cl-item"><span class="cl-swatch cl-shelf"></span>货架</span>
+            <span class="cl-item"><span class="cl-swatch cl-video"></span><span data-i18n="filter.legendVideo">短视频</span></span>
+            <span class="cl-item"><span class="cl-swatch cl-live"></span><span data-i18n="filter.legendLive">直播</span></span>
+            <span class="cl-item"><span class="cl-swatch cl-shelf"></span><span data-i18n="filter.legendShelf">货架</span></span>
           </div>
-          <button class="filter-guide-btn" onclick="openGuide()" title="查看爆款/高潜/新品标签定义">&#x1F4D6; 标签说明</button>
+          <button class="filter-guide-btn" onclick="openGuide()" title="查看爆款/高潜/新品标签定义">&#x1F4D6; <span data-i18n="filter.guide">标签说明</span></button>
         </div>
         <div class="scroll-area" id="scrollArea">
           <div id="productGrid"></div>
@@ -1624,7 +1624,36 @@ const I18N = {
     'lang.label': 'Language',
     'welcome.hi': 'Hi', 'welcome.tpl': '{hi}{agency}，欢迎来到嘉尔组选品小站！最近一次更新是{date}，祝你拥有开心的一天',
     'bsd.selectAll': '全选当前结果', 'bsd.addCart': '+ 加入圈品池', 'bsd.copyPid': '复制PID', 'bsd.copySpu': '复制SPU',
-    'translate.hint': ''
+    'translate.hint': '',
+    // 筛选栏
+    'filter.searchPh': '搜索 PID / SPU / 店铺 / 供应商 / 买手...',
+    'filter.country': '国家', 'filter.cat2': '二级类目', 'filter.cat3': '三级类目', 'filter.tag': '商品标签',
+    'filter.buyer': '买手',
+    'filter.new': '本期新增', 'filter.newYes': '是', 'filter.newNo': '否',
+    'filter.min': '最低', 'filter.max': '最高', 'filter.price': '价格$',
+    'filter.search': '搜索', 'filter.reset': '重置',
+    'filter.legendVideo': '短视频', 'filter.legendLive': '直播', 'filter.legendShelf': '货架',
+    'filter.guide': '📖 标签说明',
+    'filter.listUp': '上架',
+    'filter.histRange': '历史累计销量', 'filter.range7': '近7天销量', 'filter.rangeT1': '昨日销量', 'filter.dataDate': '更新日期',
+    'filter.sort.histDesc': '按历史销量从高到低', 'filter.sort.histAsc': '按历史销量从低到高',
+    'filter.sort.sales7': '按近7天销量从高到低', 'filter.sort.sales7Asc': '按近7天销量从低到高',
+    'filter.sort.wowDesc': '按近3天环比从高到低',
+    'filter.sort.priceDesc': '按价格从高到低', 'filter.sort.priceAsc': '按价格从低到高',
+    'filter.sort.dateDesc': '按上架时间从新到旧',
+    'filter.hideBar': '隐藏搜索栏', 'filter.showBar': '显示搜索栏',
+    'filter.statsTpl': '显示 {shown} / {total} 件商品',
+    'filter.msMulti': '(可多选)', 'filter.msClear': '清空', 'filter.msEmpty': '无可选项',
+    // 商品卡固定标签
+    'card.new': '新增', 'card.viewImg': '查看大图', 'card.store': '店铺评分', 'card.keyMerchant': '重点商家',
+    'card.stock': '库存', 'card.season': '', 'card.listedUp': '上架', 'card.updated': '更新',
+    'card.hist': '历史', 'card.s7': '近7日', 'card.t1': '昨日', 'card.wow': '近3日增速',
+    'card.empty': '暂无匹配商品', 'card.loading': '加载商品数据...',
+    // SKU 详情弹窗字段标签
+    'sku.country': '原始国家', 'sku.merchantTag': '商家标签', 'sku.keyMerchant': '重点商家',
+    'sku.catCombo': '类目组合', 'sku.season': '季节标签', 'sku.price': '价格', 'sku.listedDate': '上架日期',
+    'sku.jit': 'JIT标签', 'sku.wow': '近3天环比增速', 'sku.channelStruct': '近7日出单结构',
+    'sku.hist': '历史销量', 'sku.s7': '近7日销量', 'sku.t1': '昨日销量', 'sku.buyer': '买手'
   },
   en: {
     'nav.products': 'Products', 'nav.cart': 'Selection', 'nav.lookup': 'SPU-PID Lookup',
@@ -1632,9 +1661,47 @@ const I18N = {
     'lang.label': '中文',
     'welcome.hi': 'Hi', 'welcome.tpl': '{hi}{agency}, welcome to the Jiaer Group selection station. Last updated on {date}. Have a great day!',
     'bsd.selectAll': 'Select all results', 'bsd.addCart': '+ Add to selection', 'bsd.copyPid': 'Copy PID', 'bsd.copySpu': 'Copy SPU',
-    'translate.hint': '💡 Product details (store names, categories, tags) are not translated here. For a full-page translation, use your browser\'s built-in "Translate this page" feature.'
+    'translate.hint': '💡 Only product data VALUES (store names, category names, product tag text) stay in Chinese. For a full-page translation, use your browser\'s built-in "Translate this page" feature.',
+    // Filter bar
+    'filter.searchPh': 'Search PID / SPU / Store / Supplier / Buyer...',
+    'filter.country': 'Country', 'filter.cat2': 'Category L2', 'filter.cat3': 'Category L3', 'filter.tag': 'Product Tag',
+    'filter.buyer': 'Buyer',
+    'filter.new': 'New this batch', 'filter.newYes': 'Yes', 'filter.newNo': 'No',
+    'filter.min': 'Min', 'filter.max': 'Max', 'filter.price': 'Price$',
+    'filter.search': 'Search', 'filter.reset': 'Reset',
+    'filter.legendVideo': 'Video', 'filter.legendLive': 'Live', 'filter.legendShelf': 'Shelf',
+    'filter.guide': '📖 Tag Guide',
+    'filter.listUp': 'Listed',
+    'filter.histRange': 'Cumulative Sales', 'filter.range7': '7-Day Sales', 'filter.rangeT1': 'Yesterday Sales', 'filter.dataDate': 'Update Date',
+    'filter.sort.histDesc': 'Cumulative Sales: High→Low', 'filter.sort.histAsc': 'Cumulative Sales: Low→High',
+    'filter.sort.sales7': '7-Day Sales: High→Low', 'filter.sort.sales7Asc': '7-Day Sales: Low→High',
+    'filter.sort.wowDesc': '3-Day Growth: High→Low',
+    'filter.sort.priceDesc': 'Price: High→Low', 'filter.sort.priceAsc': 'Price: Low→High',
+    'filter.sort.dateDesc': 'Listed: Newest→Oldest',
+    'filter.hideBar': 'Hide search bar', 'filter.showBar': 'Show search bar',
+    'filter.statsTpl': 'Showing {shown} / {total} items',
+    'filter.msMulti': ' (multi-select)', 'filter.msClear': 'Clear', 'filter.msEmpty': 'No options',
+    // Product card fixed labels
+    'card.new': 'New', 'card.viewImg': 'View image', 'card.store': 'Store score', 'card.keyMerchant': 'Key merchant',
+    'card.stock': 'Stock', 'card.season': '', 'card.listedUp': 'Listed', 'card.updated': 'Updated',
+    'card.hist': 'Total', 'card.s7': '7-Day', 'card.t1': 'Yest.', 'card.wow': '3-Day growth',
+    'card.empty': 'No matching products', 'card.loading': 'Loading products...',
+    // SKU detail modal field labels
+    'sku.country': 'Country', 'sku.merchantTag': 'Merchant tag', 'sku.keyMerchant': 'Key merchant',
+    'sku.catCombo': 'Category combo', 'sku.season': 'Season', 'sku.price': 'Price', 'sku.listedDate': 'Listed date',
+    'sku.jit': 'JIT tag', 'sku.wow': '3-Day growth', 'sku.channelStruct': '7-Day order mix',
+    'sku.hist': 'Cumulative sales', 'sku.s7': '7-Day sales', 'sku.t1': 'Yesterday sales', 'sku.buyer': 'Buyer'
   }
 };
+
+// 取当前语言文案;缺失回退中文再回退 key
+function t(key) {
+  var d = I18N[LANG] || I18N.zh;
+  if (d[key] != null) return d[key];
+  if (I18N.zh[key] != null) return I18N.zh[key];
+  return key;
+}
+
 
 function toggleLang() {
   LANG = (LANG === 'zh') ? 'en' : 'zh';
@@ -1650,6 +1717,21 @@ function applyLang() {
     const key = node.getAttribute('data-i18n');
     if (t[key] != null) node.textContent = t[key];
   });
+  // 占位符:data-i18n-ph
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(node) {
+    const key = node.getAttribute('data-i18n-ph');
+    if (t[key] != null) node.setAttribute('placeholder', t[key]);
+  });
+  // 多选下拉框标签(圈品池/浏览页共用)随语言刷新
+  try { if (typeof MS_FIELDS !== 'undefined') MS_FIELDS.forEach(function(f){ msRefresh(f); }); } catch(e) {}
+  // 搜索栏收起/展开按钮文案
+  try {
+    var fbtLabel = document.querySelector('#filterBarToggle .fbt-label');
+    if (fbtLabel) {
+      var fbHidden = document.getElementById('filterBar') && document.getElementById('filterBar').classList.contains('collapsed');
+      fbtLabel.textContent = fbHidden ? t['filter.showBar'] : t['filter.hideBar'];
+    }
+  } catch(e) {}
   // Language 按钮标签
   const ll = document.getElementById('langLabel');
   if (ll) ll.textContent = t['lang.label'];
@@ -1658,6 +1740,17 @@ function applyLang() {
   // 机翻提示条
   const th = document.getElementById('translateHint');
   if (th) th.textContent = t['translate.hint'];
+  // 筛选统计文案随语言刷新
+  try {
+    var fs = document.getElementById('filterStats');
+    if (fs && fs.textContent.trim() && typeof filteredProducts !== 'undefined') {
+      fs.textContent = t['filter.statsTpl'].replace('{shown}', filteredProducts.length).replace('{total}', PRODUCTS.length);
+    }
+  } catch(e) {}
+  // 重新渲染商品卡(卡面格式化术语标签随语言切换)
+  try { if (typeof renderProducts === 'function' && typeof PRODUCTS !== 'undefined' && PRODUCTS.length) renderProducts(); } catch(e) {}
+  // 一键全选侧控件计数文案随语言刷新
+  try { if (typeof refreshBrowseSelectUI === 'function') refreshBrowseSelectUI(); } catch(e) {}
   // 欢迎语(含高亮日期,随语言重算)
   updateWelcome();
 }
@@ -1698,7 +1791,8 @@ const MS_CHECK_SVG = `<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg
 function buildMultiSelect(field, opts) {
   const wrap = document.getElementById(MS_WRAP_ID[field]);
   if (!wrap) return;
-  const label = wrap.getAttribute('data-label') || '';
+  const i18nKey = wrap.getAttribute('data-i18n-label');
+  const label = (i18nKey ? t(i18nKey) : null) || wrap.getAttribute('data-label') || '';
   const optsHtml = opts.map(o => {
     const val = String(o);
     const esc = val.replace(/"/g, '&quot;');
@@ -1721,8 +1815,8 @@ function buildMultiSelect(field, opts) {
     document.body.appendChild(panel);
   }
   panel.innerHTML = `
-    <div class="ms-panel-head"><span class="ms-h-title">${label}(可多选)</span><button type="button" class="ms-clear" onclick="msClear('${field}')">清空</button></div>
-    ${optsHtml || '<div class="ms-opt" style="cursor:default;color:var(--text-tertiary)">无可选项</div>'}`;
+    <div class="ms-panel-head"><span class="ms-h-title">${label}${t('filter.msMulti')}</span><button type="button" class="ms-clear" onclick="msClear('${field}')">${t('filter.msClear')}</button></div>
+    ${optsHtml || '<div class="ms-opt" style="cursor:default;color:var(--text-tertiary)">' + t('filter.msEmpty') + '</div>'}`;
   msRefresh(field);
 }
 
@@ -1785,7 +1879,8 @@ function msRefresh(field) {
   const panel = document.getElementById('msPanel_' + field);
   if (!wrap) return;
   const set = MS_STATE[field];
-  const label = wrap.getAttribute('data-label') || '';
+  const i18nKey = wrap.getAttribute('data-i18n-label');
+  const label = (i18nKey ? t(i18nKey) : null) || wrap.getAttribute('data-label') || '';
   if (panel) {
     panel.querySelectorAll('.ms-opt').forEach(opt => {
       const v = opt.getAttribute('data-val');
@@ -1836,14 +1931,14 @@ function buildFilterOptions() {
   // 商品标签(数据源 D 列)多选:筛选项标题动态取当前池子里所有去重标签组合(如"爆品/高潜/新品")
   const msTagWrap = document.getElementById('msTag');
   if (msTagWrap) {
-    const dynLabel = tags.length ? tags.join('/') : '商品标签';
+    const dynLabel = tags.length ? tags.join('/') : t('filter.tag');
     msTagWrap.setAttribute('data-label', dynLabel);
   }
   buildMultiSelect('tag', tags);
-  fillSelect('filterDataDate', dataDates, '更新日期');
-  fillRangeSelect('filterHistRange', histRanges, '历史累计销量');
-  fillRangeSelect('filterRange7', range7s, '近7天销量');
-  fillRangeSelect('filterRangeT1', rangeT1s, '昨日销量');
+  fillSelect('filterDataDate', dataDates, t('filter.dataDate'), 'filter.dataDate');
+  fillRangeSelect('filterHistRange', histRanges, t('filter.histRange'), 'filter.histRange');
+  fillRangeSelect('filterRange7', range7s, t('filter.range7'), 'filter.range7');
+  fillRangeSelect('filterRangeT1', rangeT1s, t('filter.rangeT1'), 'filter.rangeT1');
   buildMultiSelect('developer', developers);
   // 上架日期区间输入框:填充可选日期边界(min/max)
   const uploadDates = PRODUCTS.map(p => p.uploadDate).filter(Boolean).map(normDate).filter(Boolean).sort();
@@ -1865,15 +1960,17 @@ function normDate(v) {
   return '';
 }
 
-function fillSelect(id, opts, label) {
+function fillSelect(id, opts, label, i18nKey) {
   const el = document.getElementById(id);
-  el.innerHTML = `<option value="">${label}</option>` + opts.map(o => `<option value="${o}">${o}</option>`).join('');
+  const phAttr = i18nKey ? ` data-i18n="${i18nKey}"` : '';
+  el.innerHTML = `<option value=""${phAttr}>${label}</option>` + opts.map(o => `<option value="${o}">${o}</option>`).join('');
 }
 
 // 区间字段专用:option 的 value 仍是原始区间串(用于筛选比对),显示文本走 rangeLabel 转成「XX-XX」
-function fillRangeSelect(id, opts, label) {
+function fillRangeSelect(id, opts, label, i18nKey) {
   const el = document.getElementById(id);
-  el.innerHTML = `<option value="">${label}</option>` + opts.map(o => {
+  const phAttr = i18nKey ? ` data-i18n="${i18nKey}"` : '';
+  el.innerHTML = `<option value=""${phAttr}>${label}</option>` + opts.map(o => {
     const disp = rangeLabel(o).replace(/[「」]/g, '') || o;
     return `<option value="${o}">${disp}</option>`;
   }).join('');
@@ -1889,7 +1986,7 @@ function toggleFilterBar() {
   const head = document.querySelector('.frozen-head');
   const hidden = head.classList.toggle('filterbar-hidden');
   const label = document.querySelector('#filterBarToggle .fbt-label');
-  if (label) label.textContent = hidden ? '显示搜索栏' : '隐藏搜索栏';
+  if (label) label.textContent = hidden ? t('filter.showBar') : t('filter.hideBar');
 }
 
 function parsePrice(str) {
@@ -2015,7 +2112,7 @@ function applyFilters() {
   }
 
   renderProducts();
-  document.getElementById('filterStats').textContent = `显示 ${filteredProducts.length} / ${PRODUCTS.length} 件商品`;
+  document.getElementById('filterStats').textContent = t('filter.statsTpl').replace('{shown}', filteredProducts.length).replace('{total}', PRODUCTS.length);
   // 筛选结果变化 -> 清空一键全选(避免跨结果集残留),刷新侧控件计数
   browseSelected.clear(); browseSelectActive = false;
   refreshBrowseSelectUI();
@@ -2520,7 +2617,7 @@ function wowUpBadge(wowRaw) {
   if (pct <= 0) return '';
   const floored = Math.floor(pct / 10) * 10;
   if (floored < 10) return '';   // 不足 10% 档不展示
-  return `<span class="pc-sale pc-sale-wow" title="近3日环比增速"><i>近3日增速</i>&#9650;${floored}%</span>`;
+  return `<span class="pc-sale pc-sale-wow" title="${t('card.wow')}"><i>${t('card.wow')}</i>&#9650;${floored}%</span>`;
 }
 // 分渠道出单占比条(分母=近7日总量 Q;短视频红/直播绿/货架蓝);三者全 0 则不显示
 function channelBar(p) {
@@ -2546,7 +2643,7 @@ function countryFlag(code) {
 
 function buildCardHtml(p) {
   const tagCls = tagClass(p.tag);
-  const keyMerchant = /SKM商家/.test(p.skm || '') && !/非SKM/.test(p.skm || '') ? `<span class="pc-keymerchant">重点商家</span>` : '';
+  const keyMerchant = /SKM商家/.test(p.skm || '') && !/非SKM/.test(p.skm || '') ? `<span class="pc-keymerchant">${t('card.keyMerchant')}</span>` : '';
   const wowTxt = wowUpBadge(p.wowRaw);
   const dots = colorDots(p.colorList);
   const chBar = channelBar(p);
@@ -2569,14 +2666,14 @@ function buildCardHtml(p) {
   // 季节标签:放到价格行,位于库存右侧
   const seasonInline = p.season ? `<span class="pc-price-season">${p.season}</span>` : '';
   // 上架日期:胶囊标签,放在颜色圆块行左侧(位于更新日期上方)
-  const uploadInline = p.uploadDate ? `<span class="pc-cap pc-cap-list pc-upload-inline" title="全球首次上架日期">上架 ${p.uploadDate}</span>` : '';
+  const uploadInline = p.uploadDate ? `<span class="pc-cap pc-cap-list pc-upload-inline" title="${t('card.listedUp')}">${t('card.listedUp')} ${p.uploadDate}</span>` : '';
   // 销量标签:直接取数据源区间字段,转成「XX-XX」(历史累计销量区间/近7天出单区间/T-1出单区间)
   const histLabel = rangeLabel(p.histRange);
   const s7Label = rangeLabel(p.range7);
   const t1Label = rangeLabel(p.rangeT1);
-  const histTag = histLabel ? `<span class="pc-sale pc-sale-hist" title="历史累计销量"><i>历史</i>${histLabel}</span>` : '';
-  const s7Tag = s7Label ? `<span class="pc-sale pc-sale-7" title="近7日销量"><i>近7日</i>${s7Label}</span>` : '';
-  const t1Tag = t1Label ? `<span class="pc-sale pc-sale-t1" title="昨日销量"><i>昨日</i>${t1Label}</span>` : '';
+  const histTag = histLabel ? `<span class="pc-sale pc-sale-hist" title="${t('filter.histRange')}"><i>${t('card.hist')}</i>${histLabel}</span>` : '';
+  const s7Tag = s7Label ? `<span class="pc-sale pc-sale-7" title="${t('filter.range7')}"><i>${t('card.s7')}</i>${s7Label}</span>` : '';
+  const t1Tag = t1Label ? `<span class="pc-sale pc-sale-t1" title="${t('filter.rangeT1')}"><i>${t('card.t1')}</i>${t1Label}</span>` : '';
   // 历史/近7日/昨日销量 + 近3日增速 → 2×2 网格
   const wowCell = wowTxt ? `<div class="pc-sale-cell">${wowTxt}</div>` : '';
   const salesCells = ''
@@ -2589,8 +2686,8 @@ function buildCardHtml(p) {
     <div class="product-card">
       <div class="product-img-wrap" onclick="openSKU('${p.pid}')">
         ${productImgTag('product-img', p.image)}
-        ${p.isNew ? '<span class="pc-new-badge" title="本期相对上一期新增">新增</span>' : ''}
-        <button class="product-img-btn" onclick="event.stopPropagation();openLightbox('${p.image}')">查看大图</button>
+        ${p.isNew ? `<span class="pc-new-badge" title="${t('card.new')}">${t('card.new')}</span>` : ''}
+        <button class="product-img-btn" onclick="event.stopPropagation();openLightbox('${p.image}')">${t('card.viewImg')}</button>
       </div>
       <div class="product-info" onclick="openSKU('${p.pid}')" style="cursor:pointer;">
         <div class="pc-infoblock">
@@ -2601,12 +2698,12 @@ function buildCardHtml(p) {
           <div class="pc-pid">${p.pid}</div>
           <div class="pc-store-row">
             <span class="pc-store-name" title="${storeName.replace(/"/g,'')}">${storeName || '-'}</span>
-            ${spsScore ? `<span class="pc-store-score" title="店铺评分">店铺评分 <b>${spsScore}</b></span>` : ''}
+            ${spsScore ? `<span class="pc-store-score" title="${t('card.store')}">${t('card.store')} <b>${spsScore}</b></span>` : ''}
           </div>
           ${(subInfo || countryTag || keyMerchant) ? `<div class="pc-subinfo-row">${countryTag}<span class="pc-subinfo" title="${subInfo.replace(/"/g,'')}">${subInfo}</span>${keyMerchant}</div>` : ''}
           <div class="pc-priceline">
             <span class="product-price">${p.promoPrice || '-'}</span>
-            ${stockVal > 0 ? `<span class="pc-stock">库存 ${stockVal}</span>` : ''}
+            ${stockVal > 0 ? `<span class="pc-stock">${t('card.stock')} ${stockVal}</span>` : ''}
             ${seasonInline}
           </div>
         </div>
@@ -2618,7 +2715,7 @@ function buildCardHtml(p) {
           ${dots}
         </div>
         <div class="pc-bottom">
-          <span class="pc-date" title="更新日期(入池日期)">${p.intakeDate ? '更新 ' + p.intakeDate : ''}</span>
+          <span class="pc-date" title="${t('card.updated')}">${p.intakeDate ? t('card.updated') + ' ' + p.intakeDate : ''}</span>
           <button class="quick-add-btn" title="快速加入（热销色 / S M L混发 / 6件）" onclick="event.stopPropagation();quickAdd('${p.pid}')">+</button>
         </div>
       </div>
@@ -2631,7 +2728,7 @@ function renderProducts() {
   bindScrollLoader();
   if (filteredProducts.length === 0) {
     grid.className = '';
-    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F50D;</div><div class="empty-state-text">暂无匹配商品</div></div>';
+    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x1F50D;</div><div class="empty-state-text">' + t('card.empty') + '</div></div>';
     renderedCount = 0;
     updateProductCount();
     return;
@@ -3032,19 +3129,19 @@ function renderSKUModal() {
         </div>
         <div class="sku-section sku-info-grid-wrap">
           <div class="sku-info-grid">
-            ${infoCell('原始国家', p.country || '-')}
-            ${isKeyMerchant ? infoCell('商家标签', '重点商家') : ''}
-            ${infoCell('类目组合', p.catCombo || '-')}
-            ${infoCell('季节标签', p.season || '-')}
-            ${infoCell('价格', p.promoPrice || '-')}
-            ${infoCell('上架日期', p.uploadDate || '-')}
-            ${infoCell('JIT标签', p.isJit ? 'JIT' : '-')}
-            ${wowDesens ? infoCell('近3天环比增速', wowDesens) : ''}
-            ${infoCell('近7日出单结构', channelStruct)}
-            ${infoCell('历史销量', rangeLabel(p.histRange) || '-')}
-            ${infoCell('近7日销量', rangeLabel(p.range7) || '-')}
-            ${infoCell('昨日销量', rangeLabel(p.rangeT1) || '-')}
-            ${infoCell('买手', p.developer || '-')}
+            ${infoCell(t('sku.country'), p.country || '-')}
+            ${isKeyMerchant ? infoCell(t('sku.merchantTag'), t('sku.keyMerchant')) : ''}
+            ${infoCell(t('sku.catCombo'), p.catCombo || '-')}
+            ${infoCell(t('sku.season'), p.season || '-')}
+            ${infoCell(t('sku.price'), p.promoPrice || '-')}
+            ${infoCell(t('sku.listedDate'), p.uploadDate || '-')}
+            ${infoCell(t('sku.jit'), p.isJit ? 'JIT' : '-')}
+            ${wowDesens ? infoCell(t('sku.wow'), wowDesens) : ''}
+            ${infoCell(t('sku.channelStruct'), channelStruct)}
+            ${infoCell(t('sku.hist'), rangeLabel(p.histRange) || '-')}
+            ${infoCell(t('sku.s7'), rangeLabel(p.range7) || '-')}
+            ${infoCell(t('sku.t1'), rangeLabel(p.rangeT1) || '-')}
+            ${infoCell(t('sku.buyer'), p.developer || '-')}
           </div>
           ${(p.image || p.url) ? `<div class="sku-url-row sku-url-row-inline">${p.image ? `<a href="${p.image}" target="_blank" rel="noopener noreferrer" class="sku-url-link">首图链接</a>` : ''}${p.url ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer" class="sku-url-link">商品详情页</a>` : ''}</div>` : ''}
         </div>
