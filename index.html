@@ -772,7 +772,7 @@ body.lang-en .translate-hint { display: block; }
 
   <!-- 专题导航条(Banner 位):介于顶部导航与筛选栏之间,展示强展示专题 + 预留位 -->
   <div class="topic-nav" id="topicNav">
-    <span class="topic-nav-label">专题</span>
+    <span class="topic-nav-label" data-i18n="topic.label">专题</span>
     <div class="topic-nav-items" id="topicNavItems"></div>
   </div>
 
@@ -793,7 +793,7 @@ body.lang-en .translate-hint { display: block; }
             <div class="tb-title" id="topicBannerTitle">女士针织衫精选</div>
             <div class="tb-sub" id="topicBannerSub">强推荐专题货盘 · 精选好货</div>
           </div>
-          <button class="tb-back" onclick="exitTopic()">← 返回全部商品</button>
+          <button class="tb-back" onclick="exitTopic()" data-i18n="topic.back">← 返回全部商品</button>
         </div>
         <div class="frozen-head">
         <div class="filter-bar" id="filterBar">
@@ -1019,7 +1019,7 @@ body.lang-en .translate-hint { display: block; }
   <!-- Floating buttons (browse page) -->
   <button class="float-copy-pid" id="floatCopyPid" onclick="copyCartPIDs()">📋 复制当前圈品池的PID</button>
   <button class="float-cart" id="floatCart" onclick="switchPage('cart')">🛒 圈品池 <span class="fc-count" id="floatCartCount">0</span></button>
-  <button class="float-back-pool" id="floatBackPool" onclick="exitTopic()" title="返回全部商品(主商品池)">← 返回主商品池</button>
+  <button class="float-back-pool" id="floatBackPool" onclick="exitTopic()" title="返回全部商品(主商品池)" data-i18n="topic.backFloat">← 返回主商品池</button>
 
   <!-- 一键全选浮动侧控件(商品浏览页;新增,独立状态 browseSelected,不与圈品池冲突) -->
   <div class="browse-select-dock" id="browseSelectDock">
@@ -1076,7 +1076,7 @@ body.lang-en .translate-hint { display: block; }
 // ===== State =====
 let PRODUCTS = [];          // 当前生效的数据池(指向大池子或专题池)
 let MAIN_POOL = [];         // 大池子:全量商品(data/products.csv)
-let TOPIC_POOL = null;      // 专题池:女士针织衫精选(懒加载,加载后缓存)
+let TOPIC_POOLS = {};       // 专题池按 key 缓存:{ knit: [...], talent: [...] },避免多专题串数据
 let ACTIVE_POOL = 'main';   // 'main' | 'topic',标记当前商品浏览页展示的是哪个池子
 // 站点配置:全站唯一数据源(方案A)+ 侧边栏货盘列表。此前该定义缺失导致 loadProductData 抛 ReferenceError、主商品池卡在"加载数据"。
 const SITE_CONFIG = {
@@ -1653,7 +1653,9 @@ const I18N = {
     'sku.country': '原始国家', 'sku.merchantTag': '商家标签', 'sku.keyMerchant': '重点商家',
     'sku.catCombo': '类目组合', 'sku.season': '季节标签', 'sku.price': '价格', 'sku.listedDate': '上架日期',
     'sku.jit': 'JIT标签', 'sku.wow': '近3天环比增速', 'sku.channelStruct': '近7日出单结构',
-    'sku.hist': '历史销量', 'sku.s7': '近7日销量', 'sku.t1': '昨日销量', 'sku.buyer': '买手'
+    'sku.hist': '历史销量', 'sku.s7': '近7日销量', 'sku.t1': '昨日销量', 'sku.buyer': '买手',
+    // 专题导航 / Banner
+    'topic.label': '专题', 'topic.back': '← 返回全部商品', 'topic.backFloat': '← 返回主商品池'
   },
   en: {
     'nav.products': 'Products', 'nav.cart': 'Selection', 'nav.lookup': 'SPU-PID Lookup',
@@ -1690,7 +1692,9 @@ const I18N = {
     'sku.country': 'Country', 'sku.merchantTag': 'Merchant tag', 'sku.keyMerchant': 'Key merchant',
     'sku.catCombo': 'Category combo', 'sku.season': 'Season', 'sku.price': 'Price', 'sku.listedDate': 'Listed date',
     'sku.jit': 'JIT tag', 'sku.wow': '3-Day growth', 'sku.channelStruct': '7-Day order mix',
-    'sku.hist': 'Cumulative sales', 'sku.s7': '7-Day sales', 'sku.t1': 'Yesterday sales', 'sku.buyer': 'Buyer'
+    'sku.hist': 'Cumulative sales', 'sku.s7': '7-Day sales', 'sku.t1': 'Yesterday sales', 'sku.buyer': 'Buyer',
+    // Topic nav / Banner
+    'topic.label': 'Collections', 'topic.back': '← Back to all products', 'topic.backFloat': '← Back to main pool'
   }
 };
 
@@ -1751,6 +1755,21 @@ function applyLang() {
   try { if (typeof renderProducts === 'function' && typeof PRODUCTS !== 'undefined' && PRODUCTS.length) renderProducts(); } catch(e) {}
   // 一键全选侧控件计数文案随语言刷新
   try { if (typeof refreshBrowseSelectUI === 'function') refreshBrowseSelectUI(); } catch(e) {}
+  // 专题导航条 chip 文字随语言刷新;若正处于专题页,刷新 banner 标题/副标题
+  try { if (typeof renderTopicNav === 'function') renderTopicNav(); } catch(e) {}
+  try {
+    if (ACTIVE_POOL === 'topic' && CURRENT_TOPIC_KEY && TOPIC_META[CURRENT_TOPIC_KEY]) {
+      var __m = TOPIC_META[CURRENT_TOPIC_KEY];
+      var __en = (LANG === 'en');
+      var __title = __en ? (__m.titleEn || __m.title) : __m.title;
+      var __sub = __en ? (__m.subEn || __m.sub) : __m.sub;
+      var __suffix = __en ? (' · ' + PRODUCTS.length + ' items') : (' · 共 ' + PRODUCTS.length + ' 款');
+      var __tt = document.getElementById('topicBannerTitle');
+      var __ts = document.getElementById('topicBannerSub');
+      if (__tt) __tt.textContent = __title;
+      if (__ts) __ts.textContent = __sub + __suffix;
+    }
+  } catch(e) {}
   // 欢迎语(含高亮日期,随语言重算)
   updateWelcome();
 }
@@ -2186,13 +2205,15 @@ function trackTabView(page) {
   });
 }
 
-// ===== 强推荐专题:女士针织衫精选 =====
+// ===== 强推荐专题:多专区货盘 =====
 // 复用同一套筛选/排序/渲染引擎,只切换当前生效的数据池(PRODUCTS)
+// title/sub 为中文默认文案;titleEn/subEn 为对应英文,随 LANG 切换
 const TOPIC_META = {
-  knit: { file: 'data/topic_knit.csv', title: '女士针织衫精选', sub: '强推荐专题货盘 · 精选好货', strong: true }
+  knit:   { file: 'data/topic_knit.csv',   title: '女士针织衫精选', titleEn: 'Knitwear Picks',           sub: '强推荐专题货盘 · 精选好货',       subEn: 'Featured collection · Hand-picked',             strong: true },
+  talent: { file: 'data/topic_talent.csv', title: '达人定制专区',   titleEn: 'Creator Picks',            sub: '达人精选货盘 · 精选好货',         subEn: 'Curated collection · Hand-picked for creators', strong: true }
 };
 // 专题导航条渲染顺序;数组里的 key 必须存在于 TOPIC_META
-const TOPIC_ORDER = ['knit'];
+const TOPIC_ORDER = ['knit', 'talent'];
 // 预留占位专题数量(展示为灰色 dashed chip,暂不可点)
 // 预留位数量:暂设为 0 → 对外页面不展示"专题N(预留)"占位;
 // 将来有新专题数据时,把它改回 3(或对应数量)即可重新露出预留位。
@@ -2202,15 +2223,18 @@ const TOPIC_RESERVED = 0;
 function renderTopicNav() {
   const box = document.getElementById('topicNavItems');
   if (!box) return;
+  const en = (LANG === 'en');
   let html = TOPIC_ORDER.map(function(key){
     const meta = TOPIC_META[key];
     if (!meta) return '';
     const cls = 'topic-chip' + (meta.strong ? ' strong' : '');
     const fire = meta.strong ? '<span class="tc-fire">🔥</span>' : '';
-    return '<div class="' + cls + '" data-topic="' + key + '" onclick="enterTopic(\'' + key + '\')">' + fire + meta.title + '</div>';
+    const label = en ? (meta.titleEn || meta.title) : meta.title;
+    return '<div class="' + cls + '" data-topic="' + key + '" onclick="enterTopic(\'' + key + '\')">' + fire + label + '</div>';
   }).join('');
   for (let i = 0; i < TOPIC_RESERVED; i++) {
-    html += '<div class="topic-chip reserved" title="专题位预留中,敬请期待">专题' + (i + 1) + '(预留)</div>';
+    const txt = en ? ('Slot ' + (i + 1) + ' (Reserved)') : ('专题' + (i + 1) + '(预留)');
+    html += '<div class="topic-chip reserved" title="' + (en ? 'Reserved slot, coming soon' : '专题位预留中,敬请期待') + '">' + txt + '</div>';
   }
   box.innerHTML = html;
   updateTopicNavActive();
@@ -2244,14 +2268,18 @@ function enterTopic(key) {
   try { if (('#topic=' + key) !== location.hash) history.replaceState(null, '', '#topic=' + key); } catch(e){}
 
   const applyTopic = function() {
-    PRODUCTS = TOPIC_POOL;
+    PRODUCTS = TOPIC_POOLS[key];
     ACTIVE_POOL = 'topic';
     try { window.__PRODUCTS_FOR_DIAG = PRODUCTS; } catch(e){}
     updateTopicNavActive();
-    // 展示返回条 + 专题标题
+    // 展示返回条 + 专题标题(按当前语言)
     const banner = document.getElementById('topicBanner');
-    document.getElementById('topicBannerTitle').textContent = meta.title;
-    document.getElementById('topicBannerSub').textContent = meta.sub + ' · 共 ' + PRODUCTS.length + ' 款';
+    const en = (LANG === 'en');
+    const title = en ? (meta.titleEn || meta.title) : meta.title;
+    const sub = en ? (meta.subEn || meta.sub) : meta.sub;
+    const suffix = en ? (' · ' + PRODUCTS.length + ' items') : (' · 共 ' + PRODUCTS.length + ' 款');
+    document.getElementById('topicBannerTitle').textContent = title;
+    document.getElementById('topicBannerSub').textContent = sub + suffix;
     banner.classList.add('show');
     document.getElementById('navWelcome') && (document.getElementById('navWelcome').style.display = 'none');
     const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.add('show');
@@ -2259,28 +2287,28 @@ function enterTopic(key) {
     resetFilters();
     // 专题「女士针织衫精选」默认排序:按上架日期从新到旧(区别于主推池的按入池批次分层)
     var sortSel = document.getElementById('filterSort');
-    if (sortSel && key === 'knit') sortSel.value = 'dateDesc';
+    if (sortSel && (key === 'knit' || key === 'talent')) sortSel.value = 'dateDesc';
     buildFilterOptions();
     applyFilters();
     const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
     updateFloatButtons();
   };
 
-  if (TOPIC_POOL) { applyTopic(); return; }
+  if (TOPIC_POOLS[key]) { applyTopic(); return; }
   // 懒加载专题 CSV(与主数据同一套字段映射)
   const grid = document.getElementById('productGrid');
   grid.className = '';
-  grid.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">加载专题货盘...</div></div>';
+  grid.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">' + ((LANG==='en')?'Loading collection...':'加载专题货盘...') + '</div></div>';
   Papa.parse(meta.file + '?v=' + (window.DATA_VERSION || Date.now()), {
     download: true, header: true, skipEmptyLines: true,
     complete: function(results) {
       const list = mapRowsToProducts(results.data || []);
-      if (!list.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">专题数据加载失败,请刷新重试</div></div>'; return; }
-      TOPIC_POOL = list;
+      if (!list.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">' + ((LANG==='en')?'Failed to load collection, please refresh':'专题数据加载失败,请刷新重试') + '</div></div>'; return; }
+      TOPIC_POOLS[key] = list;
       applyTopic();
     },
     error: function() {
-      grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">专题数据加载失败,请刷新重试</div></div>';
+      grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">' + ((LANG==='en')?'Failed to load collection, please refresh':'专题数据加载失败,请刷新重试') + '</div></div>';
     }
   });
 }
