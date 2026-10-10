@@ -92,6 +92,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro
 .topic-chip.active { color: var(--text-primary); border-color: var(--brand, #ff5a4d); background: var(--card-bg); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 /* 预留位:占位、不可点、灰显 */
 .topic-chip.reserved { cursor: default; opacity: 0.55; color: var(--text-tertiary); border-style: dashed; background: transparent; }
+/* 黑五甄选专题独立配色:黑底金边,区别于主推橙红 */
+.topic-chip.strong[data-topic="bf"] { color: #f6c975; border-color: #2a2a2a; background: linear-gradient(135deg, #1a1a1a, #2d2416); }
+.topic-chip.strong[data-topic="bf"]:hover { color: #ffdc8a; border-color: #f6c975; background: linear-gradient(135deg, #232323, #3a2e1a); }
+.topic-chip.strong[data-topic="bf"].active { color: #ffdc8a; border-color: #f6c975; background: linear-gradient(135deg, #1a1a1a, #3a2e1a); box-shadow: 0 1px 4px rgba(246,201,117,0.35); }
+.topic-chip.strong[data-topic="bf"] .tc-fire { filter: hue-rotate(-20deg) saturate(1.2); }
+/* 黑五 banner 配色;.bf 由 enterTopic 在进入 bf 时加,离开时移除 */
+.topic-banner.bf { background: linear-gradient(135deg, rgba(26,26,26,0.92), rgba(58,46,26,0.92)); border-color: #f6c975; }
+.topic-banner.bf .tb-title { color: #f6c975; }
+.topic-banner.bf .tb-sub { color: #e9d6a7; }
+.topic-banner.bf .tb-back { background: rgba(255,255,255,0.08); border-color: rgba(246,201,117,0.5); color: #f6c975; }
+.topic-banner.bf .tb-back:hover { background: #f6c975; color: #1a1a1a; border-color: #f6c975; }
 @keyframes nttPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
 /* 专题页返回条 */
 .topic-banner { display: none; align-items: center; gap: 12px; padding: 10px 16px; margin: 0 0 4px; background: linear-gradient(135deg, rgba(255,90,77,0.10), rgba(255,138,61,0.10)); border: 1px solid rgba(255,90,77,0.30); border-radius: 10px; }
@@ -2209,11 +2220,12 @@ function trackTabView(page) {
 // 复用同一套筛选/排序/渲染引擎,只切换当前生效的数据池(PRODUCTS)
 // title/sub 为中文默认文案;titleEn/subEn 为对应英文,随 LANG 切换
 const TOPIC_META = {
-  knit:   { file: 'data/topic_knit.csv',   title: '女士针织衫精选', titleEn: 'Knitwear Picks',           sub: '强推荐专题货盘 · 精选好货',       subEn: 'Featured collection · Hand-picked',             strong: true },
-  talent: { file: 'data/topic_talent.csv', title: '达人定制专区',   titleEn: 'Creator Picks',            sub: '达人精选货盘 · 精选好货',         subEn: 'Curated collection · Hand-picked for creators', strong: true }
+  bf:     { file: 'data/topic_bf.csv',     title: '黑五甄选货盘',   titleEn: 'Black Friday Picks',       sub: '黑五大促 · 甄选好货',             subEn: 'Black Friday deals · Hand-picked',              strong: true },
+  talent: { file: 'data/topic_talent.csv', title: '达人定制专区',   titleEn: 'Creator Picks',            sub: '达人精选货盘 · 精选好货',         subEn: 'Curated collection · Hand-picked for creators', strong: true },
+  knit:   { file: 'data/topic_knit.csv',   title: '女士针织衫精选', titleEn: 'Knitwear Picks',           sub: '强推荐专题货盘 · 精选好货',       subEn: 'Featured collection · Hand-picked',             strong: true }
 };
 // 专题导航条渲染顺序;数组里的 key 必须存在于 TOPIC_META
-const TOPIC_ORDER = ['knit', 'talent'];
+const TOPIC_ORDER = ['bf', 'talent', 'knit'];
 // 预留占位专题数量(展示为灰色 dashed chip,暂不可点)
 // 预留位数量:暂设为 0 → 对外页面不展示"专题N(预留)"占位;
 // 将来有新专题数据时,把它改回 3(或对应数量)即可重新露出预留位。
@@ -2281,13 +2293,15 @@ function enterTopic(key) {
     document.getElementById('topicBannerTitle').textContent = title;
     document.getElementById('topicBannerSub').textContent = sub + suffix;
     banner.classList.add('show');
+    // 为黑五专题套用黑金配色;其他专题移除
+    banner.classList.toggle('bf', key === 'bf');
     document.getElementById('navWelcome') && (document.getElementById('navWelcome').style.display = 'none');
     const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.add('show');
     // 重建筛选项(反映小池子)并从头渲染
     resetFilters();
     // 专题「女士针织衫精选」默认排序:按上架日期从新到旧(区别于主推池的按入池批次分层)
     var sortSel = document.getElementById('filterSort');
-    if (sortSel && (key === 'knit' || key === 'talent')) sortSel.value = 'dateDesc';
+    if (sortSel && (key === 'knit' || key === 'talent' || key === 'bf')) sortSel.value = 'dateDesc';
     buildFilterOptions();
     applyFilters();
     const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
@@ -2323,6 +2337,7 @@ function exitTopic(silent) {
   // 清除地址栏专题后缀,回到主商品池 URL
   try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   document.getElementById('topicBanner').classList.remove('show');
+  document.getElementById('topicBanner').classList.remove('bf');
   const nw = document.getElementById('navWelcome'); if (nw) nw.style.display = '';
   const fbp = document.getElementById('floatBackPool'); if (fbp) fbp.classList.remove('show');
   resetFilters();
