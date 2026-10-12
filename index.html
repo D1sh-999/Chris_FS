@@ -2216,6 +2216,40 @@ function trackTabView(page) {
   });
 }
 
+// 向 GA4 上报一次"专题虚拟页面浏览"及自定义事件;
+// 既让 Pages and screens 能按 #topic=xxx 维度看到各专区 PV,
+// 也让 Realtime/Events 能按 topic_key/topic_title 维度拆分流量。
+function trackTopicView(key, meta) {
+  if (typeof gtag !== 'function' || !meta) return;
+  var titleZh = meta.title || key;
+  var titleEn = meta.titleEn || titleZh;
+  var payload = {
+    page_title: '选品小站 - 专题 - ' + titleZh,
+    page_location: location.origin + location.pathname + '#topic=' + key,
+    page_path: location.pathname + '#topic=' + key,
+    topic_key: key,
+    topic_title: titleZh,
+    topic_title_en: titleEn,
+    tab_name: '专题:' + titleZh
+  };
+  gtag('event', 'page_view', payload);
+  gtag('event', 'topic_enter', {
+    topic_key: key,
+    topic_title: titleZh,
+    topic_title_en: titleEn
+  });
+}
+
+// 返回主商品池时上报,便于计算专区停留时长 / 转化
+function trackTopicExit(key, meta) {
+  if (typeof gtag !== 'function' || !key || !meta) return;
+  gtag('event', 'topic_exit', {
+    topic_key: key,
+    topic_title: meta.title || key,
+    topic_title_en: meta.titleEn || meta.title || key
+  });
+}
+
 // ===== 强推荐专题:多专区货盘 =====
 // 复用同一套筛选/排序/渲染引擎,只切换当前生效的数据池(PRODUCTS)
 // title/sub 为中文默认文案;titleEn/subEn 为对应英文,随 LANG 切换
@@ -2306,6 +2340,8 @@ function enterTopic(key) {
     applyFilters();
     const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
     updateFloatButtons();
+    // 专题埋点:每次进入(含懒加载完成后、缓存命中、语言切换/返回后重入)都上报一次 page_view + topic_enter
+    try { trackTopicView(key, meta); } catch(e){}
   };
 
   if (TOPIC_POOLS[key]) { applyTopic(); return; }
@@ -2329,6 +2365,8 @@ function enterTopic(key) {
 
 // 返回大池子;silent=true 时仅切换数据不重复设置 Tab(供 switchPage 调用)
 function exitTopic(silent) {
+  // 专题埋点:退出前先上报一次 topic_exit(此刻 CURRENT_TOPIC_KEY 仍指向当前专题)
+  try { if (CURRENT_TOPIC_KEY) trackTopicExit(CURRENT_TOPIC_KEY, TOPIC_META[CURRENT_TOPIC_KEY]); } catch(e){}
   PRODUCTS = MAIN_POOL;
   ACTIVE_POOL = 'main';
   CURRENT_TOPIC_KEY = '';
