@@ -15,7 +15,6 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="config.js"></script>
 <style>
 :root {
   --bg: #fbfbfd;
@@ -1585,7 +1584,8 @@ function applyHashRoute() {
   var m = h.match(/topic=([A-Za-z0-9_-]+)/);
   var key = m ? m[1] : '';
   if (key && TOPIC_META[key]) {
-    if (ACTIVE_POOL !== 'topic') enterTopic(key);
+    // 不在专题中,或在别的专题中(如 #topic=bf → #topic=talent),都需要切换
+    if (ACTIVE_POOL !== 'topic' || CURRENT_TOPIC_KEY !== key) enterTopic(key);
     return;
   } else {
     if (ACTIVE_POOL === 'topic') exitTopic();
