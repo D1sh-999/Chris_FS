@@ -746,6 +746,7 @@ body.lang-en .translate-hint { display: block; }
   .cart-item-img { width: 150px; height: 150px; }
   .login-card { padding: 36px 24px; }
 }
+.product-img-tag.tcore, .pc-spu-tag.tcore { background: linear-gradient(135deg,#ffe08a,#e8ac22); color:#4a3200; border:1px solid #b57b0a; }
 </style>
 </head>
 <body>
@@ -2402,6 +2403,7 @@ function switchPallet(type) {
 function tagClass(tag) {
   const t = (tag || '').trim();
   if (!t) return 'told';
+  if (t === '🌟核心🌟') return 'tcore';
   // 已知关键词(大小写/中英文均兼容),命中即用语义色
   if (/7\s*天|7\s*day|7d\b/i.test(t)) return 't7';
   if (/14\s*天|14\s*day|14d\b/i.test(t)) return 't14';
