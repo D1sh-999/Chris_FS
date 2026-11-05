@@ -747,6 +747,9 @@ body.lang-en .translate-hint { display: block; }
   .login-card { padding: 36px 24px; }
 }
 .product-img-tag.tcore, .pc-spu-tag.tcore { background: linear-gradient(135deg,#ffe08a,#e8ac22); color:#4a3200; border:1px solid #b57b0a; }
+.topic-chip.strong[data-topic="liveflash"] { color:#b32639; border-color:#f4b9c2; background:linear-gradient(135deg,#fff2f4,#ffe0e5); }
+.topic-chip.strong[data-topic="liveflash"].active, .topic-chip.strong[data-topic="liveflash"]:hover { color:#8c1730; border-color:#cf3651; background:#ffdce4; }
+.product-img-tag.tliveflash, .pc-spu-tag.tliveflash { color:#fff; background:linear-gradient(135deg,#f34d67,#c72143); }
 </style>
 </head>
 <body>
@@ -2261,10 +2264,11 @@ const TOPIC_META = {
   bf:       { file: 'data/topic_bf.csv',        title: '黑五甄选货盘',   titleEn: 'Black Friday Picks',       sub: '黑五大促 · 甄选好货',             subEn: 'Black Friday deals · Hand-picked',              strong: true },
   talent:   { file: 'data/topic_talent.csv',    title: '达人定制专区',   titleEn: 'Creator Picks',            sub: '达人精选货盘 · 精选好货',         subEn: 'Curated collection · Hand-picked for creators', strong: true },
   knit:     { file: 'data/topic_knit.csv',      title: '女士针织衫精选', titleEn: 'Knitwear Picks',           sub: '强推荐专题货盘 · 精选好货',       subEn: 'Featured collection · Hand-picked',             strong: true },
-  freeship: { file: 'data/topic_freeship.csv',  title: '包邮货盘',       titleEn: 'Free Shipping Picks',      sub: '包邮专区 · 精选好货',             subEn: 'Free shipping collection · Hand-picked',        strong: true }
+  freeship: { file: 'data/topic_freeship.csv',  title: '包邮货盘',       titleEn: 'Free Shipping Picks',      sub: '包邮专区 · 精选好货',             subEn: 'Free shipping collection · Hand-picked',        strong: true },
+  liveflash: { file: 'data/topic_liveflash.csv', title: '直播限时秒杀专区', titleEn: 'Live Flash Deals', sub: '限时直播秒杀 · 精选好货', subEn: 'Live flash deals · Hand-picked', strong: true }
 };
 // 专题导航条渲染顺序;数组里的 key 必须存在于 TOPIC_META
-const TOPIC_ORDER = ['bf', 'talent', 'knit', 'freeship'];
+const TOPIC_ORDER = ['bf', 'talent', 'knit', 'freeship', 'liveflash'];
 // 预留占位专题数量(展示为灰色 dashed chip,暂不可点)
 // 预留位数量:暂设为 0 → 对外页面不展示"专题N(预留)"占位;
 // 将来有新专题数据时,把它改回 3(或对应数量)即可重新露出预留位。
@@ -2340,7 +2344,7 @@ function enterTopic(key) {
     resetFilters();
     // 专题「女士针织衫精选」默认排序:按上架日期从新到旧(区别于主推池的按入池批次分层)
     var sortSel = document.getElementById('filterSort');
-    if (sortSel && (key === 'knit' || key === 'talent' || key === 'bf' || key === 'freeship')) sortSel.value = 'dateDesc';
+    if (sortSel && (key === 'knit' || key === 'talent' || key === 'bf' || key === 'freeship' || key === 'liveflash')) sortSel.value = 'dateDesc';
     buildFilterOptions();
     applyFilters();
     const sa = document.getElementById('scrollArea'); if (sa) sa.scrollTop = 0;
@@ -2403,6 +2407,7 @@ function switchPallet(type) {
 function tagClass(tag) {
   const t = (tag || '').trim();
   if (!t) return 'told';
+  if (t === '限时直播秒杀') return 'tliveflash';
   if (t === '🌟核心🌟') return 'tcore';
   // 已知关键词(大小写/中英文均兼容),命中即用语义色
   if (/7\s*天|7\s*day|7d\b/i.test(t)) return 't7';
