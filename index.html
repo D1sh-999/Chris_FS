@@ -1546,7 +1546,7 @@ function tryLoadCsv(candidates, idx, grid) {
     grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">数据加载失败，请刷新页面重试</div></div>';
     return;
   }
-  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || 'pool-cache-v1'), {
+  Papa.parse(new URL(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || 'pool-cache-v1'), document.baseURI).href, {
     worker: !!window.Worker, download: true,
     header: true,
     skipEmptyLines: true,
@@ -2359,7 +2359,7 @@ function enterTopic(key) {
   const grid = document.getElementById('productGrid');
   grid.className = '';
   grid.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">' + ((LANG==='en')?'Loading collection...':'加载专题货盘...') + '</div></div>';
-  Papa.parse(meta.file + '?v=' + (window.DATA_VERSION || 'pool-cache-v1'), {
+  Papa.parse(new URL(meta.file + '?v=' + (window.DATA_VERSION || 'pool-cache-v1'), document.baseURI).href, {
     worker: !!window.Worker, download: true, header: true, skipEmptyLines: true,
     complete: function(results) {
       const list = mapRowsToProducts(results.data || []);
@@ -2911,7 +2911,7 @@ function tryLoadPidMap(candidates, idx, cb) {
     if (cb) cb(new Error('pid_map load failed'));
     return;
   }
-  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || 'pool-cache-v1'), {
+  Papa.parse(new URL(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || 'pool-cache-v1'), document.baseURI).href, {
     worker: !!window.Worker, download: true, header: true, skipEmptyLines: true,
     complete: function(results) {
       var rows = results.data || [];
