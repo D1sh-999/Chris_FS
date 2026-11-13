@@ -750,6 +750,7 @@ body.lang-en .translate-hint { display: block; }
 .topic-chip.strong[data-topic="liveflash"] { color:#b32639; border-color:#f4b9c2; background:linear-gradient(135deg,#fff2f4,#ffe0e5); }
 .topic-chip.strong[data-topic="liveflash"].active, .topic-chip.strong[data-topic="liveflash"]:hover { color:#8c1730; border-color:#cf3651; background:#ffdce4; }
 .product-img-tag.tliveflash, .pc-spu-tag.tliveflash { color:#fff; background:linear-gradient(135deg,#f34d67,#c72143); }
+.product-card { content-visibility: auto; contain-intrinsic-size: auto 520px; }
 </style>
 </head>
 <body>
@@ -1545,8 +1546,8 @@ function tryLoadCsv(candidates, idx, grid) {
     grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">数据加载失败，请刷新页面重试</div></div>';
     return;
   }
-  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || Date.now()), {
-    download: true,
+  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || 'pool-cache-v1'), {
+    worker: !!window.Worker, download: true,
     header: true,
     skipEmptyLines: true,
     complete: function(results) {
@@ -2358,8 +2359,8 @@ function enterTopic(key) {
   const grid = document.getElementById('productGrid');
   grid.className = '';
   grid.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">' + ((LANG==='en')?'Loading collection...':'加载专题货盘...') + '</div></div>';
-  Papa.parse(meta.file + '?v=' + (window.DATA_VERSION || Date.now()), {
-    download: true, header: true, skipEmptyLines: true,
+  Papa.parse(meta.file + '?v=' + (window.DATA_VERSION || 'pool-cache-v1'), {
+    worker: !!window.Worker, download: true, header: true, skipEmptyLines: true,
     complete: function(results) {
       const list = mapRowsToProducts(results.data || []);
       if (!list.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#x26A0;</div><div class="empty-state-text">' + ((LANG==='en')?'Failed to load collection, please refresh':'专题数据加载失败,请刷新重试') + '</div></div>'; return; }
@@ -2910,8 +2911,8 @@ function tryLoadPidMap(candidates, idx, cb) {
     if (cb) cb(new Error('pid_map load failed'));
     return;
   }
-  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || Date.now()), {
-    download: true, header: true, skipEmptyLines: true,
+  Papa.parse(candidates[idx] + (candidates[idx].indexOf('?') === -1 ? '?v=' : '&v=') + (window.DATA_VERSION || 'pool-cache-v1'), {
+    worker: !!window.Worker, download: true, header: true, skipEmptyLines: true,
     complete: function(results) {
       var rows = results.data || [];
       if (!rows.length) { tryLoadPidMap(candidates, idx + 1, cb); return; }
